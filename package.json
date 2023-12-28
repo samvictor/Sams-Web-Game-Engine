@@ -1,6 +1,6 @@
 {
-  "name": "webgameengine",
-  "version": "0.1.0",
+  "name": "sams-web-game-engine",
+  "version": "0.1.2",
   "description": "This library makes it easier to make web-based games.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",
@@ -28,11 +28,17 @@
     "README.md"
   ],
   "keywords": [
-    "react", "3D", "game engine", "game", "typescript"
+    "react",
+    "3D",
+    "game engine",
+    "game",
+    "typescript",
+    "three.js"
   ],
   "author": "Sam Inniss (samvictor)",
   "license": "MIT",
   "devDependencies": {
+    "@react-three/fiber": "^8.15.12",
     "@testing-library/react": "^14.1.2",
     "@types/jest": "^29.5.11",
     "@types/react": "^18.2.45",
@@ -49,7 +55,9 @@
     "prettier": "^3.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-redux": "^9.0.4",
     "ts-jest": "^29.1.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "three": "^0.160.0"
   }
 }

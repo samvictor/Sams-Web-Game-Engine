@@ -2,7 +2,11 @@
 This library makes it easier to make web-based games.
 
 Designed for 3rd person, side scroller games that use 3D models.
-Powered by THREE.js
+Powered by THREE.js.
+
+This library is designed for games that use 3D assets, but 2D movement
+(e.g. side scrollers, tetris, galaga).
+
 
 ## Features:
 * Movement
@@ -11,7 +15,7 @@ Powered by THREE.js
 * Menus
 * Play flow
 * Power ups
-* Eenemy AI
+* Enemy AI
 * Difficulty levels
 * Scale difficulty based on player skill
 * Score/high score management
@@ -19,4 +23,5 @@ Powered by THREE.js
 * Easy to use
 
 ## Future Features:
-* Use AI for quest text generation and level design 
+* Use LLM for quest text generation and level design
+* AI controlled allies/teammates
