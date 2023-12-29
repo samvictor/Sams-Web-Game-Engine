@@ -98,7 +98,6 @@ import { Canvas, Object, Collider } from 'sams-web-game-engine';
 const myCollider:Collider = {
   shape: 'box',
   boxSize: [1, 1, 1],
-  boxRotation: [0, 0, 0],
   offset: [0, 0, 0],
   visible: true,
 }
@@ -115,9 +114,10 @@ return (
 Supported values:
  * **shape** - (required) point, box, cylinder, sphere. "box" by default
  * **boxSize** - Must be, and should only be used with box shape. x, y, and z components of collider size. "[1, 1, 1]" by default.
- * **boxRotation** - Must be, and should only be used with box shape. x, y, and z components of collider rotation. "[0, 0, 0]" by default.
+ * **boxRotation** - (future) Must be, and should only be used with box shape. x, y, and z components of collider rotation. "[0, 0, 0]" by default.
  * **cylinderSize** - Must be, and should only be used with cylinder shape. radius and height components of collider size. "[1, 1]" by default.
- * **cylinderRotation** - Must be, and should only be used with cylinder shape. x, y, and z components of collider rotation. "[0, 0, 0]" by default.
+ * **cylinderRotation** - (future) Must be, and should only be used with cylinder shape. x, y, and z components of collider rotation. "[0, 0, 0]" by default.
+ * **cylinderOrientation** - (future) Must be, and should only be used with cylinder shape. Orientation of the cylinder. Which axis is the height of the cylinder parallel to? x, y, or z. "x" by default.
  * **sphereRadius** - Must be, and should only be used with sphere shape. Radius of collider. "1" by default.
  * **offset** - (required) x, y, and z components of collider position offset. "[0, 0, 0]" by default.
  * **visible** - Only designed for testing purposes. This option lets you see where the collider will be, even though it's usually invisible. "false" by default.

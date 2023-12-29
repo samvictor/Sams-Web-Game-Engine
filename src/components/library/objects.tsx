@@ -49,7 +49,6 @@ function Box(props: any) {
   // Return the view, these are regular Threejs elements expressed in JSX
   const defaultColor = props.color || "orange";
 
-  console.log("box function called");
 
   return (
     <mesh
