@@ -116,9 +116,9 @@ const reducer = (state = initialState, action: any) => {
         tempState = removeObjectByIndex(0)
       }
 
-      return { ...tempState, objects: [...tempState.objects, action.value] }
-    case 'removeObjectsByIndex':
-      return removeObjectByIndex(action.value.index, action.value.id)
+      return { ...tempState, bullets: [...tempState.bullets, action.value] }
+    case 'removeBulletByIndex':
+      return removeBulletByIndex(action.value.index, action.value.id)
     case 'removeBulletById':
       oldBullets = [...state.bullets]
       if (!oldBullets) {

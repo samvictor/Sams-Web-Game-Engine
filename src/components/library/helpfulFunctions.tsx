@@ -15,24 +15,34 @@ const collisionCheck3D = (object1:any, object2:any) => {
     return false;
   }
 
+  if (!object1.collider.shape || !object2.collider.shape) {
+    console.error("an object is missing collider shape");
+    console.error(object1, object2);
+    return false;
+  }
+
   // map is faster than if tree
-  // bind arguments so we can swap arguments when we need to
-  // but avoid calling all functions
   const mapShapesToFunction:any = {
     point: {
-      point: pointToPointCollisionCheck3D.bind(object1, object2),
-      box: pointToBoxCollisionCheck3D.bind(object1, object2),
-      sphere: pointToSphereCollisionCheck3D.bind(object1, object2),
+      point: pointToPointCollisionCheck3D,
+      box: pointToBoxCollisionCheck3D,
+      sphere: pointToSphereCollisionCheck3D,
     },
     box: {
-      // we need to reverse arguments because first argument
-      // must be point and second must be box
-      point: pointToBoxCollisionCheck3D.bind(object2, object1),
-
+      point: pointToBoxCollisionCheck3D,
+      box: boxToBoxCollisionCheck3D,
+      sphere: boxToSphereCollisionCheck3D,
+    },
+    sphere: {
+      point: pointToSphereCollisionCheck3D,
+      box: boxToSphereCollisionCheck3D,
+      sphere: sphereToSphereCollisionCheck3D,
     }
   }
 
-
+  return mapShapesToFunction
+              [object1.collider.shape]?.[object2.collider.shape]
+                ?.(object1, object2) || false;
 }
 
 // point, box, cylinder, sphere
@@ -55,8 +65,6 @@ const pointToPointCollisionCheck3D = (object1:any, object2:any) => {
 
 const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
   // check for collision between a point and a box shaped collider
-  // the first argument must be a point and the second argument
-  // must be a box
 
   let {point, box, isValid} = collisionCheckValidateArgs(
                                           object1, object2, "point", "box");
@@ -87,7 +95,7 @@ const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
           && boxC1[2] < pointPosition[2] && pointPosition[2] < boxC2[2];
 }
 
-const pointToSphereCollisionCheck3D = (point:any, sphere:any) => {
+const pointToSphereCollisionCheck3D = (object1:any, object2:any) => {
   // check for collision between a point and a sphere shaped collider
   // the first argument must be a point and the second argument
   // must be a shpere
@@ -159,7 +167,7 @@ const boxToBoxCollisionCheck3D = (box1:any, box2:any) => {
           && box1C1[2] < box2C2[2] && box2C1[2] < box1C2[2];
 }
 
-const boxToSphereCollisionCheck3D = (box:any, sphere:any) => {
+const boxToSphereCollisionCheck3D = (object1:any, object2:any) => {
   // check for collision between a box and a sphere shaped collider
   // the first argument must be a box and the second argument
   // must be a shpere
@@ -304,7 +312,7 @@ const collisionCheckValidateArgs = (inObject1:any, inObject2:any, type1, type2) 
 
 
 
-const getColliderPosition3D(object:any) => {
+const getColliderPosition3D = (object:any) => {
   // get absolute position of a collider
   // by combining the object position with the collider offset
 

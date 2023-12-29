@@ -1,6 +1,7 @@
 import { useSelector } from 'react-redux'
 import reduxStore from './reduxStore'
 import { screenBoundsMax, screenBoundsMin } from './constants'
+import { collisionCheck } from './helpfulFunctions';
 
 function useMovePlayer() {
   const playerShipData = useSelector((state: any) => state.playerShip)
@@ -86,6 +87,9 @@ function useUpdateBullets() {
 
       // move bullet
       bullet.position[1] += (bullet.speed || 1) * scaledDelta
+
+      // check for collision
+      console.log("collision is", collisionCheck(bullet, bullet));
 
       reduxStore.dispatch({
         type: 'updateBulletByIndex',
