@@ -1,9 +1,21 @@
 'use client'
 
-import React, { useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
 import PropTypes from 'prop-types'
+import reduxStore from './reduxStore'
+
+interface Collider {
+  shape: string;
+  offset: number[];
+  boxSize?: number[];
+  boxRotation?: number[],
+  cylinderSize?: number[];
+  cylinderRotation?: number[];
+  sphereRadius?: number;
+  visible?: boolean;
+}
 
 function Box(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
@@ -11,12 +23,41 @@ function Box(props: any) {
   // Hold state for hovered and clicked events
   const [hovered, hover] = useState(false)
   const [clicked, click] = useState(false)
+
+  const position = props.position || [0, 0, 0]
+  const rotation = props.rotation || [0, 0, 0]
+  const id = props.id || 'object_' + Date.now() + '_' + Math.floor(Math.random() * 1000)
+  const speed = props.speed || 1
+  const health = props.health|| 1
+  const collider:Collider = props.collider || {
+                            shape: "box",
+                            boxSize: [1, 1, 1],
+                            offset: [0, 0, 0],
+                          };
+
+  useEffect(() => {
+    const newObjectData = {
+      position: position,
+      // object id is object_ + time created + random number
+      id: id,
+      rotation: rotation,
+      speed: speed,
+      health: health,
+      collider: collider,
+    }
+
+    reduxStore.dispatch({ type: 'addObject', value: newObjectData })
+  }, [] );
+
+
   // Subscribe this component to the render-loop, rotate the mesh every frame
   useFrame((_, delta) => {
     if (ref?.current?.rotation?.x) ref.current.rotation.x += delta
   })
   // Return the view, these are regular Threejs elements expressed in JSX
   const defaultColor = props.color || "orange";
+
+  console.log("box function called");
 
   return (
     <mesh
@@ -26,6 +67,7 @@ function Box(props: any) {
       onClick={() => click(!clicked)}
       onPointerOver={() => hover(true)}
       onPointerOut={() => hover(false)}
+      gameObjectId={id}
     >
       <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={hovered ? 'hotpink' : defaultColor} />
@@ -75,4 +117,4 @@ Bullet.propTypes = {
   position: PropTypes.array,
 }
 
-export { Box, Ship, PlayerShip, Bullet }
+export { Box, Ship, PlayerShip, Bullet, Collider }

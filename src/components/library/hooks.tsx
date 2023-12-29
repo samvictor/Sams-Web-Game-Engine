@@ -44,6 +44,10 @@ function usePlayerShoot() {
       direction: 0, // degrees where 0 is up
       speed: 1,
       damage: 1,
+      collider: {
+        shape: "point",
+        offset: [0, 0, 0],
+      }
     }
 
     console.log('creating bullet:', newBullet)

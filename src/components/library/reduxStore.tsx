@@ -1,5 +1,5 @@
 import { createStore } from 'redux'
-import { maxBulletsOnScreen } from './constants'
+import { maxBulletsOnScreen, maxObjectsOnScreen } from './constants'
 
 /**
  * This is a reducer - a function that takes a current state value and an
@@ -15,9 +15,10 @@ import { maxBulletsOnScreen } from './constants'
  */
 
 interface AppState {
-  playerShip: any
-  playerShipUpdater: number
-  bullets: any[]
+  playerShip: any;
+  playerShipUpdater: number;
+  bullets: any[];
+  objects: any[]; // objects do not include bullets
 }
 
 const initialState: AppState = {
@@ -29,6 +30,7 @@ const initialState: AppState = {
   },
   playerShipUpdater: 0,
   bullets: [],
+  objects: [],
 }
 
 const reducer = (state = initialState, action: any) => {
@@ -72,6 +74,27 @@ const reducer = (state = initialState, action: any) => {
     return { ...state, bullets: oldBullets }
   }
 
+  let oldObjects, thisObject, objectIndex
+
+  const removeObjectByIndex = (index: number, id?: string) => {
+    oldObjects = [...state.objects]
+    if (!oldObjects) {
+      // old Objects not found
+      console.error('old objects not found')
+      return state
+    }
+
+    thisObject = oldObjects[index]
+    if (thisObject && (!id || thisObject.id === id)) {
+      // make sure bullet exist and matches id if available
+      oldObjects.splice(index, 1)
+    } else {
+      console.error('bullet not deleted')
+    }
+
+    return { ...state, objects: oldObjects }
+  }
+
   switch (action.type) {
     // players
     case 'setPlayerShip':
@@ -89,13 +112,13 @@ const reducer = (state = initialState, action: any) => {
     case 'addBullet':
       tempState = state
       oldBullets = [...tempState.bullets]
-      if (oldBullets.length > maxBulletsOnScreen) {
-        tempState = removeBulletByIndex(0)
+      if (oldBullets.length > maxObjectsOnScreen) {
+        tempState = removeObjectByIndex(0)
       }
 
-      return { ...tempState, bullets: [...tempState.bullets, action.value] }
-    case 'removeBulletByIndex':
-      return removeBulletByIndex(action.value.index, action.value.id)
+      return { ...tempState, objects: [...tempState.objects, action.value] }
+    case 'removeObjectsByIndex':
+      return removeObjectByIndex(action.value.index, action.value.id)
     case 'removeBulletById':
       oldBullets = [...state.bullets]
       if (!oldBullets) {
@@ -137,6 +160,59 @@ const reducer = (state = initialState, action: any) => {
       }
 
       return { ...state, bullets: oldBullets }
+
+    // Game objects
+    case 'addObject':
+      tempState = state
+      oldObjects = [...tempState.objects]
+      if (oldObjects.length > maxObjectsOnScreen) {
+        tempState = removeObjectById(0)
+      }
+
+      return { ...tempState, objects: [...tempState.objects, action.value] }
+    case 'removeObjectByIndex':
+      return removeObjectByIndex(action.value.index, action.value.id)
+    case 'removeObjectById':
+      oldObjects = [...state.objects]
+      if (!oldObjects) {
+        // old objects not found
+        console.error('old objects not found')
+        return state
+      }
+
+      objectIndex = oldObjects.findIndex((b) => b.id === action.value.id)
+      thisObject = null
+      if (objectIndex > -1) {
+        // make sure object exist and matches id if available
+        oldObjects.splice(objectIndex, 1)
+      } else {
+        console.error('object not deleted')
+      }
+
+      return { ...state, objects: oldObjects }
+
+    case 'updateObjectByIndex':
+      oldObjects = [...state.objects]
+      if (!oldObjects) {
+        // old objects not found
+        console.error('old objects not found')
+        return state
+      }
+
+      thisObject = oldObjects[action.value.index]
+      if (thisObject && (!action.value.id || thisObject.id === action.value.id)) {
+        // make sure object exist and matches id if available
+        oldObjects[action.value.index] = action.value.object
+      } else {
+        console.warn('object not changed')
+        console.log("this object", thisObject);
+        console.log("action id", action.value.id);
+        console.log("object id", thisObject?.id);
+        console.log("all objects", oldObjects);
+        console.log("index", action.value.index);
+      }
+
+      return { ...state, objects: oldObjects }
 
     default:
       console.error('default reached in store', action)
