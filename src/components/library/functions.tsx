@@ -80,6 +80,7 @@ const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
   // corner 1 (bottom-left-back corner)
   // and check all components of point are less than
   // box corner 2 (top-right-front corner)
+  // C1 holds all of the mins and C2 holds all of the maxs
 
   return boxC1[0] < pointPosition[0] && pointPosition[0] < boxC2[0]
           && boxC1[1] < pointPosition[1] && pointPosition[1] < boxC2[1]
@@ -98,22 +99,64 @@ const pointToSphereCollisionCheck3D = (point:any, sphere:any) => {
     return;
   }
 
+
+  const sphereRadius = sphere.collider.sphereRadius;
+  if (!sphereRadius) {
+    console.error("missing shpere radius");
+    console.error(sphere);
+    return false;
+  }
+
   const pointPosition = getColliderPosition3D(point);
   const spherePosition = getColliderPosition3D(sphere);
 
+  // calc distance between sphere center and point center
+  // if distance is less than radius, they are colliding
+  return Math.sqrt((pointPosition[0] - spherePosition[0])**2
+                    + (pointPosition[1] - spherePosition[1])**2
+                    + (pointPosition[2] - spherePosition[2])**2) < sphereRadius;
 }
 
-const boxToBoxCollisionCheck3D = (object1:any, object2:any) => {
+const boxToBoxCollisionCheck3D = (box1:any, box2:any) => {
   // check for collision between 2 box shaped colliders
   let {isValid} = collisionCheckValidateArgs(
-                                            object1, object2, "box", "box");
+                                            box1, box2, "box", "box");
 
   if (!isValid) {
     return;
   }
 
-  const object1Position = getColliderPosition3D(object1);
-  const object2Position = getColliderPosition3D(object2);
+
+  const box1Size = object1.collider.boxSize;
+  if (!box1Size) {
+    console.error("missing box size for object 1");
+    console.error(box1);
+    return false;
+  }
+
+  const box2Size = object2.collider.boxSize;
+  if (!box2Size) {
+    console.error("missing box size for object 2");
+    console.error(box2);
+    return false;
+  }
+
+  // corner 1 (bottom-left-back corner)
+  // box corner 2 (top-right-front corner)
+  const box1C1 = getColliderPosition3D(box1);
+  const box1C2 = [box1C1[0] + box1Size[0], box1C1[1] + box1Size[1],
+                                          box1C1[2] + box1Size[2]];
+
+  const box2C1 = getColliderPosition3D(box2);
+  const box2C2 = [box2C1[0] + box2Size[0], box2C1[1] + box2Size[1],
+                                          box2C1[2] + box2Size[2]];
+
+  // for each axis, check if box1min < box2max and box2min < box1max
+  // C1 holds all of the mins and C2 holds all of the maxs
+
+  return box1C1[0] < box2C2[0] && box2C1[0] < box1C2[0]
+          && box1C1[1] < box2C2[1] && box2C1[1] < box1C2[1]
+          && box1C1[2] < box2C2[2] && box2C1[2] < box1C2[2];
 }
 
 const boxToSphereCollisionCheck3D = (box:any, sphere:any) => {
@@ -128,22 +171,80 @@ const boxToSphereCollisionCheck3D = (box:any, sphere:any) => {
     return;
   }
 
-  const boxPosition = getColliderPosition3D(box);
+
+
+  const boxSize = box.collider.boxSize;
+  if (!boxSize) {
+    console.error("missing box size");
+    console.error(box);
+    return false;
+  }
+
+  // corner 1 (bottom-left-back corner)
+  // box corner 2 (top-right-front corner)
+  // C1 holds all of the mins and C2 holds all of the maxs
+  const boxC1 = getColliderPosition3D(box);
+  const boxC2 = [boxC1[0] + boxSize[0], boxC1[1] + boxSize[1], boxC1[2] + boxSize[2]];
+
+
+  const sphereRadius = sphere.collider.sphereRadius;
+  if (!sphereRadius) {
+    console.error("missing shpere radius");
+    console.error(sphere);
+    return false;
+  }
+
   const spherePosition = getColliderPosition3D(sphere);
+
+  // Every face of the box sits on a plane.
+  // We can call the planes perpendicular to the x-axis the x-planes
+  // the box has 2 x-planes: x-plane1 and x-plane2
+  // check if sphere intersects with box's x-plane1, box's x-plane2,
+  // or center is between the two planes
+  // if this is true for x, y and z planes, they intersect
+  const abs = Math.abs();
+  return (abs(spherePosition[0] - boxC1[0]) < sphereRadius
+              || abs(spherePosition[0] - boxC2[0]) < sphereRadius
+              || (boxC1[0] < spherePosition[0] && spherePosition[0] < boxC2[0]))
+        && (abs(spherePosition[1] - boxC1[1]) < sphereRadius
+                    || abs(spherePosition[1] - boxC2[1]) < sphereRadius
+                    || (boxC1[1] < spherePosition[1] && spherePosition[1] < boxC2[1]))
+        && (abs(spherePosition[2] - boxC1[2]) < sphereRadius
+                    || abs(spherePosition[2] - boxC2[2]) < sphereRadius
+                    || (boxC1[2] < spherePosition[2] && spherePosition[2] < boxC2[2]))
+
 }
 
-const sphereToSphereCollisionCheck3D = (object1:any, object2:any) => {
+const sphereToSphereCollisionCheck3D = (sphere1:any, sphere2:any) => {
   // check for collision between 2 sphere shaped colliders
 
   let {isValid} = collisionCheckValidateArgs(
-                                          object1, object2, "sphere", "sphere");
+                                          sphere1, sphere2, "sphere", "sphere");
 
   if (!isValid) {
     return;
   }
 
-  const object1Position = getColliderPosition3D(object1);
-  const object2Position = getColliderPosition3D(object2);
+  const sphere1Radius = sphere1.collider.sphereRadius;
+  if (!sphere1Radius) {
+    console.error("missing shpere1 radius");
+    console.error(sphere1);
+    return false;
+  }
+
+  const sphere2Radius = sphere2.collider.sphereRadius;
+  if (!sphere2Radius) {
+    console.error("missing shpere2 radius");
+    console.error(sphere2);
+    return false;
+  }
+
+  const sphere1Position = getColliderPosition3D(sphere1);
+  const sphere2Position = getColliderPosition3D(sphere2);
+
+  return Math.sqrt((sphere1Position[0] - sphere2Position[0])**2
+          + (sphere1Position[1] - sphere2Position[1])**2
+          + (sphere1Position[2] - sphere2Position[2])**2) < (sphere1Radius + sphere2Radius);
 }
 
 
