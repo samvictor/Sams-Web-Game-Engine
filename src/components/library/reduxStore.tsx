@@ -13,19 +13,25 @@ import { maxBulletsOnScreen } from './constants'
  * You can use any conditional logic you want in a reducer. In this example,
  * we use a switch statement, but it's not required.
  */
-const reducer = (
-  state = {
-    // default state
-    playerShip: {
-      position: [0, -5, 0],
-      lastShootTimeMs: 0,
-      shootDelayMs: 100,
-    },
-    playerShipUpdater: 0,
-    bullets: [],
+
+interface AppState {
+  playerShip: any
+  playerShipUpdater: number
+  bullets: any[]
+}
+
+const initialState: AppState = {
+  // default state
+  playerShip: {
+    position: [0, -5, 0],
+    lastShootTimeMs: 0,
+    shootDelayMs: 100,
   },
-  action,
-) => {
+  playerShipUpdater: 0,
+  bullets: [],
+}
+
+const reducer = (state = initialState, action: any) => {
   if (action?.type?.includes('@@redux/INIT')) {
     // redux is doing init
     return state
@@ -47,7 +53,7 @@ const reducer = (
 
   let oldBullets, thisBullet, bulletIndex, tempState
 
-  const removeBulletByIndex = (index, id) => {
+  const removeBulletByIndex = (index: number, id?: string) => {
     oldBullets = [...state.bullets]
     if (!oldBullets) {
       // old bullets not found
@@ -71,8 +77,7 @@ const reducer = (
     case 'setPlayerShip':
       return { ...state, playerShip: action.value, playerShipUpdater: Date.now() }
     case 'setPlayerPosition':
-      return { ...state, playerShip: { ...state.playerShip, position: action.value },
-                                       playerShipUpdater: Date.now() }
+      return { ...state, playerShip: { ...state.playerShip, position: action.value }, playerShipUpdater: Date.now() }
     case 'setPlayerLastShootTimeMs':
       return {
         ...state,

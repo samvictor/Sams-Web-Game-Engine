@@ -3,13 +3,13 @@ import reduxStore from './reduxStore'
 import { screenBoundsMax, screenBoundsMin } from './constants'
 
 function useMovePlayer() {
-  const playerShipData = useSelector((state:any) => state.playerShip)
-  const playerShipUpdater = useSelector((state:any) => state.playerShipUpdater)
+  const playerShipData = useSelector((state: any) => state.playerShip)
+  const playerShipUpdater = useSelector((state: any) => state.playerShipUpdater)
 
-  function movePlayer(direction:string, delta:number) {
+  function movePlayer(direction: string, delta: number) {
     const oldPosition = playerShipData.position
     const scaledDelta = delta * 10
-    let newPosition = [...oldPosition]
+    const newPosition = [...oldPosition]
     if (direction === 'left') {
       newPosition[0] -= scaledDelta
     } else if (direction === 'right') {
@@ -24,7 +24,7 @@ function useMovePlayer() {
 }
 
 function usePlayerShoot() {
-  const playerShipData = useSelector((state:any) => state.playerShip)
+  const playerShipData = useSelector((state: any) => state.playerShip)
 
   function playerShoot() {
     if (playerShipData.lastShootTimeMs + playerShipData.shootDelayMs > Date.now()) {
@@ -55,11 +55,11 @@ function usePlayerShoot() {
 }
 
 function useUpdateBullets() {
-  const bullets = useSelector((state:any) => state.bullets)
+  const bullets = useSelector((state: any) => state.bullets)
 
-  function updateBullets(delta:number) {
+  function updateBullets(delta: number) {
     const scaledDelta = delta * 10
-    bullets.forEach((bullet:any, i:number) => {
+    bullets.forEach((bullet: any, i: number) => {
       // check if bullet is out of bounds
       if (
         bullet.position[0] > screenBoundsMax[0] ||

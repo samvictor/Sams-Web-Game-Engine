@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
 
-function Box(props:any) {
+function Box(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
   const ref = useRef<any>()
   // Hold state for hovered and clicked events
@@ -10,8 +10,7 @@ function Box(props:any) {
   const [clicked, click] = useState(false)
   // Subscribe this component to the render-loop, rotate the mesh every frame
   useFrame((_, delta) => {
-    if (ref?.current?.rotation?.x)
-      ref.current.rotation.x += delta
+    if (ref?.current?.rotation?.x) ref.current.rotation.x += delta
   })
   // Return the view, these are regular Threejs elements expressed in JSX
   return (
@@ -29,7 +28,7 @@ function Box(props:any) {
   )
 }
 
-function Ship(props:any) {
+function Ship(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
   const ref = useRef()
   const color = props.color || 'red'
@@ -48,12 +47,12 @@ Ship.propTypes = {
 }
 
 function PlayerShip() {
-  const playerShipData = useSelector((state:any) => state.playerShip)
+  const playerShipData = useSelector((state: any) => state.playerShip)
   const playerPosition = playerShipData.position || [0, 0, 1]
   return <Ship color={'blue'} position={playerPosition} />
 }
 
-function Bullet(props:any) {
+function Bullet(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
   const ref = useRef()
   const color = props.color || 'yellow'
