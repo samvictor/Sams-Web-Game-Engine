@@ -6,16 +6,8 @@ import { useFrame } from '@react-three/fiber'
 import PropTypes from 'prop-types'
 import reduxStore from './reduxStore'
 
-interface Collider {
-  shape: string;
-  offset: number[];
-  boxSize?: number[];
-  boxRotation?: number[],
-  cylinderSize?: number[];
-  cylinderRotation?: number[];
-  sphereRadius?: number;
-  visible?: boolean;
-}
+import {Collider} from './interfaces';
+
 
 function Box(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
@@ -117,4 +109,4 @@ Bullet.propTypes = {
   position: PropTypes.array,
 }
 
-export { Box, Ship, PlayerShip, Bullet, Collider }
+export { Box, Ship, PlayerShip, Bullet }
