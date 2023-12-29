@@ -128,7 +128,12 @@ const reducer = (state = initialState, action: any) => {
         // make sure bullet exist and matches id if available
         oldBullets[action.value.index] = action.value.bullet
       } else {
-        console.error('bullet not changed')
+        console.warn('bullet not changed')
+        console.log("this bullet", thisBullet);
+        console.log("action id", action.value.id);
+        console.log("bullet id", thisBullet?.id);
+        console.log("all bullets", oldBullets);
+        console.log("index", action.value.index);
       }
 
       return { ...state, bullets: oldBullets }

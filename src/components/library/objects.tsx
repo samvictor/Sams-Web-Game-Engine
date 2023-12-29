@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
@@ -14,6 +16,8 @@ function Box(props: any) {
     if (ref?.current?.rotation?.x) ref.current.rotation.x += delta
   })
   // Return the view, these are regular Threejs elements expressed in JSX
+  const defaultColor = props.color || "orange";
+
   return (
     <mesh
       {...props}
@@ -24,7 +28,7 @@ function Box(props: any) {
       onPointerOut={() => hover(false)}
     >
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+      <meshStandardMaterial color={hovered ? 'hotpink' : defaultColor} />
     </mesh>
   )
 }

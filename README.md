@@ -2,7 +2,7 @@
 This library makes it easier to make web-based games.
 
 Designed for 3rd person, side scroller games that use 3D models.
-Powered by THREE.js.
+Powered by React Three Fiber.
 
 This library is designed for games that use 3D assets, but 2D movement
 (e.g. side scrollers, tetris, galaga).
