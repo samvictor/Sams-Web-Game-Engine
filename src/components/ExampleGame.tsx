@@ -1,3 +1,5 @@
+'use client'
+
 // import * as THREE from 'three';
 
 // const scene = new THREE.Scene();
@@ -16,7 +18,15 @@ import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks
 import { Provider } from 'react-redux'
 import store from './library/reduxStore'
 
-function ExampleGameNoProv() {
+const defaultSettings: any = {
+  background: 'transparent',
+  gravity: 'none',
+  travelDirection: 'up',
+}
+
+function ExampleGameNoProv(props: any) {
+  const settings = { ...defaultSettings, ...props.settings }
+
   const movePlayer = useMovePlayer()
   const playerShoot = usePlayerShoot()
   const updateBullets = useUpdateBullets()
@@ -70,7 +80,7 @@ function ExampleGameNoProv() {
   }, [])
 
   function Updater() {
-    useFrame((delta: any) => {
+    useFrame((_, delta: any) => {
       if (movement.left) {
         console.log('moving left')
         movePlayer('left', delta)
@@ -100,7 +110,15 @@ function ExampleGameNoProv() {
   }
 
   return (
-    <div id='parent' style={{ position: 'relative', width: '100vw', height: '100vh' }}>
+    <div
+      id='parent'
+      style={{
+        position: 'relative',
+        width: '100vw',
+        height: '100vh',
+        background: settings.background,
+      }}
+    >
       <Canvas camera={{ position: [0, 0, 10] }}>
         <Updater />
         <ambientLight />
@@ -115,9 +133,9 @@ function ExampleGameNoProv() {
   )
 }
 
-const ExampleGame = () => (
+const ExampleGame = (props: any) => (
   <Provider store={store}>
-    <ExampleGameNoProv />
+    <ExampleGameNoProv {...props} />
   </Provider>
 )
 

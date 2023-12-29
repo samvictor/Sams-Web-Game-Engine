@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
+import PropTypes from 'prop-types'
 
 function Box(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
@@ -22,7 +23,7 @@ function Box(props: any) {
       onPointerOver={() => hover(true)}
       onPointerOut={() => hover(false)}
     >
-      <boxGeometry size={[1, 1, 1]} />
+      <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
     </mesh>
   )
@@ -35,15 +36,15 @@ function Ship(props: any) {
 
   return (
     <mesh {...props} ref={ref}>
-      <boxGeometry size={[1, 1, 1]} />
+      <boxGeometry args={[1, 1, 1]} />
       <meshStandardMaterial color={color} />
     </mesh>
   )
 }
 
 Ship.propTypes = {
-  color: String,
-  position: [],
+  color: PropTypes.string,
+  position: PropTypes.array,
 }
 
 function PlayerShip() {
@@ -59,15 +60,15 @@ function Bullet(props: any) {
 
   return (
     <mesh {...props} ref={ref}>
-      <boxGeometry size={[0.1, 0.5, 0.1]} />
+      <boxGeometry args={[0.1, 0.5, 0.1]} />
       <meshStandardMaterial color={color} />
     </mesh>
   )
 }
 
 Bullet.propTypes = {
-  color: String,
-  position: [],
+  color: PropTypes.string,
+  position: PropTypes.array,
 }
 
 export { Box, Ship, PlayerShip, Bullet }
