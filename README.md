@@ -53,6 +53,11 @@ Use the `settings` argument to choose your game settings.
 
 `Canvas` is based on `Canvas` from React Three Fiber, so anything that will work in that Canvas should also work in this Canvas, but there may be compatibility issues when not using components from this package.  
 
+This is the notation for positions: `[x, y, z]`. `[0, 0, 0]` is the center of the screen.
+The x-axis is the horizontal axis. It increases to the right.
+The y-axis is the vertical axis. It increases upwards.
+The z-axis is the axis that goes into  and out of the screen. It increases out of the screen towards the camera.
+
 
 ## Game Objects
 Game Objects are general objects that you can put on the `Canvas`.
@@ -72,6 +77,8 @@ return (
 Supported arguments:
  * color - color names or hex notation.
  * position - x, y, and z components of object position. [0, 0, 0] by default.
+ This is the position of the center of the object.
+ * size - x, y, and z components of object sie. [1, 1, 1] by default.
 
 
 ## Player

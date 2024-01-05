@@ -9,5 +9,15 @@ interface Collider {
   visible?: boolean;
 }
 
+interface GameObjectData {
+  position: number[],
+  id: string,
+  rotation: number[],
+  speed: number,
+  health: number,
+  collider: Collider,
+  type: string,
+}
 
-export {Collider}
+
+export {Collider, GameObjectData}

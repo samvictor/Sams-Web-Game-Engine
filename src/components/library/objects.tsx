@@ -6,29 +6,31 @@ import { useFrame } from '@react-three/fiber'
 import PropTypes from 'prop-types'
 import reduxStore from './reduxStore'
 
-import {Collider} from './interfaces';
+import {Collider, GameObjectData} from './interfaces';
 
 
-function Box(props: any) {
+function GameObject(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
   const ref = useRef<any>()
   // Hold state for hovered and clicked events
   const [hovered, hover] = useState(false)
   const [clicked, click] = useState(false)
 
+  const type = props.type || "defaultGameObject"
+  const size = props.size || [1, 1, 1]
   const position = props.position || [0, 0, 0]
   const rotation = props.rotation || [0, 0, 0]
-  const id = props.id || 'object_' + Date.now() + '_' + Math.floor(Math.random() * 1000)
+  const id = props.objectId || 'object_' + Date.now() + '_' + Math.floor(Math.random() * 1000)
   const speed = props.speed || 1
   const health = props.health|| 1
   const collider:Collider = props.collider || {
                             shape: "box",
-                            boxSize: [1, 1, 1],
+                            boxSize: size,
                             offset: [0, 0, 0],
                           };
 
   useEffect(() => {
-    const newObjectData = {
+    const newObjectData:GameObjectData = {
       position: position,
       // object id is object_ + time created + random number
       id: id,
@@ -36,6 +38,7 @@ function Box(props: any) {
       speed: speed,
       health: health,
       collider: collider,
+      type: type,
     }
 
     reduxStore.dispatch({ type: 'addObject', value: newObjectData })
@@ -60,9 +63,26 @@ function Box(props: any) {
       onPointerOut={() => hover(false)}
       gameObjectId={id}
     >
-      <boxGeometry args={[1, 1, 1]} />
+      <boxGeometry args={size} />
       <meshStandardMaterial color={hovered ? 'hotpink' : defaultColor} />
     </mesh>
+  )
+}
+
+function Box(props: any) {
+  // create a basic game object, but make the collider a box
+
+  const size = props.size || [1, 1, 1]
+  const collider:Collider = props.collider || {
+                            shape: "box",
+                            boxSize: size,
+                            offset: [0, 0, 0],
+                          };
+
+  return (
+    <GameObject
+      {...props} collider={collider} type="box">
+    </GameObject>
   )
 }
 
@@ -108,4 +128,4 @@ Bullet.propTypes = {
   position: PropTypes.array,
 }
 
-export { Box, Ship, PlayerShip, Bullet }
+export { Box, Ship, PlayerShip, Bullet, GameObject }

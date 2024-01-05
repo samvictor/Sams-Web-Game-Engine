@@ -37,8 +37,11 @@ function usePlayerShoot() {
 
     console.log('creating bullet at', playerPosition)
 
+    const bulletStartingPosition = [...playerPosition];
+    bulletStartingPosition[2] += 0.6;
+
     const newBullet = {
-      position: playerPosition,
+      position: bulletStartingPosition,
       source: 'player',
       // bullet id is bullet_ + time created + random number
       id: 'bullet_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
@@ -61,6 +64,7 @@ function usePlayerShoot() {
 
 function useUpdateBullets() {
   const bullets = useSelector((state: any) => state.bullets)
+  const objects = useSelector((state: any) => state.objects)
 
   function updateBullets(delta: number) {
     const scaledDelta = delta * 10
@@ -89,7 +93,12 @@ function useUpdateBullets() {
       bullet.position[1] += (bullet.speed || 1) * scaledDelta
 
       // check for collision
-      console.log("collision is", collisionCheck(bullet, bullet));
+      objects.forEach(thisObject => {
+        if (collisionCheck(bullet, thisObject)) {
+          console.log("collision", thisObject.id);
+          // console.log("collision", bullet, thisObject);
+        }
+      });
 
       reduxStore.dispatch({
         type: 'updateBulletByIndex',

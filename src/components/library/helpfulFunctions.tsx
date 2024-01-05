@@ -65,6 +65,7 @@ const pointToPointCollisionCheck3D = (object1:any, object2:any) => {
 
 const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
   // check for collision between a point and a box shaped collider
+  // console.log("doing point to box collision");
 
   let {point, box, isValid} = collisionCheckValidateArgs(
                                           object1, object2, "point", "box");
@@ -81,7 +82,9 @@ const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
   }
 
   const pointPosition = getColliderPosition3D(point);
-  const boxC1 = getColliderPosition3D(box);
+  const boxCenter = getColliderPosition3D(box);
+  const boxC1 = [boxCenter[0] - boxSize[0]/2, boxCenter[1] - boxSize[1]/2,
+                                                boxCenter[2] - boxSize[2]/2];
   const boxC2 = [boxC1[0] + boxSize[0], boxC1[1] + boxSize[1], boxC1[2] + boxSize[2]];
 
   // check all components of point are greater than box
@@ -90,9 +93,9 @@ const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
   // box corner 2 (top-right-front corner)
   // C1 holds all of the mins and C2 holds all of the maxs
 
-  return boxC1[0] < pointPosition[0] && pointPosition[0] < boxC2[0]
-          && boxC1[1] < pointPosition[1] && pointPosition[1] < boxC2[1]
-          && boxC1[2] < pointPosition[2] && pointPosition[2] < boxC2[2];
+  return boxC1[0] <= pointPosition[0] && pointPosition[0] <= boxC2[0]
+          && boxC1[1] <= pointPosition[1] && pointPosition[1] <= boxC2[1]
+          && boxC1[2] <= pointPosition[2] && pointPosition[2] <= boxC2[2];
 }
 
 const pointToSphereCollisionCheck3D = (object1:any, object2:any) => {
@@ -151,11 +154,16 @@ const boxToBoxCollisionCheck3D = (box1:any, box2:any) => {
 
   // corner 1 (bottom-left-back corner)
   // box corner 2 (top-right-front corner)
-  const box1C1 = getColliderPosition3D(box1);
+  const box1Center = getColliderPosition3D(box1);
+  const box1C1 = [box1Center[0] - box1Size[0]/2, box1Center[1] - box1Size[1]/2,
+                                                box1Center[2] - box1Size[2]/2];
   const box1C2 = [box1C1[0] + box1Size[0], box1C1[1] + box1Size[1],
                                           box1C1[2] + box1Size[2]];
 
-  const box2C1 = getColliderPosition3D(box2);
+
+  const box2Center = getColliderPosition3D(box2);
+  const box2C1 = [box2Center[0] - box2Size[0]/2, box2Center[1] - box2Size[1]/2,
+                                                box2Center[2] - box2Size[2]/2];
   const box2C2 = [box2C1[0] + box2Size[0], box2C1[1] + box2Size[1],
                                           box2C1[2] + box2Size[2]];
 
@@ -191,7 +199,9 @@ const boxToSphereCollisionCheck3D = (object1:any, object2:any) => {
   // corner 1 (bottom-left-back corner)
   // box corner 2 (top-right-front corner)
   // C1 holds all of the mins and C2 holds all of the maxs
-  const boxC1 = getColliderPosition3D(box);
+  const boxCenter = getColliderPosition3D(box);
+  const boxC1 = [boxCenter[0] - boxSize[0]/2, boxCenter[1] - boxSize[1]/2,
+                                                boxCenter[2] - boxSize[2]/2];
   const boxC2 = [boxC1[0] + boxSize[0], boxC1[1] + boxSize[1], boxC1[2] + boxSize[2]];
 
 
