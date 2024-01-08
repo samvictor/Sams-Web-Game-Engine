@@ -23,6 +23,7 @@ function GameObject(props: any) {
   const id = props.objectId || 'object_' + Date.now() + '_' + Math.floor(Math.random() * 1000)
   const speed = props.speed || 1
   const health = props.health|| 1
+  const scoreValue = props.scoreValue|| 1
   const collider:Collider = props.collider || {
                             shape: "box",
                             boxSize: size,
@@ -39,6 +40,7 @@ function GameObject(props: any) {
       health: health,
       collider: collider,
       type: type,
+      scoreValue: scoreValue,
     }
 
     reduxStore.dispatch({ type: 'addObject', value: newObjectData })
@@ -56,7 +58,6 @@ function GameObject(props: any) {
   const objects:GameObjectsDictionary = useSelector((state:any) => state.gameObjectsDict)
   const thisObjectData = objects[id] || {};
 
-  console.log("object data", thisObjectData);
   if (thisObjectData.destroyed) {
     return null;
   }

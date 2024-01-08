@@ -33,6 +33,9 @@ const initialState: AppState = {
     lastShootTimeMs: 0,
     shootDelayMs: 100,
   },
+  playerStats: {
+    score: 0,
+  },
   playerShipUpdater: 0,
   bullets: [],
   objects: [],
@@ -235,11 +238,15 @@ const reducer = (state = initialState, action: any) => {
       }
 
       const target = oldObjects[targetId];
-      console.log("found target")
+
 
       if (!target) {
         // target not found in list
         throw new Error('target not found in object dict. (damageObjectById)')
+      }
+
+      if (target.destroyed) {
+        return state;
       }
 
       if (target.health > damageAmount) {
@@ -247,11 +254,18 @@ const reducer = (state = initialState, action: any) => {
       }
       else {
         // destroy target
-        console.log("destroying target")
         target.destroyed = true;
+        const playerStatsClone = {...state.playerStats};
+        const oldPlayerScore = playerStatsClone.score||0;
+
+        if (target.scoreValue) {
+          playerStatsClone.score = oldPlayerScore + target.scoreValue;
+          console.log("setting new score to", playerStatsClone.score)
+        }
         return {
           ...state,
           gameObjectsDict: oldObjects,
+          playerStats: playerStatsClone,
         }
       }
 

@@ -16,6 +16,7 @@ import store from './library/reduxStore'
 
 const defaultSettings: any = {
   background: 'transparent',
+  overlayTextColor: 'black',
   gravity: 'none',
   travelDirection: 'up',
 }
@@ -106,9 +107,21 @@ function CanvasNoProv(props: any) {
     return bulletsXml;
   }
 
+  // make overlay
+  const playerStats:any = useSelector((state:any) => state.playerStats);
+  const overlayXml:any = <div id='webGameEngineOverlay'
+                            style={{
+                              color: settings.overlayTextColor,
+                              position: 'fixed',
+                              top: 0,
+                              padding: '20px',
+                            }}>
+    Score: {playerStats.score}
+  </div>;
+
   return (
     <div
-      id='parent'
+      id='webGameEngineParent'
       style={{
         position: 'relative',
         width: '100vw',
@@ -124,6 +137,8 @@ function CanvasNoProv(props: any) {
         {props.children}
 
       </ThreeCanvas>
+
+      {overlayXml}
     </div>
   )
 }
