@@ -11,13 +11,22 @@ interface Collider {
 
 interface GameObjectData {
   position: number[],
+  size: number[],
   id: string,
   rotation: number[],
   speed: number,
-  health: number,
+  health?: number,
   collider: Collider,
   type: string,
 }
 
+interface GameObjectsDictionary {
+  [id: string]: GameObjectData,
+}
 
-export {Collider, GameObjectData}
+interface BulletData extends GameObjectData {
+  damage: number,
+}
+
+
+export {Collider, GameObjectData, GameObjectsDictionary}

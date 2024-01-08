@@ -103,7 +103,7 @@ function CanvasNoProv(props: any) {
                           key={'bullet_' + thisBullet.id} />)
     })
 
-    return bulletsXml
+    return bulletsXml;
   }
 
   return (
@@ -121,9 +121,8 @@ function CanvasNoProv(props: any) {
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
         <RenderBullets />
-
         {props.children}
-        
+
       </ThreeCanvas>
     </div>
   )

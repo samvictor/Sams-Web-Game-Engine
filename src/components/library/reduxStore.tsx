@@ -1,5 +1,6 @@
 import { createStore } from 'redux'
 import { maxBulletsOnScreen, maxObjectsOnScreen } from './constants'
+import {GameObjectData, GameObjectsDictionary} from './interfaces';
 
 /**
  * This is a reducer - a function that takes a current state value and an
@@ -14,11 +15,15 @@ import { maxBulletsOnScreen, maxObjectsOnScreen } from './constants'
  * we use a switch statement, but it's not required.
  */
 
+
 interface AppState {
-  playerShip: any;
+  playerShip: GameObjectData;
   playerShipUpdater: number;
-  bullets: any[];
-  objects: any[]; // objects do not include bullets
+  bullets: BulletData[];
+  gameObjectsDict: GameObjectsDictionary;
+  //objects: GameObjectData[]; // objects do not include bullets
+  // when a game object is destroyed, it is removed from objects and put here
+  //destroyed: GameObjectData[];
 }
 
 const initialState: AppState = {
@@ -31,6 +36,8 @@ const initialState: AppState = {
   playerShipUpdater: 0,
   bullets: [],
   objects: [],
+  destroyed: [],
+  gameObjectsDict: {},
 }
 
 const reducer = (state = initialState, action: any) => {
@@ -40,16 +47,16 @@ const reducer = (state = initialState, action: any) => {
   }
 
   if (!action?.type) {
-    console.error('action or action type missing', action)
-    return state
+    console.error('action:',  action)
+    throw new Error('action or action type missing')
   }
 
   if (typeof action.value === 'undefined') {
     if (!['counter/incremented', 'counter/decremented', 'clearSignedInUser'].includes(action.type)) {
       // this is not one of the types that does not need a value,
       // so this is an error, do nothing
-      console.log('action value is undefined', action)
-      return state
+      console.error('action:', action)
+      throw new Error('action value is undefined')
     }
   }
 
@@ -59,8 +66,7 @@ const reducer = (state = initialState, action: any) => {
     oldBullets = [...state.bullets]
     if (!oldBullets) {
       // old bullets not found
-      console.error('old bullets not found')
-      return state
+      throw new Error('old bullets not found')
     }
 
     thisBullet = oldBullets[index]
@@ -77,19 +83,18 @@ const reducer = (state = initialState, action: any) => {
   let oldObjects, thisObject, objectIndex
 
   const removeObjectByIndex = (index: number, id?: string) => {
-    oldObjects = [...state.objects]
+    oldObjects = {...state.objects}
     if (!oldObjects) {
       // old Objects not found
-      console.error('old objects not found')
-      return state
+      throw new Error('old objects not found')
     }
 
     thisObject = oldObjects[index]
     if (thisObject && (!id || thisObject.id === id)) {
-      // make sure bullet exist and matches id if available
+      // make sure object exist and matches id if available
       oldObjects.splice(index, 1)
     } else {
-      console.error('bullet not deleted')
+      throw new Error('object not deleted (removeObjectByIndex)')
     }
 
     return { ...state, objects: oldObjects }
@@ -113,7 +118,7 @@ const reducer = (state = initialState, action: any) => {
       tempState = state
       oldBullets = [...tempState.bullets]
       if (oldBullets.length > maxObjectsOnScreen) {
-        tempState = removeObjectByIndex(0)
+        tempState = removeBulletByIndex(0)
       }
 
       return { ...tempState, bullets: [...tempState.bullets, action.value] }
@@ -123,8 +128,7 @@ const reducer = (state = initialState, action: any) => {
       oldBullets = [...state.bullets]
       if (!oldBullets) {
         // old bullets not found
-        console.error('old bullets not found')
-        return state
+        throw new Error('old bullets not found')
       }
 
       bulletIndex = oldBullets.findIndex((b) => b.id === action.value.id)
@@ -133,7 +137,7 @@ const reducer = (state = initialState, action: any) => {
         // make sure bullet exist and matches id if available
         oldBullets.splice(bulletIndex, 1)
       } else {
-        console.error('bullet not deleted')
+        throw new Error('bullet not deleted')
       }
 
       return { ...state, bullets: oldBullets }
@@ -142,8 +146,7 @@ const reducer = (state = initialState, action: any) => {
       oldBullets = [...state.bullets]
       if (!oldBullets) {
         // old bullets not found
-        console.error('old bullets not found')
-        return state
+        throw new Error('old bullets not found')
       }
 
       thisBullet = oldBullets[action.value.index]
@@ -164,55 +167,96 @@ const reducer = (state = initialState, action: any) => {
     // Game objects
     case 'addObject':
       tempState = state
-      oldObjects = [...tempState.objects]
-      if (oldObjects.length > maxObjectsOnScreen) {
-        tempState = removeObjectById(0)
+      oldObjects = {...tempState.gameObjectsDict}
+      if (Object.keys(oldObjects).length > maxObjectsOnScreen) {
+        //TODO: too many objects on screen. remove one
       }
 
-      return { ...tempState, objects: [...tempState.objects, action.value] }
-    case 'removeObjectByIndex':
-      return removeObjectByIndex(action.value.index, action.value.id)
+      const newObject = action.value;
+
+      if (!newObject) {
+        throw new Error("no new object found (addObject)")
+      }
+      if (!newObject.id) {
+        throw new Error("new object does not have an id (add object)")
+      }
+
+      oldObjects[newObject.id] = newObject;
+
+      return { ...tempState, gameObjectsDict: oldObjects }
+    // case 'removeObjectByIndex':
+    //   return removeObjectByIndex(action.value.index, action.value.id)
     case 'removeObjectById':
-      oldObjects = [...state.objects]
+      oldObjects = {...state.gameObjectsDict}
       if (!oldObjects) {
         // old objects not found
-        console.error('old objects not found')
-        return state
+        throw new Error('old objects not found')
       }
 
-      objectIndex = oldObjects.findIndex((b) => b.id === action.value.id)
-      thisObject = null
-      if (objectIndex > -1) {
-        // make sure object exist and matches id if available
-        oldObjects.splice(objectIndex, 1)
-      } else {
-        console.error('object not deleted')
-      }
+      delete oldObjects[action.value.id];
 
-      return { ...state, objects: oldObjects }
+      return { ...state, gameObjectsDict: oldObjects }
 
-    case 'updateObjectByIndex':
-      oldObjects = [...state.objects]
+    case 'updateObjectById':
+      oldObjects = {...state.gameObjectsDict}
       if (!oldObjects) {
         // old objects not found
-        console.error('old objects not found')
-        return state
+        throw new Error('old objects not found')
       }
 
-      thisObject = oldObjects[action.value.index]
-      if (thisObject && (!action.value.id || thisObject.id === action.value.id)) {
-        // make sure object exist and matches id if available
-        oldObjects[action.value.index] = action.value.object
-      } else {
-        console.warn('object not changed')
-        console.log("this object", thisObject);
-        console.log("action id", action.value.id);
-        console.log("object id", thisObject?.id);
-        console.log("all objects", oldObjects);
-        console.log("index", action.value.index);
+      oldObjects[action.value.id] = action.value.object
+
+      return { ...state, gameObjectsDict: oldObjects }
+
+    // damage
+    case 'damageObjectById':
+      const sourceId = action.value.sourceId;
+      if (!sourceId) {
+        console.warn('source id not found in damageObjectById');
+      }
+      let damageAmount = 1;
+      if (typeof action.value.damage === 'number') {
+        damageAmount = action.value.damage;
+      }
+      else {
+        console.warn('damage amount not found, using default (1) in damageObjectById');
       }
 
-      return { ...state, objects: oldObjects }
+
+      const targetId = action.value.targetId;
+      if (!targetId) {
+        throw new Error('invalid targetId in damageObjectById');
+      }
+
+      oldObjects = {...state.gameObjectsDict}
+      if (!oldObjects) {
+        // old objects not found
+        throw new Error('old objects not found')
+      }
+
+      const target = oldObjects[targetId];
+      console.log("found target")
+
+      if (!target) {
+        // target not found in list
+        throw new Error('target not found in object dict. (damageObjectById)')
+      }
+
+      if (target.health > damageAmount) {
+        target.health -= damageAmount;
+      }
+      else {
+        // destroy target
+        console.log("destroying target")
+        target.destroyed = true;
+        return {
+          ...state,
+          gameObjectsDict: oldObjects,
+        }
+      }
+
+      return state
+
 
     default:
       console.error('default reached in store', action)

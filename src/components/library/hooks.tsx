@@ -2,6 +2,7 @@ import { useSelector } from 'react-redux'
 import reduxStore from './reduxStore'
 import { screenBoundsMax, screenBoundsMin } from './constants'
 import { collisionCheck } from './helpfulFunctions';
+import {BulletData, GameObjectData} from './interfaces';
 
 function useMovePlayer() {
   const playerShipData = useSelector((state: any) => state.playerShip)
@@ -9,7 +10,7 @@ function useMovePlayer() {
 
   function movePlayer(direction: string, delta: number) {
     const oldPosition = playerShipData.position
-    const scaledDelta = delta * 10
+    const scaledDelta = delta * 7
     const newPosition = [...oldPosition]
     if (direction === 'left') {
       newPosition[0] -= scaledDelta
@@ -38,9 +39,9 @@ function usePlayerShoot() {
     console.log('creating bullet at', playerPosition)
 
     const bulletStartingPosition = [...playerPosition];
-    bulletStartingPosition[2] += 0.6;
+    bulletStartingPosition[2] += 0;
 
-    const newBullet = {
+    const newBullet:BulletData = {
       position: bulletStartingPosition,
       source: 'player',
       // bullet id is bullet_ + time created + random number
@@ -62,11 +63,17 @@ function usePlayerShoot() {
   return playerShoot
 }
 
+
 function useUpdateBullets() {
   const bullets = useSelector((state: any) => state.bullets)
-  const objects = useSelector((state: any) => state.objects)
+  const objectsDict = useSelector((state: any) => state.gameObjectsDict)
+  const objects = Object.values(objectsDict);
 
   function updateBullets(delta: number) {
+    if (typeof delta === 'undefined') {
+      throw new Error('delta not found');
+    }
+
     const scaledDelta = delta * 10
     bullets.forEach((bullet: any, i: number) => {
       // check if bullet is out of bounds
@@ -96,6 +103,14 @@ function useUpdateBullets() {
       objects.forEach(thisObject => {
         if (collisionCheck(bullet, thisObject)) {
           console.log("collision", thisObject.id);
+          reduxStore.dispatch({
+            type: 'damageObjectById',
+            value: {
+              sourceId: bullet.id,
+              damage: bullet.damage,
+              targetId: thisObject.id
+            },
+          });
           // console.log("collision", bullet, thisObject);
         }
       });

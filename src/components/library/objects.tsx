@@ -6,7 +6,7 @@ import { useFrame } from '@react-three/fiber'
 import PropTypes from 'prop-types'
 import reduxStore from './reduxStore'
 
-import {Collider, GameObjectData} from './interfaces';
+import {Collider, GameObjectData, GameObjectsDictionary} from './interfaces';
 
 
 function GameObject(props: any) {
@@ -52,6 +52,14 @@ function GameObject(props: any) {
   // Return the view, these are regular Threejs elements expressed in JSX
   const defaultColor = props.color || "orange";
 
+  // get this object data from store
+  const objects:GameObjectsDictionary = useSelector((state:any) => state.gameObjectsDict)
+  const thisObjectData = objects[id] || {};
+
+  console.log("object data", thisObjectData);
+  if (thisObjectData.destroyed) {
+    return null;
+  }
 
   return (
     <mesh
