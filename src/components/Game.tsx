@@ -13,6 +13,7 @@ import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks
 
 import { Provider } from 'react-redux'
 import reduxStore from './library/reduxStore'
+import { GameState } from './library/interfaces'
 
 const defaultSettings: any = {
   background: 'transparent',
@@ -22,6 +23,7 @@ const defaultSettings: any = {
   levelFlowType: 'linear',
   levelFlow: ['defaultLevel'],
   currentLevel: null,
+  gameState: GameState.StartScreen,
 }
 
 function GameNoProv(props: any) {

@@ -11,6 +11,21 @@ enum GameObjectType {
   Projectile,
 }
 
+enum GameState {
+  StartScreen,
+  NormalPlay,
+  Paused,
+  EndScreen,
+}
+
+enum LevelState {
+  StartScreen,
+  NormalPlay,
+  WinScreen,
+  LoseScreen,
+  OutOfTime,
+}
+
 interface Collider {
   shape: ColliderShape;
   offset: number[];
@@ -60,4 +75,6 @@ export {
   PlayerObjectData,
   ColliderShape,
   GameObjectType,
+  GameState,
+  LevelState,
 }

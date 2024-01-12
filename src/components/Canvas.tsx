@@ -15,10 +15,6 @@ import { Provider } from 'react-redux'
 import store from './library/reduxStore'
 
 const defaultSettings: any = {
-  background: 'transparent',
-  overlayTextColor: 'black',
-  gravity: 'none',
-  travelDirection: 'up',
 }
 
 function CanvasNoProv(props: any) {
@@ -108,10 +104,11 @@ function CanvasNoProv(props: any) {
   }
 
   // make overlay
+  const gameSettings = useSelector((state:any) => state.gameSettings);
   const playerStats:any = useSelector((state:any) => state.playerStats);
   const overlayXml:any = <div id='webGameEngineOverlay'
                             style={{
-                              color: settings.overlayTextColor,
+                              color: gameSettings.overlayTextColor,
                               position: 'fixed',
                               top: 0,
                               padding: '20px',
@@ -121,12 +118,9 @@ function CanvasNoProv(props: any) {
 
   return (
     <div
-      id='webGameEngineParent'
+      id='webGameEngineCanvas'
       style={{
-        position: 'relative',
-        width: '100vw',
-        height: '100vh',
-        background: settings.background,
+        height: '100%'
       }}
     >
       <ThreeCanvas camera={{ position: [0, 0, 10] }}>

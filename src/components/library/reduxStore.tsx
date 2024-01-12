@@ -33,6 +33,7 @@ interface AppState {
   bullets: BulletData[];
   gameObjectsDict: GameObjectsDictionary;
   colliderObjects: GameObjectData[];
+  gameSettings: any;
 }
 
 const initialState: AppState = {
@@ -53,6 +54,7 @@ const initialState: AppState = {
   gameObjectsDict: {},
   // live game objects with colliders
   colliderObjects: [],
+  gameSettings: {},
 }
 
 const reducer = (state = initialState, action: any) => {
@@ -266,10 +268,15 @@ const reducer = (state = initialState, action: any) => {
       }
 
       return state
-
+    
+    case 'setGameSettings':
+      return {
+        ...state,
+        gameSettings: action.value
+      }
 
     default:
-      console.error('default reached in store', action)
+      console.warn('default reached in store', action)
       return state
   }
 }

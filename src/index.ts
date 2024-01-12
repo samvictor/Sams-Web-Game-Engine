@@ -4,8 +4,9 @@ import ExampleGame from './components/ExampleGame'
 import {Collider} from './components/library/interfaces'
 import Canvas from './components/Canvas'
 import Game from './components/Game'
+import Level from './components/Level'
 import {
   Player, Box, GameObject
 } from './components/library/objects'
 
-export { Test, ExampleGame, Canvas, Player, Box, GameObject, Collider, Game }
+export { Test, ExampleGame, Canvas, Player, Box, GameObject, Collider, Game, Level }
