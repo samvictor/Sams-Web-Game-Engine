@@ -120,9 +120,9 @@ Ship.propTypes = {
   position: PropTypes.array,
 }
 
-function PlayerShip() {
-  const playerShipData = useSelector((state: any) => state.playerShip)
-  const playerPosition = playerShipData.position || [0, 0, 1]
+function Player() {
+  const playerData = useSelector((state: any) => state.player)
+  const playerPosition = playerData.position || [0, 0, 1]
   return <Ship color={'blue'} position={playerPosition} />
 }
 
@@ -144,4 +144,4 @@ Bullet.propTypes = {
   position: PropTypes.array,
 }
 
-export { Box, Ship, PlayerShip, Bullet, GameObject }
+export { Box, Ship, Player, Bullet, GameObject }

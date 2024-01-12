@@ -12,7 +12,7 @@ import React, { useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useSelector } from 'react-redux'
 // import reduxStore from './library/reduxStore';
-import { Box, Ship, PlayerShip, Bullet } from './library/objects'
+import { Box, Ship, Player, Bullet } from './library/objects'
 import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks'
 
 import { Provider } from 'react-redux'
@@ -127,7 +127,7 @@ function ExampleGameNoProv(props: any) {
         <Box position={[1.2, 0, 0]} />
         <Ship />
         <RenderBullets />
-        <PlayerShip />
+        <Player />
       </Canvas>
     </div>
   )

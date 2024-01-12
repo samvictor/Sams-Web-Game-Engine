@@ -10,7 +10,6 @@ import {
   BulletData, 
   PlayerObjectData,
   GameObjectType,
-  ColliderShape,
 } from './interfaces';
 
 /**
@@ -28,8 +27,8 @@ import {
 
 
 interface AppState {
-  playerShip: PlayerObjectData;
-  playerShipUpdater: number;
+  player: PlayerObjectData;
+  playerUpdater: number;
   playerStats: any;
   bullets: BulletData[];
   gameObjectsDict: GameObjectsDictionary;
@@ -38,7 +37,7 @@ interface AppState {
 
 const initialState: AppState = {
   // default state
-  playerShip: {
+  player: {
     ...defaultGameObjectData,
     id: 'player',
     type: GameObjectType.Player,
@@ -49,7 +48,7 @@ const initialState: AppState = {
   playerStats: {
     score: 0,
   },
-  playerShipUpdater: 0,
+  playerUpdater: 0,
   bullets: [],
   gameObjectsDict: {},
   // live game objects with colliders
@@ -102,21 +101,22 @@ const reducer = (state = initialState, action: any) => {
   switch (action.type) {
     // players
     case 'setPlayerShip':
-      return { ...state, playerShip: action.value, playerShipUpdater: Date.now() }
+      return { ...state, player: action.value, playerUpdater: Date.now() }
     case 'setPlayerPosition':
-      return { ...state, playerShip: { ...state.playerShip, position: action.value }, playerShipUpdater: Date.now() }
+      return { ...state, player: { ...state.player, position: action.value }, 
+                         playerUpdater: Date.now() }
     case 'setPlayerLastShootTimeMs':
       return {
         ...state,
-        playerShip: { ...state.playerShip, lastShootTimeMs: action.value },
-        playerShipUpdater: Date.now(),
+        player: { ...state.player, lastShootTimeMs: action.value },
+        playerUpdater: Date.now(),
       }
 
     // bullets
     case 'addBullet':
       tempState = state
       oldBullets = [...tempState.bullets]
-      if (oldBullets.length > maxObjectsOnScreen) {
+      if (oldBullets.length > maxBulletsOnScreen) {
         tempState = removeBulletByIndex(0)
       }
 

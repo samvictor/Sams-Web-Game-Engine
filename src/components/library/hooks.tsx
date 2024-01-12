@@ -2,14 +2,19 @@ import { useSelector } from 'react-redux'
 import reduxStore from './reduxStore'
 import { screenBoundsMax, screenBoundsMin } from './constants'
 import { collisionCheck } from './helpfulFunctions';
-import {BulletData, GameObjectData, ColliderShape, GameObjectType} from './interfaces';
+import {
+  BulletData, 
+  GameObjectData, 
+  ColliderShape, 
+  GameObjectType
+} from './interfaces';
 
 function useMovePlayer() {
-  const playerShipData = useSelector((state: any) => state.playerShip)
-  const playerShipUpdater = useSelector((state: any) => state.playerShipUpdater)
+  const playerData = useSelector((state: any) => state.player)
+  const playerUpdater = useSelector((state: any) => state.playerUpdater)
 
   function movePlayer(direction: string, delta: number) {
-    const oldPosition = playerShipData.position
+    const oldPosition = playerData.position
     const scaledDelta = delta * 7
     const newPosition = [...oldPosition]
     if (direction === 'left') {
@@ -18,7 +23,7 @@ function useMovePlayer() {
       newPosition[0] += scaledDelta
     }
     console.log('setting player position to', newPosition)
-    console.log('playerShipUpdater is', playerShipUpdater)
+    console.log('playerUpdater is', playerUpdater)
     reduxStore.dispatch({ type: 'setPlayerPosition', value: newPosition })
   }
 
@@ -26,15 +31,15 @@ function useMovePlayer() {
 }
 
 function usePlayerShoot() {
-  const playerShipData = useSelector((state: any) => state.playerShip)
+  const playerData = useSelector((state: any) => state.player)
 
   function playerShoot() {
-    if (playerShipData.lastShootTimeMs + playerShipData.shootDelayMs > Date.now()) {
+    if (playerData.lastShootTimeMs + playerData.shootDelayMs > Date.now()) {
       // make sure we're not shooting too quickly
       return
     }
 
-    const playerPosition = [...playerShipData.position]
+    const playerPosition = [...playerData.position]
 
     console.log('creating bullet at', playerPosition)
 

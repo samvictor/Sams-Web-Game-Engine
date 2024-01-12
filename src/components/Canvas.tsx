@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react'
 import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
 import { useSelector } from 'react-redux'
 // import reduxStore from './library/reduxStore';
-import { Box, Ship, PlayerShip, Bullet } from './library/objects'
+import { Bullet } from './library/objects'
 import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks'
 
 import { Provider } from 'react-redux'
@@ -29,12 +29,12 @@ function CanvasNoProv(props: any) {
   const updateBullets = useUpdateBullets()
 
   const keys: any = {
-    KeyW: 'forward',
-    KeyS: 'backward',
+    KeyW: 'up',
+    KeyS: 'down',
     KeyA: 'left',
     KeyD: 'right',
-    ArrowUp: 'forward',
-    ArrowDown: 'backward',
+    ArrowUp: 'up',
+    ArrowDown: 'down',
     ArrowLeft: 'left',
     ArrowRight: 'right',
     Space: 'shoot',
@@ -43,8 +43,8 @@ function CanvasNoProv(props: any) {
   const moveFieldByKey = (key: any) => keys[key]
 
   const [movement, setMovement] = useState({
-    forward: false,
-    backward: false,
+    up: false,
+    down: false,
     left: false,
     right: false,
     shoot: false,
