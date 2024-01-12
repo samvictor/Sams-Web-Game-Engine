@@ -49,7 +49,7 @@ const collisionCheck3D = (object1:any, object2:any) => {
 const pointToPointCollisionCheck3D = (object1:any, object2:any) => {
   // check for a collision between two point shaped colliders
 
-  let {isValid} = collisionCheckValidateArgs(object1, object2, 
+  const {isValid} = collisionCheckValidateArgs(object1, object2, 
                               ColliderShape.Point, ColliderShape.Point);
 
   if (!isValid) {
@@ -68,7 +68,7 @@ const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
   // check for collision between a point and a box shaped collider
   // console.log("doing point to box collision");
 
-  let {outObject1, outObject2, isValid} = collisionCheckValidateArgs(
+  const {outObject1, outObject2, isValid} = collisionCheckValidateArgs(
                                           object1, object2, 
                                           ColliderShape.Point, 
                                           ColliderShape.Box);
@@ -108,7 +108,7 @@ const pointToSphereCollisionCheck3D = (object1:any, object2:any) => {
   // the first argument must be a point and the second argument
   // must be a shpere
 
-  let {outObject1, outObject2, isValid} = collisionCheckValidateArgs(
+  const {outObject1, outObject2, isValid} = collisionCheckValidateArgs(
                                           object1, object2, 
                                           ColliderShape.Point, 
                                           ColliderShape.Sphere);
@@ -140,7 +140,7 @@ const pointToSphereCollisionCheck3D = (object1:any, object2:any) => {
 
 const boxToBoxCollisionCheck3D = (box1:any, box2:any) => {
   // check for collision between 2 box shaped colliders
-  let {isValid} = collisionCheckValidateArgs(
+  const {isValid} = collisionCheckValidateArgs(
                                             box1, box2, 
                                             ColliderShape.Box, 
                                             ColliderShape.Box);
@@ -253,7 +253,7 @@ const boxToSphereCollisionCheck3D = (object1:any, object2:any) => {
 const sphereToSphereCollisionCheck3D = (sphere1:any, sphere2:any) => {
   // check for collision between 2 sphere shaped colliders
 
-  let {isValid} = collisionCheckValidateArgs(
+  const {isValid} = collisionCheckValidateArgs(
                                           sphere1, sphere2, 
                                           ColliderShape.Sphere, 
                                           ColliderShape.Sphere);
