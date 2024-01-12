@@ -5,11 +5,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
 import { useSelector } from 'react-redux'
-// import reduxStore from './library/reduxStore';
-import { Bullet } from './library/objects'
-import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks'
 
 import { Provider } from 'react-redux'
 import reduxStore from './library/reduxStore'
@@ -35,18 +31,82 @@ function GameNoProv(props: any) {
     }
     reduxStore.dispatch({type: 'setGameSettings', value: settings});
   }, [])
-  
+
+
+  useEffect(() => {
+    const handleKeyUp = (e: any) => {
+      switch (e.code) {
+        case 'Escape':
+        case 'KeyP':
+          reduxStore.dispatch({type: 'updateGameSettings', value: {
+            gameState: GameState.Paused
+          }});
+        break;
+      }
+    }
+    document.addEventListener('keyup', handleKeyUp)
+    return () => {
+      document.removeEventListener('keyup', handleKeyUp)
+    }
+  }, [])
+
+  const settingsFromStore = useSelector((state:any) => state.gameSettings);
+
+  // first try to get gameState from props. If not there, get it from store
+  if (props.gameState && props.gameState !== settingsFromStore.gameState) {
+    reduxStore.dispatch({type: 'updateGameSettings', value: {
+      gameState: props.gameState
+    }})
+  }
+  const gameState = settingsFromStore.gameState;
+
+  const goToNormalPlay = () => {
+    reduxStore.dispatch({type: 'updateGameSettings', value: {
+      gameState: GameState.NormalPlay
+    }})
+  }
+
+  const startScreen = <div>
+    Start Screen 
+    <button onClick={goToNormalPlay}>Start</button>
+  </div>
+
+  const pauseScreen = <div>
+    Pause Screen 
+    <button onClick={goToNormalPlay}>Resume</button>
+  </div>
+
+  let returnBody = props.children;
+
+  switch (gameState) {
+    case GameState.StartScreen:
+      returnBody = startScreen
+    break;
+    
+    case GameState.Paused:
+      returnBody = pauseScreen
+    break;
+
+    case GameState.EndScreen:
+      returnBody = <div>End Screen</div>
+    break
+
+    case GameState.NormalPlay:
+    default:
+      returnBody = props.children;
+  }
+    
   return (
     <div
-      id='webGameEngineParent'
-      style={{
-        position: 'relative',
-        width: '100vw',
-        height: '100vh',
-        background: settings.background,
-      }}
-    >
-      {props.children}
+        id='webGameEngineParent'
+        style={{
+          position: 'relative',
+          width: '100vw',
+          height: '100vh',
+          background: settings.background,
+        }}
+        >
+      {returnBody}
     </div>
   )
 }

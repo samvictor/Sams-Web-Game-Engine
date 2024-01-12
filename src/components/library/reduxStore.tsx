@@ -10,6 +10,7 @@ import {
   BulletData, 
   PlayerObjectData,
   GameObjectType,
+  GameState,
 } from './interfaces';
 
 /**
@@ -54,7 +55,9 @@ const initialState: AppState = {
   gameObjectsDict: {},
   // live game objects with colliders
   colliderObjects: [],
-  gameSettings: {},
+  gameSettings: {
+    gameState: GameState.StartScreen,
+  },
 }
 
 const reducer = (state = initialState, action: any) => {
@@ -273,6 +276,14 @@ const reducer = (state = initialState, action: any) => {
       return {
         ...state,
         gameSettings: action.value
+      }
+    case 'updateGameSettings':
+      return {
+        ...state,
+        gameSettings: {
+          ...state.gameSettings,
+          ...action.value
+        }
       }
 
     default:
