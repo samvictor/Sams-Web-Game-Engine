@@ -4,21 +4,19 @@ const collisionCheck3D = (object1:any, object2:any) => {
   // are these objects currently colliding?
   // all objects must have a collider
   if (!object1 || !object2) {
-    console.error("an object is missing");
     console.error("object1:", object1, "object2:", object2);
-    return false;
+    throw new Error("an object is missing");
   }
 
   if (!object1.collider || !object2.collider) {
-    console.error("an object is missing a collider");
     console.error(object1, object2);
-    return false;
+    throw new Error("an object is missing a collider");
   }
 
-  if (!object1.collider.shape || !object2.collider.shape) {
-    console.error("an object is missing collider shape");
+  if (typeof object1.collider.shape === 'undefined' 
+        || typeof !object2.collider.shape === 'undefined') {
     console.error(object1, object2);
-    return false;
+    throw new Error("an object is missing collider shape");
   }
 
   // map is faster than if tree
@@ -81,9 +79,8 @@ const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
 
   const boxSize = box.collider.boxSize;
   if (!boxSize) {
-    console.error("missing box size");
     console.error(box);
-    return false;
+    throw new Error("missing box size");
   }
 
   const pointPosition = getColliderPosition3D(point);
@@ -123,9 +120,8 @@ const pointToSphereCollisionCheck3D = (object1:any, object2:any) => {
 
   const sphereRadius = sphere.collider.sphereRadius;
   if (!sphereRadius) {
-    console.error("missing shpere radius");
     console.error(sphere);
-    return false;
+    throw new Error("missing shpere radius");
   }
 
   const pointPosition = getColliderPosition3D(point);
@@ -152,16 +148,14 @@ const boxToBoxCollisionCheck3D = (box1:any, box2:any) => {
 
   const box1Size = box1.collider.boxSize;
   if (!box1Size) {
-    console.error("missing box size for object 1");
     console.error(box1);
-    return false;
+    throw new Error("missing box size for object 1");
   }
 
   const box2Size = box2.collider.boxSize;
   if (!box2Size) {
-    console.error("missing box size for object 2");
     console.error(box2);
-    return false;
+    throw new Error("missing box size for object 2");
   }
 
   // corner 1 (bottom-left-back corner)
@@ -208,9 +202,8 @@ const boxToSphereCollisionCheck3D = (object1:any, object2:any) => {
 
   const boxSize = box.collider.boxSize;
   if (!boxSize) {
-    console.error("missing box size");
     console.error(box);
-    return false;
+    throw new Error("missing box size");
   }
 
   // corner 1 (bottom-left-back corner)
@@ -224,9 +217,8 @@ const boxToSphereCollisionCheck3D = (object1:any, object2:any) => {
 
   const sphereRadius = sphere.collider.sphereRadius;
   if (!sphereRadius) {
-    console.error("missing shpere radius");
     console.error(sphere);
-    return false;
+    throw new Error("missing shpere radius");
   }
 
   const spherePosition = getColliderPosition3D(sphere);
@@ -271,9 +263,8 @@ const sphereToSphereCollisionCheck3D = (sphere1:any, sphere2:any) => {
 
   const sphere2Radius = sphere2.collider.sphereRadius;
   if (!sphere2Radius) {
-    console.error("missing shpere2 radius");
     console.error(sphere2);
-    return false;
+    throw new Error("missing shpere2 radius");
   }
 
   const sphere1Position = getColliderPosition3D(sphere1);
@@ -298,15 +289,15 @@ const collisionCheckValidateArgs = (inObject1:any, inObject2:any,
   let outObject2 = inObject2;
 
   if (!inObject1 || !inObject2) {
-    console.error("an object is missing");
     console.error("object1:", inObject1, "object2:", inObject2);
     isValid = false;
+    throw new Error("an object is missing");
   }
 
   if (!inObject1.collider || !inObject2.collider) {
-    console.error("an object is missing a collider");
     console.error(inObject1, inObject2);
     isValid = false;
+    throw new Error("an object is missing a collider");
   }
 
   if (inObject1.collider.shape !== type1) {
@@ -315,9 +306,9 @@ const collisionCheckValidateArgs = (inObject1:any, inObject2:any,
       outObject1 = inObject2;
     }
     else {
-      console.error("object1 is not a " + type1);
       console.error(inObject1, inObject2);
       isValid = false;
+      throw new Error("object1 is not a " + type1);
     }
   }
 
@@ -327,9 +318,9 @@ const collisionCheckValidateArgs = (inObject1:any, inObject2:any,
       outObject2 = inObject1;
     }
     else {
-      console.error("object2 is not a " + type2)
       console.error(inObject1, inObject2);
       isValid = false;
+      throw new Error("object2 is not a " + type2)
     }
   }
 
