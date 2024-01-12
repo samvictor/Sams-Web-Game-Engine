@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux'
 import reduxStore from './reduxStore'
 import { screenBoundsMax, screenBoundsMin } from './constants'
 import { collisionCheck } from './helpfulFunctions';
-import {BulletData, GameObjectData} from './interfaces';
+import {BulletData, GameObjectData, ColliderShape, GameObjectType} from './interfaces';
 
 function useMovePlayer() {
   const playerShipData = useSelector((state: any) => state.playerShip)
@@ -43,14 +43,16 @@ function usePlayerShoot() {
 
     const newBullet:BulletData = {
       position: bulletStartingPosition,
-      source: 'player',
+      sourceId: 'player',
       // bullet id is bullet_ + time created + random number
       id: 'bullet_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
-      direction: 0, // degrees where 0 is up
+      rotation: [0, 0, 0], // degrees where 0 is up
+      size: [0.1, 0.5, 0.1],
+      type: GameObjectType.Projectile,
       speed: 1,
       damage: 1,
       collider: {
-        shape: "point",
+        shape: ColliderShape.Point,
         offset: [0, 0, 0],
       }
     }
@@ -67,7 +69,7 @@ function usePlayerShoot() {
 function useUpdateBullets() {
   const bullets = useSelector((state: any) => state.bullets)
   const objectsDict = useSelector((state: any) => state.gameObjectsDict)
-  const objects = Object.values(objectsDict);
+  const objects:GameObjectData[] = Object.values(objectsDict);
 
   function updateBullets(delta: number) {
     if (typeof delta === 'undefined') {
@@ -100,7 +102,7 @@ function useUpdateBullets() {
       bullet.position[1] += (bullet.speed || 1) * scaledDelta
 
       // check for collision
-      objects.forEach(thisObject => {
+      objects.forEach((thisObject:GameObjectData) => {
         if (collisionCheck(bullet, thisObject)) {
           console.log("collision", thisObject.id);
           reduxStore.dispatch({

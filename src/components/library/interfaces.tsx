@@ -1,5 +1,18 @@
+enum ColliderShape {
+  Box,
+  Point,
+  Cylinder,
+  Sphere,
+}
+
+enum GameObjectType {
+  Default,
+  Player,
+  Projectile,
+}
+
 interface Collider {
-  shape: string;
+  shape: ColliderShape;
   offset: number[];
   boxSize?: number[];
   boxRotation?: number[],
@@ -16,17 +29,35 @@ interface GameObjectData {
   rotation: number[],
   speed: number,
   health?: number,
+  scoreValue?: number,
   collider: Collider,
-  type: string,
+  type: GameObjectType,
+  destroyed?: boolean,
 }
+
+interface PlayerObjectData extends GameObjectData {
+  lastShootTimeMs: number,
+  shootDelayMs: number,
+}
+
+
+interface BulletData extends GameObjectData {
+  damage: number,
+  sourceId: string,
+}
+
 
 interface GameObjectsDictionary {
   [id: string]: GameObjectData,
 }
 
-interface BulletData extends GameObjectData {
-  damage: number,
+
+export {
+  Collider, 
+  GameObjectData, 
+  GameObjectsDictionary, 
+  BulletData,
+  PlayerObjectData,
+  ColliderShape,
+  GameObjectType,
 }
-
-
-export {Collider, GameObjectData, GameObjectsDictionary}

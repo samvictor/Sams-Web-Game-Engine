@@ -6,7 +6,13 @@ import { useFrame } from '@react-three/fiber'
 import PropTypes from 'prop-types'
 import reduxStore from './reduxStore'
 
-import {Collider, GameObjectData, GameObjectsDictionary} from './interfaces';
+import {
+  Collider, 
+  GameObjectData, 
+  GameObjectsDictionary, 
+  ColliderShape,
+  GameObjectType,
+} from './interfaces';
 
 
 function GameObject(props: any) {
@@ -16,7 +22,7 @@ function GameObject(props: any) {
   const [hovered, hover] = useState(false)
   const [clicked, click] = useState(false)
 
-  const type = props.type || "defaultGameObject"
+  const type = props.type || GameObjectType.Default
   const size = props.size || [1, 1, 1]
   const position = props.position || [0, 0, 0]
   const rotation = props.rotation || [0, 0, 0]
@@ -25,7 +31,7 @@ function GameObject(props: any) {
   const health = props.health|| 1
   const scoreValue = props.scoreValue|| 1
   const collider:Collider = props.collider || {
-                            shape: "box",
+                            shape: ColliderShape.Box,
                             boxSize: size,
                             offset: [0, 0, 0],
                           };
@@ -36,6 +42,7 @@ function GameObject(props: any) {
       // object id is object_ + time created + random number
       id: id,
       rotation: rotation,
+      size: size,
       speed: speed,
       health: health,
       collider: collider,
@@ -83,7 +90,7 @@ function Box(props: any) {
 
   const size = props.size || [1, 1, 1]
   const collider:Collider = props.collider || {
-                            shape: "box",
+                            shape: ColliderShape.Box,
                             boxSize: size,
                             offset: [0, 0, 0],
                           };

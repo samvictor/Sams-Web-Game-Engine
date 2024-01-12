@@ -1,4 +1,4 @@
-import {Collider} from './interfaces';
+import {Collider, ColliderShape} from './interfaces';
 
 const collisionCheck3D = (object1:any, object2:any) => {
   // are these objects currently colliding?
@@ -23,20 +23,20 @@ const collisionCheck3D = (object1:any, object2:any) => {
 
   // map is faster than if tree
   const mapShapesToFunction:any = {
-    point: {
-      point: pointToPointCollisionCheck3D,
-      box: pointToBoxCollisionCheck3D,
-      sphere: pointToSphereCollisionCheck3D,
+    [ColliderShape.Point]: {
+      [ColliderShape.Point]: pointToPointCollisionCheck3D,
+      [ColliderShape.Box]: pointToBoxCollisionCheck3D,
+      [ColliderShape.Sphere]: pointToSphereCollisionCheck3D,
     },
-    box: {
-      point: pointToBoxCollisionCheck3D,
-      box: boxToBoxCollisionCheck3D,
-      sphere: boxToSphereCollisionCheck3D,
+    [ColliderShape.Box]: {
+      [ColliderShape.Point]: pointToBoxCollisionCheck3D,
+      [ColliderShape.Box]: boxToBoxCollisionCheck3D,
+      [ColliderShape.Sphere]: boxToSphereCollisionCheck3D,
     },
-    sphere: {
-      point: pointToSphereCollisionCheck3D,
-      box: boxToSphereCollisionCheck3D,
-      sphere: sphereToSphereCollisionCheck3D,
+    [ColliderShape.Sphere]: {
+      [ColliderShape.Point]: pointToSphereCollisionCheck3D,
+      [ColliderShape.Box]: boxToSphereCollisionCheck3D,
+      [ColliderShape.Sphere]: sphereToSphereCollisionCheck3D,
     }
   }
 
@@ -49,7 +49,8 @@ const collisionCheck3D = (object1:any, object2:any) => {
 const pointToPointCollisionCheck3D = (object1:any, object2:any) => {
   // check for a collision between two point shaped colliders
 
-  let {isValid} = collisionCheckValidateArgs(object1, object2, "point", "point");
+  let {isValid} = collisionCheckValidateArgs(object1, object2, 
+                              ColliderShape.Point, ColliderShape.Point);
 
   if (!isValid) {
     return;
@@ -67,8 +68,12 @@ const pointToBoxCollisionCheck3D = (object1:any, object2:any) => {
   // check for collision between a point and a box shaped collider
   // console.log("doing point to box collision");
 
-  let {point, box, isValid} = collisionCheckValidateArgs(
-                                          object1, object2, "point", "box");
+  let {outObject1, outObject2, isValid} = collisionCheckValidateArgs(
+                                          object1, object2, 
+                                          ColliderShape.Point, 
+                                          ColliderShape.Box);
+  const point = outObject1;
+  const box = outObject2                                        
 
   if (!isValid) {
     return;
@@ -103,8 +108,13 @@ const pointToSphereCollisionCheck3D = (object1:any, object2:any) => {
   // the first argument must be a point and the second argument
   // must be a shpere
 
-  let {point, sphere, isValid} = collisionCheckValidateArgs(
-                                          object1, object2, "point", "sphere");
+  let {outObject1, outObject2, isValid} = collisionCheckValidateArgs(
+                                          object1, object2, 
+                                          ColliderShape.Point, 
+                                          ColliderShape.Sphere);
+
+  const point = outObject1;
+  const sphere = outObject2; 
 
   if (!isValid) {
     return;
@@ -131,21 +141,23 @@ const pointToSphereCollisionCheck3D = (object1:any, object2:any) => {
 const boxToBoxCollisionCheck3D = (box1:any, box2:any) => {
   // check for collision between 2 box shaped colliders
   let {isValid} = collisionCheckValidateArgs(
-                                            box1, box2, "box", "box");
+                                            box1, box2, 
+                                            ColliderShape.Box, 
+                                            ColliderShape.Box);
 
   if (!isValid) {
     return;
   }
 
 
-  const box1Size = object1.collider.boxSize;
+  const box1Size = box1.collider.boxSize;
   if (!box1Size) {
     console.error("missing box size for object 1");
     console.error(box1);
     return false;
   }
 
-  const box2Size = object2.collider.boxSize;
+  const box2Size = box2.collider.boxSize;
   if (!box2Size) {
     console.error("missing box size for object 2");
     console.error(box2);
@@ -180,8 +192,13 @@ const boxToSphereCollisionCheck3D = (object1:any, object2:any) => {
   // the first argument must be a box and the second argument
   // must be a shpere
 
-  let {box, sphere, isValid} = collisionCheckValidateArgs(
-                                            object1, object2, "box", "sphere");
+  const {outObject1, outObject2, isValid} = collisionCheckValidateArgs(
+                                            object1, object2, 
+                                            ColliderShape.Box, 
+                                            ColliderShape.Sphere);
+  
+  const box = outObject1;
+  const sphere = outObject2;
 
   if (!isValid) {
     return;
@@ -220,7 +237,7 @@ const boxToSphereCollisionCheck3D = (object1:any, object2:any) => {
   // check if sphere intersects with box's x-plane1, box's x-plane2,
   // or center is between the two planes
   // if this is true for x, y and z planes, they intersect
-  const abs = Math.abs();
+  const abs = Math.abs;
   return (abs(spherePosition[0] - boxC1[0]) < sphereRadius
               || abs(spherePosition[0] - boxC2[0]) < sphereRadius
               || (boxC1[0] < spherePosition[0] && spherePosition[0] < boxC2[0]))
@@ -237,7 +254,9 @@ const sphereToSphereCollisionCheck3D = (sphere1:any, sphere2:any) => {
   // check for collision between 2 sphere shaped colliders
 
   let {isValid} = collisionCheckValidateArgs(
-                                          sphere1, sphere2, "sphere", "sphere");
+                                          sphere1, sphere2, 
+                                          ColliderShape.Sphere, 
+                                          ColliderShape.Sphere);
 
   if (!isValid) {
     return;
@@ -270,7 +289,8 @@ const sphereToSphereCollisionCheck3D = (sphere1:any, sphere2:any) => {
 
 // == helpers ==
 
-const collisionCheckValidateArgs = (inObject1:any, inObject2:any, type1, type2) => {
+const collisionCheckValidateArgs = (inObject1:any, inObject2:any, 
+                                    type1:ColliderShape, type2:ColliderShape) => {
   // make sure all objects exist, have colliders, and are in right order
   // return objects in correct order as well as if validate passed
   let isValid = true;
@@ -297,7 +317,7 @@ const collisionCheckValidateArgs = (inObject1:any, inObject2:any, type1, type2) 
     else {
       console.error("object1 is not a " + type1);
       console.error(inObject1, inObject2);
-      return false;
+      isValid = false;
     }
   }
 
@@ -309,13 +329,13 @@ const collisionCheckValidateArgs = (inObject1:any, inObject2:any, type1, type2) 
     else {
       console.error("object2 is not a " + type2)
       console.error(inObject1, inObject2);
-      return false;
+      isValid = false;
     }
   }
 
   return {
-    [type1]: outObject1,
-    [type2]: outObject2,
+    outObject1: outObject1,
+    outObject2: outObject2,
     isValid: isValid
   }
 }
@@ -327,14 +347,12 @@ const getColliderPosition3D = (object:any) => {
   // by combining the object position with the collider offset
 
   if (!object.collider) {
-    console.error("object did not have a collider");
     console.error(object);
-    return;
+    throw new Error("object did not have a collider");
   }
   if (!object.position) {
-    console.error("object did not have a position");
     console.error(object);
-    return;
+    throw new Error("object did not have a position");
   }
 
   const collider:Collider = object.collider;
@@ -342,14 +360,12 @@ const getColliderPosition3D = (object:any) => {
   const position = object.position;
 
   if (colliderOffset.length < 3 ) {
-    console.error("collider offset is invalid")
     console.error(colliderOffset);
-    return;
+    throw new Error("collider offset is invalid")
   }
   if (position.length < 3) {
-    console.error("object position is invalid")
     console.error(object.position);
-    return;
+    throw new Error("object position is invalid")
   }
 
   return [

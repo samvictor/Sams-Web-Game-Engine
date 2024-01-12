@@ -1,6 +1,17 @@
 import { createStore } from 'redux'
-import { maxBulletsOnScreen, maxObjectsOnScreen } from './constants'
-import {GameObjectData, GameObjectsDictionary} from './interfaces';
+import { 
+  maxBulletsOnScreen, 
+  maxObjectsOnScreen, 
+  defaultGameObjectData 
+} from './constants'
+import {
+  GameObjectData, 
+  GameObjectsDictionary,
+  BulletData, 
+  PlayerObjectData,
+  GameObjectType,
+  ColliderShape,
+} from './interfaces';
 
 /**
  * This is a reducer - a function that takes a current state value and an
@@ -17,18 +28,20 @@ import {GameObjectData, GameObjectsDictionary} from './interfaces';
 
 
 interface AppState {
-  playerShip: GameObjectData;
+  playerShip: PlayerObjectData;
   playerShipUpdater: number;
+  playerStats: any;
   bullets: BulletData[];
   gameObjectsDict: GameObjectsDictionary;
-  //objects: GameObjectData[]; // objects do not include bullets
-  // when a game object is destroyed, it is removed from objects and put here
-  //destroyed: GameObjectData[];
+  colliderObjects: GameObjectData[];
 }
 
 const initialState: AppState = {
   // default state
   playerShip: {
+    ...defaultGameObjectData,
+    id: 'player',
+    type: GameObjectType.Player,
     position: [0, -5, 0],
     lastShootTimeMs: 0,
     shootDelayMs: 100,
@@ -38,9 +51,9 @@ const initialState: AppState = {
   },
   playerShipUpdater: 0,
   bullets: [],
-  objects: [],
-  destroyed: [],
   gameObjectsDict: {},
+  // live game objects with colliders
+  colliderObjects: [],
 }
 
 const reducer = (state = initialState, action: any) => {
@@ -83,25 +96,8 @@ const reducer = (state = initialState, action: any) => {
     return { ...state, bullets: oldBullets }
   }
 
-  let oldObjects, thisObject, objectIndex
+  let oldObjects;
 
-  const removeObjectByIndex = (index: number, id?: string) => {
-    oldObjects = {...state.objects}
-    if (!oldObjects) {
-      // old Objects not found
-      throw new Error('old objects not found')
-    }
-
-    thisObject = oldObjects[index]
-    if (thisObject && (!id || thisObject.id === id)) {
-      // make sure object exist and matches id if available
-      oldObjects.splice(index, 1)
-    } else {
-      throw new Error('object not deleted (removeObjectByIndex)')
-    }
-
-    return { ...state, objects: oldObjects }
-  }
 
   switch (action.type) {
     // players
@@ -249,7 +245,7 @@ const reducer = (state = initialState, action: any) => {
         return state;
       }
 
-      if (target.health > damageAmount) {
+      if (target.health && target.health > damageAmount) {
         target.health -= damageAmount;
       }
       else {
