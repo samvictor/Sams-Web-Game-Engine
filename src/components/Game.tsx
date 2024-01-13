@@ -76,24 +76,28 @@ function GameNoProv(props: any) {
     <button onClick={goToNormalPlay}>Resume</button>
   </div>
 
-  let returnBody = props.children;
+  let returnBody = null;//props.children;
+  let childrenDisplay = 'unset';
 
   switch (gameState) {
     case GameState.StartScreen:
       returnBody = startScreen
+      childrenDisplay = 'none';
     break;
     
     case GameState.Paused:
       returnBody = pauseScreen
+      childrenDisplay = 'none';
     break;
 
     case GameState.EndScreen:
+      childrenDisplay = 'none';
       returnBody = <div>End Screen</div>
     break
 
     case GameState.NormalPlay:
     default:
-      returnBody = props.children;
+      // returnBody = props.children;
   }
     
   return (
@@ -107,6 +111,10 @@ function GameNoProv(props: any) {
         }}
         >
       {returnBody}
+      <div
+        style={{display: childrenDisplay, height: '100%'}}>
+      {props.children}
+      </div>
     </div>
   )
 }

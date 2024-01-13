@@ -126,7 +126,7 @@ function Player() {
   return <Ship color={'blue'} position={playerPosition} />
 }
 
-function Bullet(props: any) {
+function Projectile(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
   const ref = useRef()
   const color = props.color || 'yellow'
@@ -139,9 +139,9 @@ function Bullet(props: any) {
   )
 }
 
-Bullet.propTypes = {
+Projectile.propTypes = {
   color: PropTypes.string,
   position: PropTypes.array,
 }
 
-export { Box, Ship, Player, Bullet, GameObject }
+export { Box, Ship, Player, Projectile, GameObject }

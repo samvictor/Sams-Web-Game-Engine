@@ -105,7 +105,7 @@ const reducer = (state = initialState, action: any) => {
 
   switch (action.type) {
     // players
-    case 'setPlayerShip':
+    case 'setPlayer':
       return { ...state, player: action.value, playerUpdater: Date.now() }
     case 'setPlayerPosition':
       return { ...state, player: { ...state.player, position: action.value }, 

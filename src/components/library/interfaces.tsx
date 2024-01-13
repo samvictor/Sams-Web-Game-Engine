@@ -56,7 +56,7 @@ interface PlayerObjectData extends GameObjectData {
 }
 
 
-interface BulletData extends GameObjectData {
+interface ProjectileData extends GameObjectData {
   damage: number,
   sourceId: string,
 }
@@ -71,7 +71,7 @@ export {
   Collider, 
   GameObjectData, 
   GameObjectsDictionary, 
-  BulletData,
+  ProjectileData,
   PlayerObjectData,
   ColliderShape,
   GameObjectType,
