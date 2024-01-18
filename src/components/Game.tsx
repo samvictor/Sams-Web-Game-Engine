@@ -8,7 +8,8 @@ import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 import { Provider } from 'react-redux'
-import reduxStore from './library/reduxStore'
+// import reduxStore from './library/reduxStore'
+import { useZustandStore } from './library/zustandStore'
 import { GameState } from './library/interfaces'
 
 const defaultSettings: any = {
@@ -24,12 +25,14 @@ const defaultSettings: any = {
 
 function GameNoProv(props: any) {
   const settings = { ...defaultSettings, ...props.settings }
+  const setGameSettings = useZustandStore((state:any) => state.setGameSettings)
+  const updateGameSettings = useZustandStore((state:any) => state.updateGameSettings)
 
   useEffect(() => {    
     if (settings.levelFlowType === 'linear') {
       settings.currentLevel = settings.levelFlow[0];
     }
-    reduxStore.dispatch({type: 'setGameSettings', value: settings});
+    setGameSettings(settings);
   }, [])
 
 
@@ -38,9 +41,9 @@ function GameNoProv(props: any) {
       switch (e.code) {
         case 'Escape':
         case 'KeyP':
-          reduxStore.dispatch({type: 'updateGameSettings', value: {
+          updateGameSettings({
             gameState: GameState.Paused
-          }});
+          });
         break;
       }
     }
@@ -54,16 +57,16 @@ function GameNoProv(props: any) {
 
   // first try to get gameState from props. If not there, get it from store
   if (props.gameState && props.gameState !== settingsFromStore.gameState) {
-    reduxStore.dispatch({type: 'updateGameSettings', value: {
+    updateGameSettings({
       gameState: props.gameState
-    }})
+    })
   }
   const gameState = settingsFromStore.gameState;
 
   const goToNormalPlay = () => {
-    reduxStore.dispatch({type: 'updateGameSettings', value: {
+    updateGameSettings({
       gameState: GameState.NormalPlay
-    }})
+    })
   }
 
   const startScreen = <div>
@@ -120,9 +123,9 @@ function GameNoProv(props: any) {
 }
 
 const Game = (props: any) => (
-  <Provider store={reduxStore}>
+  // <Provider store={reduxStore}>
     <GameNoProv {...props} />
-  </Provider>
+  // </Provider>
 )
 
 export default Game

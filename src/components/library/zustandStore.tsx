@@ -1,19 +1,28 @@
 import { create } from 'zustand'
 import { 
   maxProjectilesOnScreen, 
-  maxObjectsOnScreen, 
   defaultGameObjectData 
 } from './constants'
 import {
   GameObjectData, 
-  GameObjectsDictionary,
   ProjectileData, 
   PlayerObjectData,
   GameObjectType,
   GameState,
 } from './interfaces';
+import { Projectile } from './objects';
 
 
+const updateProjectileByIndex = (oldProjectiles:ProjectileData[], index: number, newProjectile:ProjectileData) => {
+  if (!oldProjectiles) {
+    // old projectiles not found
+    throw new Error('old projectiles not found')
+  }
+
+  oldProjectiles[index] = newProjectile;
+
+  return oldProjectiles;
+}
 const removeProjectileByIndex = (oldProjectiles:ProjectileData[], index: number, id?: string) => {
   if (!oldProjectiles) {
     // old projectiles not found
@@ -106,6 +115,13 @@ const useZustandStore = create((set) => ({
       projectiles: tempProjectiles,
     }
   }),
+  updateProjectileByIndex: (projectileIndex:number, newProjectile:ProjectileData) => set((state:any) => {
+    let tempProjectiles = state.projectiles || [];
+    tempProjectiles = updateProjectileByIndex(tempProjectiles, projectileIndex, newProjectile);
+    return {
+      projectiles: tempProjectiles,
+    }
+  }),
   removeProjectileById: (id:string) => set((state:any) => {
     let tempProjectiles = state.projectiles || [];
     
@@ -116,6 +132,13 @@ const useZustandStore = create((set) => ({
       throw new Error('projectile not deleted (removeProjectileById)')
     }
 
+    return {
+      projectiles: tempProjectiles
+    }
+  }),
+  removeProjectileByIndex: (projectileIndex:number, projectileId:string) => set((state:any) => {
+    let tempProjectiles = state.projectiles || [];
+    tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, projectileId);
     return {
       projectiles: tempProjectiles
     }
@@ -137,8 +160,93 @@ const useZustandStore = create((set) => ({
     return addObject(newObject, state)
   }),
 
+  // damage 
+  damageObjectById: (targetId:string, damage?:number, sourceId?:string) => 
+                    set((state:any) => {
+    if (!sourceId) {
+      console.warn('source id not found in damageObjectById');
+    }
+    let damageAmount = 1;
+    if (typeof damage === 'number') {
+      damageAmount = damage;
+    }
+    else {
+      console.warn('damage amount not found, using default (1) in damageObjectById');
+    }
+
+
+    if (!targetId) {
+      throw new Error('invalid targetId in damageObjectById');
+    }
+
+    const oldObjects = {...state.gameObjectsDict}
+    if (!oldObjects) {
+      // old objects not found
+      throw new Error('old objects not found')
+    }
+
+    const target = oldObjects[targetId];
+
+
+    if (!target) {
+      // target not found in list
+      throw new Error('target not found in object dict. (damageObjectById)')
+    }
+
+    if (target.destroyed) {
+      console.warn('target already destroyed (damageObjectById)');
+      return {};
+    }
+
+    if (target.health && target.health > damageAmount) {
+      target.health -= damageAmount;
+    }
+    else {
+      // destroy target
+      target.destroyed = true;
+      const playerStatsClone = {...state.playerStats};
+      const oldPlayerScore = playerStatsClone.score||0;
+
+      if (target.scoreValue) {
+        playerStatsClone.score = oldPlayerScore + target.scoreValue;
+        console.log("setting new score to", playerStatsClone.score)
+      }
+      return {
+        gameObjectsDict: oldObjects,
+        playerStats: playerStatsClone,
+      }
+    }
+
+    return {}
+  }),
+
+
+  // Game settings
+  setGameSettings: (gameSettings:any) => set(() => {
+    if (!gameSettings) {
+      throw new Error('gameSettings is empty');
+    }
+
+    return {
+      gameSettings: gameSettings
+    }
+  }),
+  updateGameSettings: (gameSettings:any) => set((state:any) => {
+    if (!gameSettings) {
+      throw new Error('gameSettings is empty');
+    }
+
+    const oldGameSettings = state.gameSettings;
+    
+    return {
+      gameSettings: {
+        ...oldGameSettings,
+        ...gameSettings
+      }
+    }
+  }),
   
 }))
 
 
-export default useZustandStore
+export {useZustandStore}

@@ -8,11 +8,11 @@ import React, { useState, useEffect } from 'react'
 import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
 import { useSelector } from 'react-redux'
 // import reduxStore from './library/reduxStore';
-import { Bullet } from './library/objects'
-import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks'
+import { Projectile } from './library/objects'
+import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks'
 
-import { Provider } from 'react-redux'
-import store from './library/reduxStore'
+// import { Provider } from 'react-redux'
+// import {useZustandStore} from './library/zustandStore'
 
 const defaultSettings: any = {
 }
@@ -22,7 +22,7 @@ function CanvasNoProv(props: any) {
 
   const movePlayer = useMovePlayer()
   const playerShoot = usePlayerShoot()
-  const updateBullets = useUpdateBullets()
+  const updateBullets = useUpdateProjectiles()
 
   const keys: any = {
     KeyW: 'up',
@@ -96,7 +96,7 @@ function CanvasNoProv(props: any) {
     const bulletsXml: any[] = []
 
     bullets.forEach((thisBullet: any) => {
-      bulletsXml.push(<Bullet position={thisBullet.position}
+      bulletsXml.push(<Projectile position={thisBullet.position}
                           key={'bullet_' + thisBullet.id} />)
     })
 
@@ -138,9 +138,7 @@ function CanvasNoProv(props: any) {
 }
 
 const Canvas = (props: any) => (
-  <Provider store={store}>
     <CanvasNoProv {...props} />
-  </Provider>
 )
 
 export default Canvas

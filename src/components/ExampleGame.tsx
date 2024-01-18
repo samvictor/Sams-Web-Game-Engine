@@ -12,11 +12,12 @@ import React, { useState, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useSelector } from 'react-redux'
 // import reduxStore from './library/reduxStore';
-import { Box, Ship, Player, Bullet } from './library/objects'
-import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks'
+import { Box, Ship, Player, Projectile } from './library/objects'
+import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks'
 
 import { Provider } from 'react-redux'
-import store from './library/reduxStore'
+// import store from './library/reduxStore'
+import { useZustandStore } from './library/zustandStore'
 
 const defaultSettings: any = {
   background: 'transparent',
@@ -29,7 +30,7 @@ function ExampleGameNoProv(props: any) {
 
   const movePlayer = useMovePlayer()
   const playerShoot = usePlayerShoot()
-  const updateBullets = useUpdateBullets()
+  const updateBullets = useUpdateProjectiles()
 
   const keys: any = {
     KeyW: 'forward',
@@ -103,7 +104,7 @@ function ExampleGameNoProv(props: any) {
     const bulletsXml: any[] = []
 
     bullets.forEach((thisBullet: any) => {
-      bulletsXml.push(<Bullet position={thisBullet.position} key={'bullet_' + thisBullet.id} />)
+      bulletsXml.push(<Projectile position={thisBullet.position} key={'projectile_' + thisBullet.id} />)
     })
 
     return bulletsXml
@@ -134,9 +135,9 @@ function ExampleGameNoProv(props: any) {
 }
 
 const ExampleGame = (props: any) => (
-  <Provider store={store}>
+  // <Provider store={store}>
     <ExampleGameNoProv {...props} />
-  </Provider>
+  // </Provider>
 )
 
 export default ExampleGame

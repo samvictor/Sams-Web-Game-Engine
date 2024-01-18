@@ -4,7 +4,8 @@ import React, { useRef, useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
 import PropTypes from 'prop-types'
-import reduxStore from './reduxStore'
+// import reduxStore from './reduxStore'
+import { useZustandStore } from './zustandStore'
 
 import {
   Collider, 
@@ -35,6 +36,7 @@ function GameObject(props: any) {
                             boxSize: size,
                             offset: [0, 0, 0],
                           };
+  const addObject = useZustandStore((state:any) => state.addObject)                        
 
   useEffect(() => {
     const newObjectData:GameObjectData = {
@@ -50,7 +52,7 @@ function GameObject(props: any) {
       scoreValue: scoreValue,
     }
 
-    reduxStore.dispatch({ type: 'addObject', value: newObjectData })
+    addObject(newObjectData)
   }, [] );
 
 

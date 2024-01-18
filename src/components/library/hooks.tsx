@@ -1,17 +1,19 @@
-import { useSelector } from 'react-redux'
-import reduxStore from './reduxStore'
+// import { useSelector } from 'react-redux'
+// import reduxStore from './reduxStore'
+import { useZustandStore } from './zustandStore';
 import { screenBoundsMax, screenBoundsMin } from './constants'
 import { collisionCheck } from './helpfulFunctions';
 import {
-  BulletData, 
+  ProjectileData, 
   GameObjectData, 
   ColliderShape, 
   GameObjectType
 } from './interfaces';
 
 function useMovePlayer() {
-  const playerData = useSelector((state: any) => state.player)
-  const playerUpdater = useSelector((state: any) => state.playerUpdater)
+  const playerData = useZustandStore((state: any) => state.player)
+  const playerUpdater = useZustandStore((state: any) => state.playerUpdater)
+  const setPlayerPosition = useZustandStore((state:any) => state.setPlayerPosition)
 
   function movePlayer(direction: string, delta: number) {
     const oldPosition = playerData.position
@@ -24,14 +26,16 @@ function useMovePlayer() {
     }
     console.log('setting player position to', newPosition)
     console.log('playerUpdater is', playerUpdater)
-    reduxStore.dispatch({ type: 'setPlayerPosition', value: newPosition })
+    setPlayerPosition(newPosition);
   }
 
   return movePlayer
 }
 
 function usePlayerShoot() {
-  const playerData = useSelector((state: any) => state.player)
+  const playerData = useZustandStore((state: any) => state.player)
+  const addProjectile = useZustandStore((state:any) => state.addProjectile);
+  const setPlayerLastShootTimeMs = useZustandStore((state:any) => state.setPlayerLastShootTimeMs)
 
   function playerShoot() {
     if (playerData.lastShootTimeMs + playerData.shootDelayMs > Date.now()) {
@@ -46,7 +50,7 @@ function usePlayerShoot() {
     const bulletStartingPosition = [...playerPosition];
     bulletStartingPosition[2] += 0;
 
-    const newBullet:BulletData = {
+    const newBullet:ProjectileData = {
       position: bulletStartingPosition,
       sourceId: 'player',
       // bullet id is bullet_ + time created + random number
@@ -63,17 +67,21 @@ function usePlayerShoot() {
     }
 
     console.log('creating bullet:', newBullet)
-    reduxStore.dispatch({ type: 'addBullet', value: newBullet })
-    reduxStore.dispatch({ type: 'setPlayerLastShootTimeMs', value: Date.now() })
+    addProjectile(newBullet);
+    setPlayerLastShootTimeMs(Date.now());
   }
 
   return playerShoot
 }
 
 
-function useUpdateBullets() {
-  const bullets = useSelector((state: any) => state.bullets)
-  const objectsDict = useSelector((state: any) => state.gameObjectsDict)
+function useUpdateProjectiles() {
+  const projectiles = useZustandStore((state:any) => state.projectiles)
+  const objectsDict = useZustandStore((state:any) => state.gameObjectsDict)
+  const removeProjectileByIndex = useZustandStore((state:any) => state.removeProjectileByIndex)
+  const damageObjectById = useZustandStore((state:any) => state.damageObjectById) 
+  const updateProjectileByIndex = useZustandStore((state:any) => state.updateProjectileByIndex)
+
   const objects:GameObjectData[] = Object.values(objectsDict);
 
   function updateBullets(delta: number) {
@@ -82,7 +90,7 @@ function useUpdateBullets() {
     }
 
     const scaledDelta = delta * 10
-    bullets.forEach((bullet: any, i: number) => {
+    projectiles.forEach((bullet: any, i: number) => {
       // check if bullet is out of bounds
       if (
         bullet.position[0] > screenBoundsMax[0] ||
@@ -93,13 +101,7 @@ function useUpdateBullets() {
         bullet.position[2] < screenBoundsMin[2]
       ) {
         // bullet is out of bounds, delete and return
-        reduxStore.dispatch({
-          type: 'removeBulletByIndex',
-          value: {
-            index: i,
-            id: bullet.id,
-          },
-        })
+        removeProjectileByIndex(i, bullet.id);
         return
       }
 
@@ -110,30 +112,16 @@ function useUpdateBullets() {
       objects.forEach((thisObject:GameObjectData) => {
         if (collisionCheck(bullet, thisObject)) {
           console.log("collision", thisObject.id);
-          reduxStore.dispatch({
-            type: 'damageObjectById',
-            value: {
-              sourceId: bullet.id,
-              damage: bullet.damage,
-              targetId: thisObject.id
-            },
-          });
+          damageObjectById(thisObject.id, bullet.damage, bullet.id)
           // console.log("collision", bullet, thisObject);
         }
       });
 
-      reduxStore.dispatch({
-        type: 'updateBulletByIndex',
-        value: {
-          index: i,
-          id: bullet.id,
-          bullet: bullet,
-        },
-      })
+      updateProjectileByIndex(i, bullet)
     })
   }
 
   return updateBullets
 }
 
-export { useMovePlayer, usePlayerShoot, useUpdateBullets }
+export { useMovePlayer, usePlayerShoot, useUpdateProjectiles }

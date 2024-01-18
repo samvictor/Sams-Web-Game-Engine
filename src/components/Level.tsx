@@ -5,14 +5,11 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
+// import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
 import { useSelector } from 'react-redux'
 // import reduxStore from './library/reduxStore';
-import { Bullet } from './library/objects'
-import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks'
-
-import { Provider } from 'react-redux'
-import reduxStore from './library/reduxStore'
+// import { useMovePlayer, usePlayerShoot, useUpdateBullets } from './library/hooks'
+// import { useZustandStore } from './library/zustandStore'
 
 const defaultSettings: any = {
   id: 'defaultLevel',
