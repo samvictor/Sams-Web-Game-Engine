@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 // import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
 import { useSelector } from 'react-redux'
 // import reduxStore from './library/reduxStore';
@@ -18,24 +18,20 @@ const defaultSettings: any = {
 function Level(props: any) {
   const settings = { ...defaultSettings, ...props.settings }
 
-  const levelId = settings.id;
+  const levelId = settings.id
 
-  const gameSettings = useSelector((state:any) => state.gameSettings);
+  const gameSettings = useSelector((state: any) => state.gameSettings)
 
   // if we're not on this level, don't show anything
   if (gameSettings.currentLevel === levelId) {
     return (
-      <div
-        id='webGameEngineLevel'
-        style={{
-        }}
-      >
+      <div id='webGameEngineLevel' style={{}}>
         {props.children}
       </div>
     )
   }
 
-  return null;
+  return null
 }
 
 export default Level

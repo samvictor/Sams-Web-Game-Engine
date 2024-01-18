@@ -128,3 +128,8 @@ Supported values:
  * **sphereRadius** - Must be, and should only be used with sphere shape. Radius of collider. "1" by default.
  * **offset** - (required) x, y, and z components of collider position offset. "[0, 0, 0]" by default.
  * **visible** - Only designed for testing purposes. This option lets you see where the collider will be, even though it's usually invisible. "false" by default.
+
+
+`yarn prettier`
+
+`npm publish --dry-run`

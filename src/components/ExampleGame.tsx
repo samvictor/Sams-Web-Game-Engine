@@ -15,9 +15,9 @@ import { useSelector } from 'react-redux'
 import { Box, Ship, Player, Projectile } from './library/objects'
 import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks'
 
-import { Provider } from 'react-redux'
+// import { Provider } from 'react-redux'
 // import store from './library/reduxStore'
-import { useZustandStore } from './library/zustandStore'
+// import { useZustandStore } from './library/zustandStore'
 
 const defaultSettings: any = {
   background: 'transparent',
@@ -136,7 +136,7 @@ function ExampleGameNoProv(props: any) {
 
 const ExampleGame = (props: any) => (
   // <Provider store={store}>
-    <ExampleGameNoProv {...props} />
+  <ExampleGameNoProv {...props} />
   // </Provider>
 )
 

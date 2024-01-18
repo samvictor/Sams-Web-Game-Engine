@@ -6,19 +6,19 @@
 
 import React, { useState, useEffect } from 'react'
 import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
-import { useSelector } from 'react-redux'
+// import { useSelector } from 'react-redux'
 // import reduxStore from './library/reduxStore';
 import { Projectile } from './library/objects'
 import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks'
+import { useZustandStore } from './library/zustandStore'
 
 // import { Provider } from 'react-redux'
 // import {useZustandStore} from './library/zustandStore'
 
-const defaultSettings: any = {
-}
+// const defaultSettings: any = {}
 
 function CanvasNoProv(props: any) {
-  const settings = { ...defaultSettings, ...props.settings }
+  // const settings = { ...defaultSettings, ...props.settings }
 
   const movePlayer = useMovePlayer()
   const playerShoot = usePlayerShoot()
@@ -90,37 +90,40 @@ function CanvasNoProv(props: any) {
     return <mesh />
   }
 
-  const bullets = useSelector((state: any) => state.bullets)
+  const bullets = useZustandStore((state: any) => state.projectiles)
 
   function RenderBullets() {
     const bulletsXml: any[] = []
 
     bullets.forEach((thisBullet: any) => {
-      bulletsXml.push(<Projectile position={thisBullet.position}
-                          key={'bullet_' + thisBullet.id} />)
+      bulletsXml.push(<Projectile position={thisBullet.position} key={'bullet_' + thisBullet.id} />)
     })
 
-    return bulletsXml;
+    return bulletsXml
   }
 
   // make overlay
-  const gameSettings = useSelector((state:any) => state.gameSettings);
-  const playerStats:any = useSelector((state:any) => state.playerStats);
-  const overlayXml:any = <div id='webGameEngineOverlay'
-                            style={{
-                              color: gameSettings.overlayTextColor,
-                              position: 'fixed',
-                              top: 0,
-                              padding: '20px',
-                            }}>
-    Score: {playerStats.score}
-  </div>;
+  const gameSettings = useZustandStore((state: any) => state.gameSettings)
+  const playerStats: any = useZustandStore((state: any) => state.playerStats)
+  const overlayXml: any = (
+    <div
+      id='webGameEngineOverlay'
+      style={{
+        color: gameSettings.overlayTextColor,
+        position: 'fixed',
+        top: 0,
+        padding: '20px',
+      }}
+    >
+      Score: {playerStats.score}
+    </div>
+  )
 
   return (
     <div
       id='webGameEngineCanvas'
       style={{
-        height: '100%'
+        height: '100%',
       }}
     >
       <ThreeCanvas camera={{ position: [0, 0, 10] }}>
@@ -129,7 +132,6 @@ function CanvasNoProv(props: any) {
         <pointLight position={[10, 10, 10]} />
         <RenderBullets />
         {props.children}
-
       </ThreeCanvas>
 
       {overlayXml}
@@ -137,8 +139,6 @@ function CanvasNoProv(props: any) {
   )
 }
 
-const Canvas = (props: any) => (
-    <CanvasNoProv {...props} />
-)
+const Canvas = (props: any) => <CanvasNoProv {...props} />
 
 export default Canvas

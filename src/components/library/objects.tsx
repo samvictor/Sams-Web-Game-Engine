@@ -1,20 +1,13 @@
 'use client'
 
 import React, { useRef, useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+// import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
 import PropTypes from 'prop-types'
 // import reduxStore from './reduxStore'
 import { useZustandStore } from './zustandStore'
 
-import {
-  Collider, 
-  GameObjectData, 
-  GameObjectsDictionary, 
-  ColliderShape,
-  GameObjectType,
-} from './interfaces';
-
+import { Collider, GameObjectData, GameObjectsDictionary, ColliderShape, GameObjectType } from './interfaces'
 
 function GameObject(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
@@ -29,17 +22,17 @@ function GameObject(props: any) {
   const rotation = props.rotation || [0, 0, 0]
   const id = props.objectId || 'object_' + Date.now() + '_' + Math.floor(Math.random() * 1000)
   const speed = props.speed || 1
-  const health = props.health|| 1
-  const scoreValue = props.scoreValue|| 1
-  const collider:Collider = props.collider || {
-                            shape: ColliderShape.Box,
-                            boxSize: size,
-                            offset: [0, 0, 0],
-                          };
-  const addObject = useZustandStore((state:any) => state.addObject)                        
+  const health = props.health || 1
+  const scoreValue = props.scoreValue || 1
+  const collider: Collider = props.collider || {
+    shape: ColliderShape.Box,
+    boxSize: size,
+    offset: [0, 0, 0],
+  }
+  const addObject = useZustandStore((state: any) => state.addObject)
 
   useEffect(() => {
-    const newObjectData:GameObjectData = {
+    const newObjectData: GameObjectData = {
       position: position,
       // object id is object_ + time created + random number
       id: id,
@@ -53,22 +46,21 @@ function GameObject(props: any) {
     }
 
     addObject(newObjectData)
-  }, [] );
-
+  }, [])
 
   // Subscribe this component to the render-loop, rotate the mesh every frame
   useFrame((_, delta) => {
     if (ref?.current?.rotation?.x) ref.current.rotation.x += delta
   })
   // Return the view, these are regular Threejs elements expressed in JSX
-  const defaultColor = props.color || "orange";
+  const defaultColor = props.color || 'orange'
 
   // get this object data from store
-  const objects:GameObjectsDictionary = useSelector((state:any) => state.gameObjectsDict)
-  const thisObjectData = objects[id] || {};
+  const objects: GameObjectsDictionary = useZustandStore((state: any) => state.gameObjectsDict)
+  const thisObjectData = objects[id] || {}
 
   if (thisObjectData.destroyed) {
-    return null;
+    return null
   }
 
   return (
@@ -91,17 +83,13 @@ function Box(props: any) {
   // create a basic game object, but make the collider a box
 
   const size = props.size || [1, 1, 1]
-  const collider:Collider = props.collider || {
-                            shape: ColliderShape.Box,
-                            boxSize: size,
-                            offset: [0, 0, 0],
-                          };
+  const collider: Collider = props.collider || {
+    shape: ColliderShape.Box,
+    boxSize: size,
+    offset: [0, 0, 0],
+  }
 
-  return (
-    <GameObject
-      {...props} collider={collider} type="box">
-    </GameObject>
-  )
+  return <GameObject {...props} collider={collider} type='box'></GameObject>
 }
 
 function Ship(props: any) {
@@ -123,7 +111,7 @@ Ship.propTypes = {
 }
 
 function Player() {
-  const playerData = useSelector((state: any) => state.player)
+  const playerData = useZustandStore((state: any) => state.player)
   const playerPosition = playerData.position || [0, 0, 1]
   return <Ship color={'blue'} position={playerPosition} />
 }

@@ -4,10 +4,10 @@
 
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect } from 'react'
+// import { useSelector } from 'react-redux'
 
-import { Provider } from 'react-redux'
+// import { Provider } from 'react-redux'
 // import reduxStore from './library/reduxStore'
 import { useZustandStore } from './library/zustandStore'
 import { GameState } from './library/interfaces'
@@ -25,16 +25,15 @@ const defaultSettings: any = {
 
 function GameNoProv(props: any) {
   const settings = { ...defaultSettings, ...props.settings }
-  const setGameSettings = useZustandStore((state:any) => state.setGameSettings)
-  const updateGameSettings = useZustandStore((state:any) => state.updateGameSettings)
+  const setGameSettings = useZustandStore((state: any) => state.setGameSettings)
+  const updateGameSettings = useZustandStore((state: any) => state.updateGameSettings)
 
-  useEffect(() => {    
+  useEffect(() => {
     if (settings.levelFlowType === 'linear') {
-      settings.currentLevel = settings.levelFlow[0];
+      settings.currentLevel = settings.levelFlow[0]
     }
-    setGameSettings(settings);
+    setGameSettings(settings)
   }, [])
-
 
   useEffect(() => {
     const handleKeyUp = (e: any) => {
@@ -42,9 +41,9 @@ function GameNoProv(props: any) {
         case 'Escape':
         case 'KeyP':
           updateGameSettings({
-            gameState: GameState.Paused
-          });
-        break;
+            gameState: GameState.Paused,
+          })
+          break
       }
     }
     document.addEventListener('keyup', handleKeyUp)
@@ -53,78 +52,79 @@ function GameNoProv(props: any) {
     }
   }, [])
 
-  const settingsFromStore = useSelector((state:any) => state.gameSettings);
+  const settingsFromStore = useZustandStore((state: any) => state.gameSettings)
 
   // first try to get gameState from props. If not there, get it from store
   if (props.gameState && props.gameState !== settingsFromStore.gameState) {
     updateGameSettings({
-      gameState: props.gameState
+      gameState: props.gameState,
     })
   }
-  const gameState = settingsFromStore.gameState;
+  const gameState = settingsFromStore.gameState
 
   const goToNormalPlay = () => {
     updateGameSettings({
-      gameState: GameState.NormalPlay
+      gameState: GameState.NormalPlay,
     })
   }
 
-  const startScreen = <div>
-    Start Screen 
-    <button onClick={goToNormalPlay}>Start</button>
-  </div>
+  const startScreen = (
+    <div>
+      Start Screen
+      <button onClick={goToNormalPlay}>Start</button>
+    </div>
+  )
 
-  const pauseScreen = <div>
-    Pause Screen 
-    <button onClick={goToNormalPlay}>Resume</button>
-  </div>
+  const pauseScreen = (
+    <div>
+      Pause Screen
+      <button onClick={goToNormalPlay}>Resume</button>
+    </div>
+  )
 
-  let returnBody = null;//props.children;
-  let childrenDisplay = 'unset';
+  let returnBody = null //props.children;
+  let childrenDisplay = 'unset'
 
   switch (gameState) {
     case GameState.StartScreen:
       returnBody = startScreen
-      childrenDisplay = 'none';
-    break;
-    
+      childrenDisplay = 'none'
+      break
+
     case GameState.Paused:
       returnBody = pauseScreen
-      childrenDisplay = 'none';
-    break;
+      childrenDisplay = 'none'
+      break
 
     case GameState.EndScreen:
-      childrenDisplay = 'none';
+      childrenDisplay = 'none'
       returnBody = <div>End Screen</div>
-    break
+      break
 
     case GameState.NormalPlay:
     default:
-      // returnBody = props.children;
+    // returnBody = props.children;
   }
-    
+
   return (
     <div
-        id='webGameEngineParent'
-        style={{
-          position: 'relative',
-          width: '100vw',
-          height: '100vh',
-          background: settings.background,
-        }}
-        >
+      id='webGameEngineParent'
+      style={{
+        position: 'relative',
+        width: '100vw',
+        height: '100vh',
+        background: settings.background,
+      }}
+    >
       {returnBody}
-      <div
-        style={{display: childrenDisplay, height: '100%'}}>
-      {props.children}
-      </div>
+      <div style={{ display: childrenDisplay, height: '100%' }}>{props.children}</div>
     </div>
   )
 }
 
 const Game = (props: any) => (
   // <Provider store={reduxStore}>
-    <GameNoProv {...props} />
+  <GameNoProv {...props} />
   // </Provider>
 )
 
