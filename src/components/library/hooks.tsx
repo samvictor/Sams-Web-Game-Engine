@@ -49,7 +49,7 @@ function usePlayerShoot() {
 
     const playerPosition = [...playerData.position]
 
-    console.log('creating bullet at', playerPosition)
+    // console.log('creating bullet at', playerPosition)
 
     const bulletStartingPosition = [...playerPosition]
     bulletStartingPosition[2] += 0
@@ -70,7 +70,7 @@ function usePlayerShoot() {
       },
     }
 
-    console.log('creating bullet:', newBullet)
+    // console.log('creating bullet:', newBullet)
     addProjectile(newBullet)
     setPlayerLastShootTimeMs(Date.now())
   }
@@ -88,7 +88,7 @@ function useUpdateProjectiles() {
   const updateProjectileByIndex = useZustandStore((state: ZustandState) => 
                                                       state.updateProjectileByIndex)
 
-  const objects: GameObjectData[] = Object.values(objectsDict)
+  const objects = useZustandStore((state:ZustandState) => state.colliderObjects)
 
   function updateBullets(delta: number) {
     if (typeof delta === 'undefined') {

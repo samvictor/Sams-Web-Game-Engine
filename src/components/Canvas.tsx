@@ -49,15 +49,15 @@ function CanvasNoProv(props: any) {
   useEffect(() => {
     const handleKeyDown = (e: any) => {
       setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: true }))
-      console.log('key is', e.code)
+      // console.log('key is', e.code)
       switch (e.code) {
         case 'ArrowLeft':
           break
         case 'ArrowRight':
-          console.log('right')
+          // console.log('right')
           break
         case 'Space':
-          console.log('space')
+          // console.log('space')
           break
       }
     }
@@ -75,7 +75,7 @@ function CanvasNoProv(props: any) {
   function Updater() {
     useFrame((_, delta: number) => {
       if (movement.left) {
-        console.log('moving left')
+        // console.log('moving left')
         movePlayer('left', delta)
       } else if (movement.right) {
         movePlayer('right', delta)
@@ -98,7 +98,6 @@ function CanvasNoProv(props: any) {
     const bulletsXml: any[] = []
 
     bullets.forEach((thisBullet: any) => {
-      console.log("bullet position is", thisBullet.position)
       bulletsXml.push(<Projectile position={thisBullet.position} 
                                   key={'bullet_' + thisBullet.id} />)
     })

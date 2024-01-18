@@ -80,20 +80,25 @@ const removeProjectileByIndex = (oldProjectiles: ProjectileData[],
   return oldProjectiles
 }
 
-const addObject = (newObject: GameObjectData, state: any) => {
-  if (!newObject) {
-    throw new Error('new object not found (addObject)')
-  }
-  if (!newObject.id) {
-    throw new Error('new object missing id (addObject)')
+const removeFromListById = (list:any[],  id:string) => {
+  if (!list) {
+    throw new Error('list not found')
   }
 
-  return {
-    gameObjectsDict: {
-      ...state.gameObjectsDict,
-      [newObject.id]: newObject,
-    },
+  if (!id) {
+    throw new Error('id not found')
   }
+
+  const indexToRemove = list.findIndex((item: any) => item.id === id)
+  if (indexToRemove === -1) {
+    console.warn('id not found in list (removeFromListById)');
+    console.warn('list', list, 'id', id)
+    return list
+  }
+
+  list.splice(indexToRemove, 1)
+
+  return list;
 }
 
 const useZustandStore = create<ZustandState>()((set) => ({
@@ -202,7 +207,25 @@ const useZustandStore = create<ZustandState>()((set) => ({
   // objects
   addObject: (newObject: GameObjectData) =>
     set((state: any) => {
-      return addObject(newObject, state)
+      if (!newObject) {
+        throw new Error('new object not found (addObject)')
+      }
+      if (!newObject.id) {
+        throw new Error('new object missing id (addObject)')
+      }
+
+      const tempColliderObj = state.colliderObjects || [];
+      if (newObject.collider) {
+        tempColliderObj.push(newObject);
+      }
+
+      return {
+        gameObjectsDict: {
+          ...state.gameObjectsDict,
+          [newObject.id]: newObject,
+        },
+        colliderObjects: tempColliderObj,
+      }
     }),
   removeObjectById: (objectId: string) =>
     set((state: any) => {
@@ -215,12 +238,24 @@ const useZustandStore = create<ZustandState>()((set) => ({
     }),
   updateObjectById: (newObject: GameObjectData) =>
     set((state: any) => {
-      return addObject(newObject, state)
+      if (!newObject) {
+        throw new Error('new object not found (addObject)')
+      }
+      if (!newObject.id) {
+        throw new Error('new object missing id (addObject)')
+      }
+
+      return {
+        gameObjectsDict: {
+          ...state.gameObjectsDict,
+          [newObject.id]: newObject,
+        },
+      }
     }),
 
   // damage
   damageObjectById: (targetId: string, damage?: number, sourceId?: string) =>
-    set((state: any) => {
+    set((state: ZustandState) => {
       if (!sourceId) {
         console.warn('source id not found in damageObjectById')
       }
@@ -261,6 +296,9 @@ const useZustandStore = create<ZustandState>()((set) => ({
         const playerStatsClone = { ...state.playerStats }
         const oldPlayerScore = playerStatsClone.score || 0
 
+        let tempColliderObj = state.colliderObjects
+        tempColliderObj = removeFromListById(tempColliderObj, target.id)
+
         if (target.scoreValue) {
           playerStatsClone.score = oldPlayerScore + target.scoreValue
           console.log('setting new score to', playerStatsClone.score)
@@ -268,6 +306,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         return {
           gameObjectsDict: oldObjects,
           playerStats: playerStatsClone,
+          colliderObjects: tempColliderObj,
         }
       }
 
