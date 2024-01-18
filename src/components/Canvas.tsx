@@ -10,7 +10,7 @@ import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
 // import reduxStore from './library/reduxStore';
 import { Projectile } from './library/objects'
 import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks'
-import { useZustandStore } from './library/zustandStore'
+import { useZustandStore, ZustandState } from './library/zustandStore'
 
 // import { Provider } from 'react-redux'
 // import {useZustandStore} from './library/zustandStore'
@@ -73,7 +73,7 @@ function CanvasNoProv(props: any) {
   }, [])
 
   function Updater() {
-    useFrame((_, delta: any) => {
+    useFrame((_, delta: number) => {
       if (movement.left) {
         console.log('moving left')
         movePlayer('left', delta)
@@ -90,21 +90,25 @@ function CanvasNoProv(props: any) {
     return <mesh />
   }
 
-  const bullets = useZustandStore((state: any) => state.projectiles)
+  const bullets = useZustandStore((state: ZustandState) => state.projectiles)
+  const projectilesUpdater = useZustandStore((state: ZustandState) => 
+                                                    state.projectilesUpdater)
 
   function RenderBullets() {
     const bulletsXml: any[] = []
 
     bullets.forEach((thisBullet: any) => {
-      bulletsXml.push(<Projectile position={thisBullet.position} key={'bullet_' + thisBullet.id} />)
+      console.log("bullet position is", thisBullet.position)
+      bulletsXml.push(<Projectile position={thisBullet.position} 
+                                  key={'bullet_' + thisBullet.id} />)
     })
 
     return bulletsXml
   }
 
   // make overlay
-  const gameSettings = useZustandStore((state: any) => state.gameSettings)
-  const playerStats: any = useZustandStore((state: any) => state.playerStats)
+  const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
+  const playerStats: any = useZustandStore((state: ZustandState) => state.playerStats)
   const overlayXml: any = (
     <div
       id='webGameEngineOverlay'

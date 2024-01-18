@@ -1,14 +1,21 @@
 // import { useSelector } from 'react-redux'
 // import reduxStore from './reduxStore'
-import { useZustandStore } from './zustandStore'
+import { useZustandStore, ZustandState } from './zustandStore'
 import { screenBoundsMax, screenBoundsMin } from './constants'
 import { collisionCheck } from './helpfulFunctions'
-import { ProjectileData, GameObjectData, ColliderShape, GameObjectType } from './interfaces'
+import { 
+  ProjectileData, 
+  GameObjectData, 
+  ColliderShape, 
+  GameObjectType 
+} from './interfaces'
 
 function useMovePlayer() {
-  const playerData = useZustandStore((state: any) => state.player)
-  const playerUpdater = useZustandStore((state: any) => state.playerUpdater)
-  const setPlayerPosition = useZustandStore((state: any) => state.setPlayerPosition)
+  const playerData = useZustandStore((state: ZustandState) => state.player)
+  const playerUpdater = useZustandStore((state: ZustandState) => 
+                                                            state.playerUpdater)
+  const setPlayerPosition = useZustandStore((state: ZustandState) => 
+                                                      state.setPlayerPosition)
 
   function movePlayer(direction: string, delta: number) {
     const oldPosition = playerData.position
@@ -19,8 +26,8 @@ function useMovePlayer() {
     } else if (direction === 'right') {
       newPosition[0] += scaledDelta
     }
-    console.log('setting player position to', newPosition)
-    console.log('playerUpdater is', playerUpdater)
+    // console.log('setting player position to', newPosition)
+    // console.log('playerUpdater is', playerUpdater)
     setPlayerPosition(newPosition)
   }
 
@@ -28,9 +35,11 @@ function useMovePlayer() {
 }
 
 function usePlayerShoot() {
-  const playerData = useZustandStore((state: any) => state.player)
-  const addProjectile = useZustandStore((state: any) => state.addProjectile)
-  const setPlayerLastShootTimeMs = useZustandStore((state: any) => state.setPlayerLastShootTimeMs)
+  const playerData = useZustandStore((state: ZustandState) => state.player)
+  const addProjectile = useZustandStore((state: ZustandState) => 
+                                                      state.addProjectile)
+  const setPlayerLastShootTimeMs = useZustandStore((state: ZustandState) => 
+                                              state.setPlayerLastShootTimeMs)
 
   function playerShoot() {
     if (playerData.lastShootTimeMs + playerData.shootDelayMs > Date.now()) {
@@ -70,11 +79,14 @@ function usePlayerShoot() {
 }
 
 function useUpdateProjectiles() {
-  const projectiles = useZustandStore((state: any) => state.projectiles)
-  const objectsDict = useZustandStore((state: any) => state.gameObjectsDict)
-  const removeProjectileByIndex = useZustandStore((state: any) => state.removeProjectileByIndex)
-  const damageObjectById = useZustandStore((state: any) => state.damageObjectById)
-  const updateProjectileByIndex = useZustandStore((state: any) => state.updateProjectileByIndex)
+  const projectiles = useZustandStore((state: ZustandState) => state.projectiles)
+  const objectsDict = useZustandStore((state: ZustandState) => state.gameObjectsDict)
+  const removeProjectileByIndex = useZustandStore((state: ZustandState) => 
+                                                  state.removeProjectileByIndex)
+  const damageObjectById = useZustandStore((state: ZustandState) => 
+                                                            state.damageObjectById)
+  const updateProjectileByIndex = useZustandStore((state: ZustandState) => 
+                                                      state.updateProjectileByIndex)
 
   const objects: GameObjectData[] = Object.values(objectsDict)
 
@@ -101,6 +113,8 @@ function useUpdateProjectiles() {
 
       // move bullet
       bullet.position[1] += (bullet.speed || 1) * scaledDelta
+
+      // console.log('new bullet position is', bullet.position);
 
       // check for collision
       objects.forEach((thisObject: GameObjectData) => {

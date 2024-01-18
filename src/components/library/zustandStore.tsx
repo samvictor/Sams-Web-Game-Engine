@@ -1,9 +1,57 @@
 import { create } from 'zustand'
-import { maxProjectilesOnScreen, defaultGameObjectData } from './constants'
-import { GameObjectData, ProjectileData, PlayerObjectData, GameObjectType, GameState } from './interfaces'
+import { maxProjectilesOnScreen, 
+  defaultGameObjectData, 
+  defaultGameSettings } from './constants'
+import { 
+  GameObjectData, 
+  GameObjectsDictionary,
+  ProjectileData, 
+  PlayerObjectData, 
+  GameObjectType, 
+  GameSettings,
+  PlayerStats,
+} from './interfaces'
+
 // import { Projectile } from './objects'
 
-const updateProjectileByIndex = (oldProjectiles: ProjectileData[], index: number, newProjectile: ProjectileData) => {
+interface ZustandState {
+  // data
+  player: PlayerObjectData
+  playerStats: PlayerStats
+  playerUpdater: number
+  projectiles: GameObjectData[]
+  projectilesUpdater: number
+  gameObjectsDict: GameObjectsDictionary
+  colliderObjects: GameObjectData[]
+  gameSettings: GameSettings
+
+  // functions
+  // players
+  setPlayer: (newPlayer: PlayerObjectData) => void
+  setPlayerPosition: (newPlayerPosition: number[]) => void
+  setPlayerLastShootTimeMs: (newShootTime: number) => void
+
+  // projectiles
+  addProjectile: (newProjectile: ProjectileData) => void
+  updateProjectileByIndex: (projectileIndex: number, 
+                              newProjectile: ProjectileData) => void
+  removeProjectileById: (id: string) => void
+  removeProjectileByIndex: (projectileIndex: number, projectileId: string) => void 
+
+  // objects
+  addObject: (newObject: GameObjectData) => void
+
+  // damage
+  damageObjectById: (targetId: string, damage?: number, sourceId?: string) =>  void
+
+  // Game settings
+  setGameSettings: (gameSettings: any) => void
+  updateGameSettings: (gameSettings: any) => void
+}
+
+const updateProjectileByIndex = (oldProjectiles: ProjectileData[], 
+                                    index: number, 
+                                    newProjectile: ProjectileData) => {
   if (!oldProjectiles) {
     // old projectiles not found
     throw new Error('old projectiles not found')
@@ -13,7 +61,9 @@ const updateProjectileByIndex = (oldProjectiles: ProjectileData[], index: number
 
   return oldProjectiles
 }
-const removeProjectileByIndex = (oldProjectiles: ProjectileData[], index: number, id?: string) => {
+const removeProjectileByIndex = (oldProjectiles: ProjectileData[], 
+                                    index: number, 
+                                    id?: string) => {
   if (!oldProjectiles) {
     // old projectiles not found
     throw new Error('old projectiles not found')
@@ -46,7 +96,7 @@ const addObject = (newObject: GameObjectData, state: any) => {
   }
 }
 
-const useZustandStore = create((set) => ({
+const useZustandStore = create<ZustandState>()((set) => ({
   // default state
   player: {
     ...defaultGameObjectData,
@@ -59,14 +109,17 @@ const useZustandStore = create((set) => ({
   playerStats: {
     score: 0,
   },
+  // change updater number whenever we change dict 
+  // this lets zustand know that there has been a change
+  // and we should rerender
   playerUpdater: 0,
   projectiles: [],
+  projectilesUpdater: 0,
   gameObjectsDict: {},
   // live game objects with colliders
   colliderObjects: [],
-  gameSettings: {
-    gameState: GameState.StartScreen,
-  },
+  gameSettings: defaultGameSettings,
+  
 
   // functions
   // players
@@ -83,7 +136,7 @@ const useZustandStore = create((set) => ({
       },
       playerUpdater: Date.now(),
     })),
-  setPlayerLastShootTimeMs: (newShootTime: number[]) =>
+  setPlayerLastShootTimeMs: (newShootTime: number) =>
     set((state: any) => ({
       player: {
         ...state.player,
@@ -107,14 +160,17 @@ const useZustandStore = create((set) => ({
 
       return {
         projectiles: tempProjectiles,
+        projectilesUpdater: Date.now(),
       }
     }),
   updateProjectileByIndex: (projectileIndex: number, newProjectile: ProjectileData) =>
     set((state: any) => {
       let tempProjectiles = state.projectiles || []
       tempProjectiles = updateProjectileByIndex(tempProjectiles, projectileIndex, newProjectile)
+      // console.log("setting projectiles to", JSON.stringify(tempProjectiles));
       return {
         projectiles: tempProjectiles,
+        projectilesUpdater: Date.now(),
       }
     }),
   removeProjectileById: (id: string) =>
@@ -130,6 +186,7 @@ const useZustandStore = create((set) => ({
 
       return {
         projectiles: tempProjectiles,
+        projectilesUpdater: Date.now(),
       }
     }),
   removeProjectileByIndex: (projectileIndex: number, projectileId: string) =>
@@ -138,6 +195,7 @@ const useZustandStore = create((set) => ({
       tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, projectileId)
       return {
         projectiles: tempProjectiles,
+        projectilesUpdater: Date.now(),
       }
     }),
 
@@ -244,4 +302,4 @@ const useZustandStore = create((set) => ({
     }),
 }))
 
-export { useZustandStore }
+export { useZustandStore, ZustandState }

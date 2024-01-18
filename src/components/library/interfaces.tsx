@@ -26,6 +26,17 @@ enum LevelState {
   OutOfTime,
 }
 
+interface GameSettings {
+  background: string
+  overlayTextColor: string
+  gravity: string
+  travelDirection: string
+  levelFlowType: string
+  levelFlow: string[]
+  currentLevel: string | null
+  gameState: GameState
+}
+
 interface Collider {
   shape: ColliderShape
   offset: number[]
@@ -55,6 +66,10 @@ interface PlayerObjectData extends GameObjectData {
   shootDelayMs: number
 }
 
+interface PlayerStats {
+  score:number
+}
+
 interface ProjectileData extends GameObjectData {
   damage: number
   sourceId: string
@@ -73,5 +88,7 @@ export {
   ColliderShape,
   GameObjectType,
   GameState,
+  GameSettings,
   LevelState,
+  PlayerStats,
 }

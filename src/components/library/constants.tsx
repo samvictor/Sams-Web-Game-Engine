@@ -1,4 +1,11 @@
-import { GameObjectData, Collider, ColliderShape, GameObjectType } from './interfaces'
+import { 
+  GameObjectData, 
+  Collider, 
+  ColliderShape, 
+  GameObjectType, 
+  GameSettings,
+  GameState,
+} from './interfaces'
 
 const maxProjectilesOnScreen = 100
 const maxObjectsOnScreen = 100
@@ -21,4 +28,22 @@ const defaultGameObjectData: GameObjectData = {
   collider: defaultCollider,
 }
 
-export { maxProjectilesOnScreen, maxObjectsOnScreen, screenBoundsMax, screenBoundsMin, defaultGameObjectData }
+const defaultGameSettings: GameSettings = {
+  background: 'transparent',
+  overlayTextColor: 'black',
+  gravity: 'none',
+  travelDirection: 'up',
+  levelFlowType: 'linear',
+  levelFlow: ['defaultLevel'],
+  currentLevel: null,
+  gameState: GameState.NormalPlay,
+}
+
+
+export { maxProjectilesOnScreen, 
+  maxObjectsOnScreen, 
+  screenBoundsMax, 
+  screenBoundsMin, 
+  defaultGameObjectData,
+  defaultGameSettings, 
+}

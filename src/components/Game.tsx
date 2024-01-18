@@ -10,21 +10,13 @@ import React, { useEffect } from 'react'
 // import { Provider } from 'react-redux'
 // import reduxStore from './library/reduxStore'
 import { useZustandStore } from './library/zustandStore'
-import { GameState } from './library/interfaces'
+import { GameState, GameSettings } from './library/interfaces'
+import { defaultGameSettings } from './library/constants'
 
-const defaultSettings: any = {
-  background: 'transparent',
-  overlayTextColor: 'black',
-  gravity: 'none',
-  travelDirection: 'up',
-  levelFlowType: 'linear',
-  levelFlow: ['defaultLevel'],
-  currentLevel: null,
-  gameState: GameState.StartScreen,
-}
+const defaultSettings: GameSettings = defaultGameSettings
 
 function GameNoProv(props: any) {
-  const settings = { ...defaultSettings, ...props.settings }
+  const settings:GameSettings = { ...defaultSettings, ...props.settings }
   const setGameSettings = useZustandStore((state: any) => state.setGameSettings)
   const updateGameSettings = useZustandStore((state: any) => state.updateGameSettings)
 
