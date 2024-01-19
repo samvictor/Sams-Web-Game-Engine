@@ -74,6 +74,13 @@ function Level(props: any) {
     </div>
   )
 
+  const winScreen = (
+    <div>
+      You Won!
+      Score: {playerStats.score}
+    </div>
+  )
+
   
 
   let returnBody = null 
@@ -92,6 +99,11 @@ function Level(props: any) {
     
     case LevelState.LoseScreen:
       returnBody = loseScreen 
+      childrenDisplay = 'none'
+      break
+    
+    case LevelState.WinScreen:
+      returnBody = winScreen
       childrenDisplay = 'none'
       break
 

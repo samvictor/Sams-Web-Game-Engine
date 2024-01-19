@@ -5,6 +5,7 @@ import { Collider } from './components/library/interfaces'
 import Canvas from './components/Canvas'
 import Game from './components/Game'
 import Level from './components/Level'
-import { Player, Box, GameObject } from './components/library/objects'
+import { Player, Box, GameObject, Enemy } from './components/library/objects'
 
-export { Test, ExampleGame, Canvas, Player, Box, GameObject, Collider, Game, Level }
+export { Test, ExampleGame, Canvas, Player, Box, 
+  GameObject, Collider, Game, Level, Enemy }

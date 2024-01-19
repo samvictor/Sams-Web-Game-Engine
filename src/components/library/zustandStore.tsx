@@ -307,14 +307,29 @@ const useZustandStore = create<ZustandState>()((set) => ({
         let tempColliderObj = state.colliderObjects
         tempColliderObj = removeFromListById(tempColliderObj, target.id)
 
+        // count how many enemies are still alive
+        let numLivingEnemies = 0;
+        const allObjects:GameObjectData[] = Object.values(state.gameObjectsDict);
+        allObjects.forEach((thisObject:GameObjectData) => {
+          if (!thisObject.destroyed && thisObject.isEnemy) {
+            numLivingEnemies++
+          }
+        })
+        console.log("enemies remaining:", numLivingEnemies, 'objects', allObjects)
+
         if (target.scoreValue) {
           playerStatsClone.score = oldPlayerScore + target.scoreValue
           console.log('setting new score to', playerStatsClone.score)
         }
+
         return {
           gameObjectsDict: oldObjects,
           playerStats: playerStatsClone,
           colliderObjects: tempColliderObj,
+          levelSettings: {
+            ...state.levelSettings,
+            numLivingEnemies: numLivingEnemies,
+          }
         }
       }
 

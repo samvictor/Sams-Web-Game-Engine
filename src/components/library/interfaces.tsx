@@ -55,6 +55,7 @@ interface LevelSettings {
   failCriteria: FailCriteria[]
   winCriteria: WinCriteria[]
   numberOfLives?: number
+  numLivingEnemies?: number
   timeLeftSec?: number
   targetIds?: string[]
   targetScore?: number
@@ -83,8 +84,9 @@ interface GameObjectData {
   health?: number
   scoreValue?: number
   collider: Collider
-  type: GameObjectType
+  objectType: GameObjectType
   destroyed?: boolean
+  isEnemy?: boolean
 }
 
 interface PlayerObjectData extends GameObjectData {

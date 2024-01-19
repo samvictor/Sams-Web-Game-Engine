@@ -16,7 +16,7 @@ function GameObject(props: any) {
   const [hovered, hover] = useState(false)
   const [clicked, click] = useState(false)
 
-  const type = props.type || GameObjectType.Default
+  const objectType = props.objectType || GameObjectType.Default
   const size = props.size || [1, 1, 1]
   const position = props.position || [0, 0, 0]
   const rotation = props.rotation || [0, 0, 0]
@@ -29,6 +29,7 @@ function GameObject(props: any) {
     boxSize: size,
     offset: [0, 0, 0],
   }
+  const isEnemy = props.isEnemy || false;
   const addObject = useZustandStore((state: any) => state.addObject)
 
   useEffect(() => {
@@ -40,9 +41,10 @@ function GameObject(props: any) {
       size: size,
       speed: speed,
       health: health,
-      collider: collider,
-      type: type,
+      objectType: objectType,
       scoreValue: scoreValue,
+      collider: collider,
+      isEnemy: isEnemy,
     }
 
     addObject(newObjectData)
@@ -79,6 +81,23 @@ function GameObject(props: any) {
   )
 }
 
+function Enemy(props:any) {
+  // create basic game object, but set 'isEnemy' to true by default
+  let isEnemy = true;
+  if (typeof props.isEnemy !== 'undefined') {
+    isEnemy = props.isEnemy
+  }
+
+  const objectType = props.objectType || 'enemy'
+  
+  delete props.isEnemy
+  delete props.objectType
+
+  console.log("setting is enemy to", isEnemy)
+
+  return <GameObject {...props} isEnemy={isEnemy} objectType={objectType} />
+}
+
 function Box(props: any) {
   // create a basic game object, but make the collider a box
 
@@ -89,7 +108,7 @@ function Box(props: any) {
     offset: [0, 0, 0],
   }
 
-  return <GameObject {...props} collider={collider} type='box'></GameObject>
+  return <GameObject {...props} collider={collider} objectType='box'></GameObject>
 }
 
 function Ship(props: any) {
@@ -124,7 +143,7 @@ function Projectile(props: any) {
   return (
     <mesh {...props} ref={ref}>
       <boxGeometry args={[0.1, 0.5, 0.1]} />
-      <meshStandardMaterial color={color} />
+      <meshStandardMaterial color={color}/>
     </mesh>
   )
 }
@@ -134,4 +153,4 @@ Projectile.propTypes = {
   position: PropTypes.array,
 }
 
-export { Box, Ship, Player, Projectile, GameObject }
+export { Box, Ship, Player, Projectile, GameObject, Enemy }
