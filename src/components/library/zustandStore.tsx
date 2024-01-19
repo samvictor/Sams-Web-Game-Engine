@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { maxProjectilesOnScreen, 
   defaultGameObjectData, 
-  defaultGameSettings } from './constants'
+  defaultGameSettings, 
+  defaultLevelSettings} from './constants'
 import { 
   GameObjectData, 
   GameObjectsDictionary,
@@ -10,6 +11,7 @@ import {
   GameObjectType, 
   GameSettings,
   PlayerStats,
+  LevelSettings,
 } from './interfaces'
 
 // import { Projectile } from './objects'
@@ -19,11 +21,12 @@ interface ZustandState {
   player: PlayerObjectData
   playerStats: PlayerStats
   playerUpdater: number
-  projectiles: GameObjectData[]
+  projectiles: ProjectileData[]
   projectilesUpdater: number
   gameObjectsDict: GameObjectsDictionary
   colliderObjects: GameObjectData[]
   gameSettings: GameSettings
+  levelSettings: LevelSettings
 
   // functions
   // players
@@ -45,8 +48,12 @@ interface ZustandState {
   damageObjectById: (targetId: string, damage?: number, sourceId?: string) =>  void
 
   // Game settings
-  setGameSettings: (gameSettings: any) => void
+  setGameSettings: (gameSettings: GameSettings) => void
   updateGameSettings: (gameSettings: any) => void
+
+  // Level settings
+  setLevelSettings: (levelSettings: LevelSettings) => void 
+  updateLevelSettings: (levelSettings: any) => void
 }
 
 const updateProjectileByIndex = (oldProjectiles: ProjectileData[], 
@@ -124,6 +131,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
   // live game objects with colliders
   colliderObjects: [],
   gameSettings: defaultGameSettings,
+  levelSettings: defaultLevelSettings,
   
 
   // functions
@@ -169,7 +177,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
       }
     }),
   updateProjectileByIndex: (projectileIndex: number, newProjectile: ProjectileData) =>
-    set((state: any) => {
+    set((state: ZustandState) => {
       let tempProjectiles = state.projectiles || []
       tempProjectiles = updateProjectileByIndex(tempProjectiles, projectileIndex, newProjectile)
       // console.log("setting projectiles to", JSON.stringify(tempProjectiles));
@@ -179,7 +187,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
       }
     }),
   removeProjectileById: (id: string) =>
-    set((state: any) => {
+    set((state: ZustandState) => {
       let tempProjectiles = state.projectiles || []
 
       const projectileIndex = tempProjectiles.findIndex((projectile: any) => projectile.id === id)
@@ -195,7 +203,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
       }
     }),
   removeProjectileByIndex: (projectileIndex: number, projectileId: string) =>
-    set((state: any) => {
+    set((state: ZustandState) => {
       let tempProjectiles = state.projectiles || []
       tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, projectileId)
       return {
@@ -206,7 +214,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
 
   // objects
   addObject: (newObject: GameObjectData) =>
-    set((state: any) => {
+    set((state: ZustandState) => {
       if (!newObject) {
         throw new Error('new object not found (addObject)')
       }
@@ -228,7 +236,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
       }
     }),
   removeObjectById: (objectId: string) =>
-    set((state: any) => {
+    set((state: ZustandState) => {
       const tempObjects = state.gameObjectsDict || {}
       delete tempObjects[objectId]
 
@@ -237,7 +245,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
       }
     }),
   updateObjectById: (newObject: GameObjectData) =>
-    set((state: any) => {
+    set((state: ZustandState) => {
       if (!newObject) {
         throw new Error('new object not found (addObject)')
       }
@@ -314,7 +322,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
     }),
 
   // Game settings
-  setGameSettings: (gameSettings: any) =>
+  setGameSettings: (gameSettings: GameSettings) =>
     set(() => {
       if (!gameSettings) {
         throw new Error('gameSettings is empty')
@@ -325,7 +333,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
       }
     }),
   updateGameSettings: (gameSettings: any) =>
-    set((state: any) => {
+    set((state: ZustandState) => {
       if (!gameSettings) {
         throw new Error('gameSettings is empty')
       }
@@ -336,6 +344,33 @@ const useZustandStore = create<ZustandState>()((set) => ({
         gameSettings: {
           ...oldGameSettings,
           ...gameSettings,
+        },
+      }
+    }),
+    
+    // Level settings
+  setLevelSettings: (levelSettings: LevelSettings) =>
+    set(() => {
+      if (!levelSettings) {
+        throw new Error('levelSettings is empty (setLevelSettings)')
+      }
+
+      return {
+        levelSettings: levelSettings,
+      }
+    }),
+  updateLevelSettings: (levelSettings: any) =>
+    set((state: ZustandState) => {
+      if (!levelSettings) {
+        throw new Error('levelSettings is empty (updateLevelSettings)')
+      }
+
+      const oldLevelSettings = state.levelSettings
+
+      return {
+        levelSettings: {
+          ...oldLevelSettings,
+          ...levelSettings,
         },
       }
     }),

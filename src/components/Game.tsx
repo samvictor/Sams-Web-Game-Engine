@@ -25,9 +25,7 @@ function GameNoProv(props: any) {
       settings.currentLevel = settings.levelFlow[0]
     }
     setGameSettings(settings)
-  }, [])
-
-  useEffect(() => {
+    
     const handleKeyUp = (e: any) => {
       switch (e.code) {
         case 'Escape':

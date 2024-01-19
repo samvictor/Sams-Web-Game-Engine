@@ -26,6 +26,19 @@ enum LevelState {
   OutOfTime,
 }
 
+enum FailCriteria {
+  NumLives0,
+  TimeLeft0,
+}
+
+enum WinCriteria {
+  NumEnemies0, 
+  CollideWithAnyTarget, 
+  CollideWithAllTargets,
+  ScoreAtOrAboveTarget,
+}
+
+
 interface GameSettings {
   background: string
   overlayTextColor: string
@@ -35,6 +48,19 @@ interface GameSettings {
   levelFlow: string[]
   currentLevel: string | null
   gameState: GameState
+}
+
+interface LevelSettings {
+  id?: string
+  failCriteria: FailCriteria[]
+  winCriteria: WinCriteria[]
+  numberOfLives?: number
+  timeLeftSec?: number
+  targetIds?: string[]
+  targetScore?: number
+  levelState: LevelState
+  title: string 
+  startScreenBody: string
 }
 
 interface Collider {
@@ -91,4 +117,7 @@ export {
   GameSettings,
   LevelState,
   PlayerStats,
+  FailCriteria, 
+  WinCriteria,
+  LevelSettings,
 }
