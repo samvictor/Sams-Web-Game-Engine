@@ -6,7 +6,7 @@
 
 import React, { useEffect } from 'react'
 import { defaultLevelSettings } from './library/constants'
-import { LevelSettings, LevelState } from './library/interfaces'
+import { LevelSettings, LevelState, WinCriteria } from './library/interfaces'
 import { ZustandState, useZustandStore } from './library/zustandStore'
 
 const defaultSettings: LevelSettings = defaultLevelSettings
@@ -43,8 +43,19 @@ function Level(props: any) {
     })
   }
 
-
+  const numLivingEnemies = settingsFromStore.numLivingEnemies || 0;
   const levelState = settingsFromStore.levelState
+
+  if (numLivingEnemies <= 0 
+        && settingsFromStore.winCriteria.includes(WinCriteria.NumEnemies0) 
+        && levelState === LevelState.NormalPlay) {
+    updateLevelSettings({
+      levelState: LevelState.WinScreen
+    })
+  }
+
+  
+  
 
   const goToNormalPlay = () => {
     updateLevelSettings({
