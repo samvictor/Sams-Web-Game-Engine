@@ -362,4 +362,21 @@ const getColliderPosition3D = (object: any) => {
 
 const collisionCheck = collisionCheck3D
 
-export { collisionCheck }
+
+const timer = {
+  startTime: 0,
+  endTime: 0,
+  start: function () {
+    this.startTime = Date.now()
+  },
+  stop: function () {
+    this.endTime = Date.now()
+    return this.endTime - this.startTime
+  },
+  reset: function () {
+    this.startTime = 0
+    this.endTime = 0
+  },
+}
+
+export { collisionCheck, timer }

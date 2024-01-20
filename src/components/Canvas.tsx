@@ -49,17 +49,6 @@ function CanvasNoProv(props: any) {
   useEffect(() => {
     const handleKeyDown = (e: any) => {
       setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: true }))
-      // console.log('key is', e.code)
-      switch (e.code) {
-        case 'ArrowLeft':
-          break
-        case 'ArrowRight':
-          // console.log('right')
-          break
-        case 'Space':
-          // console.log('space')
-          break
-      }
     }
     const handleKeyUp = (e: any) => {
       setMovement((m: any) => ({ ...m, [moveFieldByKey(e.code)]: false }))
@@ -75,7 +64,6 @@ function CanvasNoProv(props: any) {
   function Updater() {
     useFrame((_, delta: number) => {
       if (movement.left) {
-        // console.log('moving left')
         movePlayer('left', delta)
       } else if (movement.right) {
         movePlayer('right', delta)
@@ -107,7 +95,12 @@ function CanvasNoProv(props: any) {
 
   // make overlay
   const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
-  const playerStats: any = useZustandStore((state: ZustandState) => state.playerStats)
+  const playerStats: any = useZustandStore((state: ZustandState) => 
+                                                          state.playerStats)
+  const levelSettings = useZustandStore((state: ZustandState) => 
+                                                          state.levelSettings)
+ 
+
   const overlayXml: any = (
     <div
       id='webGameEngineOverlay'
@@ -119,6 +112,7 @@ function CanvasNoProv(props: any) {
       }}
     >
       Score: {playerStats.score}
+      Time Left: {levelSettings.timeLeftSec}
     </div>
   )
 

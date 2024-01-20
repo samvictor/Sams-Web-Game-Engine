@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { defaultLevelSettings } from './library/constants'
 import { LevelSettings, LevelState, WinCriteria } from './library/interfaces'
 import { ZustandState, useZustandStore } from './library/zustandStore'
@@ -12,7 +12,12 @@ import { ZustandState, useZustandStore } from './library/zustandStore'
 const defaultSettings: LevelSettings = defaultLevelSettings
 
 function Level(props: any) {
-  const settings:LevelSettings = { ...defaultSettings, ...props.settings }
+  const settings:LevelSettings = {
+    ...defaultSettings, 
+    ...props.settings,
+  }
+  settings.timeLeftSec = settings.timeLimitSec
+
   const levelId = settings.id
   const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
   const setLevelSettings = useZustandStore((state: ZustandState) => 
@@ -22,39 +27,63 @@ function Level(props: any) {
   
   const playerStats = useZustandStore((state:ZustandState) => 
                                                     state.playerStats)
+  
+  
+  const timeUpdaterIntervalId = useRef<any>()
+  
   useEffect(() => {
     setLevelSettings(settings)
   }, [])
-
   
   
   const settingsFromStore = useZustandStore((state: ZustandState) => 
   state.levelSettings)
   
-  // if we're not on this level, don't show anything
-  if (gameSettings.currentLevel !== levelId) {
-    return null
-  }
-
-  // first try to get gameState from props. If not there, get it from store
+  
+  // if levelState changes in props, update store
   if (props.levelState && props.levelState !== settingsFromStore.levelState) {
     updateLevelSettings({
       gameState: props.gameState,
     })
   }
-
+  
   const numLivingEnemies = settingsFromStore.numLivingEnemies || 0;
   const levelState = settingsFromStore.levelState
+  
+  useEffect(() => {
+    // go to win screen when player wins
+    if (numLivingEnemies <= 0 
+              && settingsFromStore.winCriteria.includes(WinCriteria.NumEnemies0) 
+              && levelState === LevelState.NormalPlay) {
+      updateLevelSettings({
+        levelState: LevelState.WinScreen
+      })
+    }
 
-  if (numLivingEnemies <= 0 
-        && settingsFromStore.winCriteria.includes(WinCriteria.NumEnemies0) 
-        && levelState === LevelState.NormalPlay) {
-    updateLevelSettings({
-      levelState: LevelState.WinScreen
-    })
+
+    
+  }, [numLivingEnemies, settingsFromStore, levelState, updateLevelSettings])
+    
+  const updateTimeLeft = useZustandStore((state:ZustandState) => 
+                                                          state.updateTimeLeft)
+    
+  // if we're not on this level, don't show anything
+  if (gameSettings.currentLevel !== levelId) {
+    return null
   }
 
-  
+
+  const startTimeUpdater = () => {
+    // 2x per second update time left
+    timeUpdaterIntervalId.current = setInterval(() => {
+      console.log('updating time')
+      
+      updateTimeLeft()
+    }, 500)
+  }
+  const clearTimeUpdater = () => {
+    clearInterval(timeUpdaterIntervalId.current)
+  }
   
 
   const goToNormalPlay = () => {
@@ -63,12 +92,22 @@ function Level(props: any) {
     })
   }
 
+  const startLevel = () => {
+    goToNormalPlay()
+    updateLevelSettings({
+      startTimeMs: Date.now()
+    })
+
+    clearTimeUpdater()
+    startTimeUpdater()
+  }
+
 
   const startScreen = (
     <div>
       {settings.title}
       {settings.startScreenBody}
-      <button onClick={goToNormalPlay}>Start</button>
+      <button onClick={startLevel}>Start</button>
     </div>
   )
 

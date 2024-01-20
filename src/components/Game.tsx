@@ -4,21 +4,25 @@
 
 'use client'
 
-import React, { useEffect } from 'react'
+import React, { startTransition, useEffect } from 'react'
 // import { useSelector } from 'react-redux'
 
 // import { Provider } from 'react-redux'
 // import reduxStore from './library/reduxStore'
-import { useZustandStore } from './library/zustandStore'
+import { ZustandState, useZustandStore } from './library/zustandStore'
 import { GameState, GameSettings } from './library/interfaces'
 import { defaultGameSettings } from './library/constants'
+import { timer } from './library/helpfulFunctions'
 
 const defaultSettings: GameSettings = defaultGameSettings
 
 function GameNoProv(props: any) {
   const settings:GameSettings = { ...defaultSettings, ...props.settings }
   const setGameSettings = useZustandStore((state: any) => state.setGameSettings)
-  const updateGameSettings = useZustandStore((state: any) => state.updateGameSettings)
+  const updateGameSettings = useZustandStore((state: any) => 
+                                                        state.updateGameSettings)
+
+ 
 
   useEffect(() => {
     if (settings.levelFlowType === 'linear') {
@@ -30,9 +34,7 @@ function GameNoProv(props: any) {
       switch (e.code) {
         case 'Escape':
         case 'KeyP':
-          updateGameSettings({
-            gameState: GameState.Paused,
-          })
+          startPause()
           break
       }
     }
@@ -58,6 +60,35 @@ function GameNoProv(props: any) {
     })
   }
 
+  const startPause = () => {
+    // if already paused, do nothing
+    if (gameState === GameState.Paused) {
+      return
+    }
+
+    timer.start()
+    updateGameSettings({
+      gameState: GameState.Paused,
+    })
+  }
+
+  const levelSettings = useZustandStore((state:ZustandState) => state.levelSettings)
+  const updateLevelSettings = useZustandStore((state:ZustandState) => 
+                                                          state.updateLevelSettings)
+  const endPause = () => {
+    // if not paused, do nothing
+    if (gameState !== GameState.Paused) {
+      return
+    }
+
+    const pauseTimeMs = timer.stop();
+    timer.reset()
+    updateLevelSettings({
+      pauseOffsetMs: (levelSettings.pauseOffsetMs||0) + pauseTimeMs
+    })
+    goToNormalPlay()
+  }
+
   const startScreen = (
     <div>
       Start Screen
@@ -68,7 +99,7 @@ function GameNoProv(props: any) {
   const pauseScreen = (
     <div>
       Pause Screen
-      <button onClick={goToNormalPlay}>Resume</button>
+      <button onClick={endPause}>Resume</button>
     </div>
   )
 

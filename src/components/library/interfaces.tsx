@@ -56,7 +56,11 @@ interface LevelSettings {
   winCriteria: WinCriteria[]
   numberOfLives?: number
   numLivingEnemies?: number
+  timeLimitSec?: number
   timeLeftSec?: number
+  startTimeMs?: number
+  // add extra time while paused so time doesn't count down
+  pauseOffsetMs?: number
   targetIds?: string[]
   targetScore?: number
   levelState: LevelState

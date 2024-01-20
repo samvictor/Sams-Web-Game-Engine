@@ -26,6 +26,7 @@ interface ZustandState {
   gameObjectsDict: GameObjectsDictionary
   colliderObjects: GameObjectData[]
   gameSettings: GameSettings
+  // current level
   levelSettings: LevelSettings
 
   // functions
@@ -54,6 +55,9 @@ interface ZustandState {
   // Level settings
   setLevelSettings: (levelSettings: LevelSettings) => void 
   updateLevelSettings: (levelSettings: any) => void
+
+  // timer 
+  updateTimeLeft: (timeLeftMs?:number) => void
 }
 
 const updateProjectileByIndex = (oldProjectiles: ProjectileData[], 
@@ -107,6 +111,18 @@ const removeFromListById = (list:any[],  id:string) => {
 
   return list;
 }
+
+const getTimeLeftFromState = (state:ZustandState) => {
+  const timeElapsedMs = (Date.now() - (state.levelSettings.startTimeMs || 0))
+                                        - (state.levelSettings.pauseOffsetMs || 0)
+  let timeLeftSec =  (state.levelSettings.timeLimitSec||0) -  
+                                    Math.floor(timeElapsedMs/1000)
+  if (timeLeftSec < 0) {
+    timeLeftSec = 0
+  }
+
+  return timeLeftSec;
+} 
 
 const useZustandStore = create<ZustandState>()((set) => ({
   // default state
@@ -382,13 +398,39 @@ const useZustandStore = create<ZustandState>()((set) => ({
 
       const oldLevelSettings = state.levelSettings
 
+      const timeLeftSec = getTimeLeftFromState(state);
+
       return {
         levelSettings: {
           ...oldLevelSettings,
           ...levelSettings,
+          timeLeftSec: timeLeftSec,
         },
       }
     }),
+  
+  // timer
+  updateTimeLeft: (inTimeLeftSec?:number) => set((state:ZustandState) => {
+    // if timeLeftMs is provided, use that. 
+    // if not, calculate time left from level settings 
+    if (typeof inTimeLeftSec !== 'undefined') {
+      return {
+        levelSettings: {
+          ...state.levelSettings,
+          timeLeftSec: inTimeLeftSec
+        }
+      }
+    }
+
+    const timeLeftSec = getTimeLeftFromState(state);    
+
+    return {
+      levelSettings: {
+        ...state.levelSettings,
+        timeLeftSec: timeLeftSec,
+      }
+    }
+  })
 }))
 
 export { useZustandStore, ZustandState }
