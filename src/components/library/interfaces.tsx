@@ -12,10 +12,10 @@ enum GameObjectType {
 }
 
 enum GameState {
-  StartScreen,
-  NormalPlay,
-  Paused,
-  EndScreen,
+  StartScreen = 'startScreen',
+  NormalPlay = 'normalPlay',
+  Paused = 'paused',
+  EndScreen = 'endScreen',
 }
 
 enum LevelState {

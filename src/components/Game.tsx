@@ -19,6 +19,8 @@ const defaultSettings: GameSettings = defaultGameSettings
 function GameNoProv(props: any) {
   const settings:GameSettings = { ...defaultSettings, ...props.settings }
   const setGameSettings = useZustandStore((state: any) => state.setGameSettings)
+  const settingsFromStore = useZustandStore((state: any) => state.gameSettings)
+  const gameState = settingsFromStore.gameState
   const updateGameSettings = useZustandStore((state: any) => 
                                                         state.updateGameSettings)
 
@@ -29,12 +31,17 @@ function GameNoProv(props: any) {
       settings.currentLevel = settings.levelFlow[0]
     }
     setGameSettings(settings)
-    
+  }, [])
+
+
+
+  useEffect(() => {
+    // handle key presses  
     const handleKeyUp = (e: any) => {
       switch (e.code) {
         case 'Escape':
         case 'KeyP':
-          startPause()
+          pausePressed()
           break
       }
     }
@@ -42,9 +49,10 @@ function GameNoProv(props: any) {
     return () => {
       document.removeEventListener('keyup', handleKeyUp)
     }
-  }, [])
-
-  const settingsFromStore = useZustandStore((state: any) => state.gameSettings)
+  }, [gameState])
+  
+  
+  
 
   // first try to get gameState from props. If not there, get it from store
   if (props.gameState && props.gameState !== settingsFromStore.gameState) {
@@ -52,7 +60,6 @@ function GameNoProv(props: any) {
       gameState: props.gameState,
     })
   }
-  const gameState = settingsFromStore.gameState
 
   const goToNormalPlay = () => {
     updateGameSettings({
@@ -87,6 +94,18 @@ function GameNoProv(props: any) {
       pauseOffsetMs: (levelSettings.pauseOffsetMs||0) + pauseTimeMs
     })
     goToNormalPlay()
+  }
+
+  const pausePressed = () => {
+    console.log('pause pressed', gameState, GameState.Paused);
+    if (gameState === GameState.Paused) {
+      console.log('ending pause')
+      endPause();
+    }
+    else {
+      startPause();
+    }
+
   }
 
   const startScreen = (
