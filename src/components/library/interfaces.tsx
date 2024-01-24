@@ -38,14 +38,22 @@ enum WinCriteria {
   ScoreAtOrAboveTarget,
 }
 
+enum LevelFlowType {
+  None,
+  Linear,
+}
 
 interface GameSettings {
   background: string
   overlayTextColor: string
   gravity: string
   travelDirection: string
-  levelFlowType: string
+  levelFlowType: LevelFlowType
   levelFlow: string[]
+  // when this is set to a level id,
+  // that level sees this and starts itself
+  // then clears this data
+  goToLevel?: string
   currentLevel: string | null
   gameState: GameState
 }
@@ -126,4 +134,5 @@ export {
   FailCriteria, 
   WinCriteria,
   LevelSettings,
+  LevelFlowType,
 }

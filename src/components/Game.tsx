@@ -10,7 +10,7 @@ import React, { useEffect } from 'react'
 // import { Provider } from 'react-redux'
 // import reduxStore from './library/reduxStore'
 import { ZustandState, useZustandStore } from './library/zustandStore'
-import { GameState, GameSettings } from './library/interfaces'
+import { GameState, GameSettings, LevelFlowType } from './library/interfaces'
 import { defaultGameSettings } from './library/constants'
 import { timer } from './library/helpfulFunctions'
 
@@ -27,8 +27,8 @@ function GameNoProv(props: any) {
  
 
   useEffect(() => {
-    if (settings.levelFlowType === 'linear') {
-      settings.currentLevel = settings.levelFlow[0]
+    if (settings.levelFlowType === LevelFlowType.Linear) {
+      settings.goToLevel = settings.levelFlow[0]
     }
     setGameSettings(settings)
   }, [])
@@ -60,7 +60,7 @@ function GameNoProv(props: any) {
       gameState: props.gameState,
     })
   }
-  const updateTimeLeft = useZustandStore((state:ZustandState) => state.updateTimeLeft)
+  
   const goToNormalPlay = () => {
     updateGameSettings({
       gameState: GameState.NormalPlay,

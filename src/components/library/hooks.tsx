@@ -61,7 +61,7 @@ function usePlayerShoot() {
       id: 'bullet_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
       rotation: [0, 0, 0], // degrees where 0 is up
       size: [0.1, 0.5, 0.1],
-      type: GameObjectType.Projectile,
+      objectType: GameObjectType.Projectile,
       speed: 1,
       damage: 1,
       collider: {
@@ -117,15 +117,21 @@ function useUpdateProjectiles() {
       // console.log('new bullet position is', bullet.position);
 
       // check for collision
+      let hadCollision = false;
       objects.forEach((thisObject: GameObjectData) => {
         if (collisionCheck(bullet, thisObject)) {
           console.log('collision', thisObject.id)
           damageObjectById(thisObject.id, bullet.damage, bullet.id)
           // console.log("collision", bullet, thisObject);
+          hadCollision = true;
+          // destroy this projectile
+          removeProjectileByIndex(i, bullet.id)
         }
       })
 
-      updateProjectileByIndex(i, bullet)
+      if (!hadCollision) {
+        updateProjectileByIndex(i, bullet)
+      }
     })
   }
 

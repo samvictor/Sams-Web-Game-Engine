@@ -27,13 +27,23 @@ function Level(props: any) {
   
   const playerStats = useZustandStore((state:ZustandState) => 
                                                     state.playerStats)
-  
+  const updateGameSettings = useZustandStore((state:ZustandState) => 
+                                                      state.updateGameSettings)  
   
   const timeUpdaterIntervalId = useRef<any>()
   
+  // start self
+  const goToLevel = gameSettings.goToLevel;
   useEffect(() => {
-    setLevelSettings(settings)
-  }, [])
+    if (goToLevel === levelId) {
+      console.log('setting level settings')
+      setLevelSettings(settings)
+      updateGameSettings({
+        startLevel: null,
+        currentLevel: levelId,
+      })
+    }
+  }, [goToLevel])
   
   
   const settingsFromStore = useZustandStore((state: ZustandState) => 
@@ -66,7 +76,8 @@ function Level(props: any) {
     
   const updateTimeLeft = useZustandStore((state:ZustandState) => 
                                                           state.updateTimeLeft)
-    
+  const goToNextLevel = useZustandStore((state:ZustandState) => state.goToNextLevel)
+
   // if we're not on this level, don't show anything
   if (gameSettings.currentLevel !== levelId) {
     return null
@@ -103,6 +114,12 @@ function Level(props: any) {
   }
 
 
+
+  const winContinueClicked = () => {
+    goToNextLevel()
+  }
+
+
   const startScreen = (
     <div>
       {settings.title}
@@ -128,6 +145,7 @@ function Level(props: any) {
     <div>
       You Won!
       Score: {playerStats.score}
+      <button onClick={winContinueClicked}>Continue</button>
     </div>
   )
 

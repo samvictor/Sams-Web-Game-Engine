@@ -93,7 +93,6 @@ function Enemy(props:any) {
   delete props.isEnemy
   delete props.objectType
 
-  console.log("setting is enemy to", isEnemy)
 
   return <GameObject {...props} isEnemy={isEnemy} objectType={objectType} />
 }

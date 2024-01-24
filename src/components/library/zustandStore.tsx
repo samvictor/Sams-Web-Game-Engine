@@ -12,6 +12,8 @@ import {
   GameSettings,
   PlayerStats,
   LevelSettings,
+  LevelFlowType,
+  GameState,
 } from './interfaces'
 
 // import { Projectile } from './objects'
@@ -51,6 +53,7 @@ interface ZustandState {
   // Game settings
   setGameSettings: (gameSettings: GameSettings) => void
   updateGameSettings: (gameSettings: any) => void
+  goToNextLevel: () => void
 
   // Level settings
   setLevelSettings: (levelSettings: LevelSettings) => void 
@@ -214,6 +217,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('projectile not deleted (removeProjectileById)')
       }
 
+
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
@@ -223,6 +227,9 @@ const useZustandStore = create<ZustandState>()((set) => ({
     set((state: ZustandState) => {
       let tempProjectiles = state.projectiles || []
       tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, projectileId)
+
+
+      
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
@@ -313,6 +320,8 @@ const useZustandStore = create<ZustandState>()((set) => ({
         return {}
       }
 
+      console.log('target health', target.health)
+
       if (target.health && target.health > damageAmount) {
         target.health -= damageAmount
       } else {
@@ -378,6 +387,48 @@ const useZustandStore = create<ZustandState>()((set) => ({
           ...gameSettings,
         },
       }
+    }),
+  goToNextLevel: () =>
+    set((state: ZustandState) => {
+      const tempGameSettings = state.gameSettings
+
+      const currentLevel = tempGameSettings.currentLevel;
+      const levelFlow = tempGameSettings.levelFlow;
+      const levelFlowType = tempGameSettings.levelFlowType;
+
+      if (levelFlowType === LevelFlowType.Linear) {
+        if (!currentLevel) {
+          throw new Error('no current level found')
+        }
+        let currentLevelIndex = levelFlow.indexOf(currentLevel);
+        if (currentLevelIndex === -1) {
+          throw new Error('current level not in level flow')
+        }
+
+        currentLevelIndex++;
+        if (currentLevelIndex === levelFlow.length) {
+          // we're out of levels. end game
+          return {
+            gameSettings: {
+              ...tempGameSettings,
+              gameState: GameState.EndScreen
+            }
+          }
+        }
+
+        // move to next level 
+        const newLevel = levelFlow[currentLevelIndex];
+        return {
+          gameSettings: {
+            ...tempGameSettings,
+            goToLevel: newLevel,
+          }
+        }
+      }
+
+      console.warn('cannot go to next level,',
+                        'flow type is not linear (goToNextLevel)')
+      return {}
     }),
     
     // Level settings

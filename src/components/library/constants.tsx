@@ -9,6 +9,7 @@ import {
   FailCriteria,
   WinCriteria,
   LevelState,
+  LevelFlowType,
 } from './interfaces'
 
 const maxProjectilesOnScreen = 100
@@ -37,7 +38,7 @@ const defaultGameSettings: GameSettings = {
   overlayTextColor: 'black',
   gravity: 'none',
   travelDirection: 'up',
-  levelFlowType: 'linear',
+  levelFlowType: LevelFlowType.Linear,
   levelFlow: ['defaultLevel'],
   currentLevel: null,
   gameState: GameState.StartScreen,
