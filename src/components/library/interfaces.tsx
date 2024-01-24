@@ -19,11 +19,11 @@ enum GameState {
 }
 
 enum LevelState {
-  StartScreen,
-  NormalPlay,
-  WinScreen,
-  LoseScreen,
-  OutOfTime,
+  StartScreen = 'startScreen',
+  NormalPlay = 'normalPlay',
+  WinScreen = 'winScreen',
+  LoseScreen = 'loseScreen',
+  OutOfTime = 'outOfTime',
 }
 
 enum FailCriteria {

@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { startTransition, useEffect } from 'react'
+import React, { useEffect } from 'react'
 // import { useSelector } from 'react-redux'
 
 // import { Provider } from 'react-redux'
@@ -60,7 +60,7 @@ function GameNoProv(props: any) {
       gameState: props.gameState,
     })
   }
-
+  const updateTimeLeft = useZustandStore((state:ZustandState) => state.updateTimeLeft)
   const goToNormalPlay = () => {
     updateGameSettings({
       gameState: GameState.NormalPlay,
@@ -82,7 +82,7 @@ function GameNoProv(props: any) {
   const levelSettings = useZustandStore((state:ZustandState) => state.levelSettings)
   const updateLevelSettings = useZustandStore((state:ZustandState) => 
                                                           state.updateLevelSettings)
-  const endPause = () => {
+  const endPause = async() => {
     // if not paused, do nothing
     if (gameState !== GameState.Paused) {
       return
@@ -97,9 +97,7 @@ function GameNoProv(props: any) {
   }
 
   const pausePressed = () => {
-    console.log('pause pressed', gameState, GameState.Paused);
     if (gameState === GameState.Paused) {
-      console.log('ending pause')
       endPause();
     }
     else {

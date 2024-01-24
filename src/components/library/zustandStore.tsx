@@ -112,11 +112,12 @@ const removeFromListById = (list:any[],  id:string) => {
   return list;
 }
 
-const getTimeLeftFromState = (state:ZustandState) => {
-  const timeElapsedMs = (Date.now() - (state.levelSettings.startTimeMs || 0))
-                                        - (state.levelSettings.pauseOffsetMs || 0)
-  let timeLeftSec =  (state.levelSettings.timeLimitSec||0) -  
+const getTimeLeftFromLevelSettings = (levelSettings:LevelSettings) => {
+  const timeElapsedMs = (Date.now() - (levelSettings.startTimeMs || 0))
+                                        - (levelSettings.pauseOffsetMs || 0)
+  let timeLeftSec =  (levelSettings.timeLimitSec||0) -  
                                     Math.floor(timeElapsedMs/1000)
+
   if (timeLeftSec < 0) {
     timeLeftSec = 0
   }
@@ -397,13 +398,17 @@ const useZustandStore = create<ZustandState>()((set) => ({
       }
 
       const oldLevelSettings = state.levelSettings
+      const newLevelSettings = {
+        ...oldLevelSettings,
+        ...levelSettings
+      }
+      
 
-      const timeLeftSec = getTimeLeftFromState(state);
+      const timeLeftSec = getTimeLeftFromLevelSettings(newLevelSettings);
 
       return {
         levelSettings: {
-          ...oldLevelSettings,
-          ...levelSettings,
+          ...newLevelSettings,
           timeLeftSec: timeLeftSec,
         },
       }
@@ -422,7 +427,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
       }
     }
 
-    const timeLeftSec = getTimeLeftFromState(state);    
+    const timeLeftSec = getTimeLeftFromLevelSettings(state.levelSettings);    
 
     return {
       levelSettings: {

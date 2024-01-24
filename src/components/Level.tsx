@@ -93,10 +93,10 @@ function Level(props: any) {
   }
 
   const startLevel = () => {
-    goToNormalPlay()
     updateLevelSettings({
       startTimeMs: Date.now()
     })
+    goToNormalPlay()
 
     clearTimeUpdater()
     startTimeUpdater()
