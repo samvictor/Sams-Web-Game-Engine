@@ -20,10 +20,12 @@ function Level(props: any) {
 
   const levelId = settings.id
   const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
-  const setLevelSettings = useZustandStore((state: ZustandState) => 
-                                                  state.setLevelSettings)
-  const updateLevelSettings = useZustandStore((state:ZustandState) => 
-                                                  state.updateLevelSettings)  
+  const setCurrentLevelSettings = useZustandStore((state: ZustandState) => 
+                                                  state.setCurrentLevelSettings)
+  const updateAllLevelSettings = useZustandStore((state:ZustandState) => 
+                                                  state.updateAllLevelSettings)
+  const updateCurrentLevelSettings = useZustandStore((state:ZustandState) => 
+                                                  state.updateCurrentLevelSettings)  
   
   const playerStats = useZustandStore((state:ZustandState) => 
                                                     state.playerStats)
@@ -32,12 +34,19 @@ function Level(props: any) {
   
   const timeUpdaterIntervalId = useRef<any>()
   
+  // declare self in database
+  useEffect(() => {
+    updateAllLevelSettings({
+      levelId: settings
+    })
+  }, [])
+
   // start self
   const goToLevel = gameSettings.goToLevel;
   useEffect(() => {
     if (goToLevel === levelId) {
       console.log('setting level settings')
-      setLevelSettings(settings)
+      setCurrentLevelSettings(settings)
       updateGameSettings({
         startLevel: null,
         currentLevel: levelId,
@@ -47,12 +56,12 @@ function Level(props: any) {
   
   
   const settingsFromStore = useZustandStore((state: ZustandState) => 
-  state.levelSettings)
+  state.currentLevelSettings)
   
   
   // if levelState changes in props, update store
   if (props.levelState && props.levelState !== settingsFromStore.levelState) {
-    updateLevelSettings({
+    updateCurrentLevelSettings({
       gameState: props.gameState,
     })
   }
@@ -65,14 +74,14 @@ function Level(props: any) {
     if (numLivingEnemies <= 0 
               && settingsFromStore.winCriteria.includes(WinCriteria.NumEnemies0) 
               && levelState === LevelState.NormalPlay) {
-      updateLevelSettings({
+      updateCurrentLevelSettings({
         levelState: LevelState.WinScreen
       })
     }
 
 
     
-  }, [numLivingEnemies, settingsFromStore, levelState, updateLevelSettings])
+  }, [numLivingEnemies, settingsFromStore, levelState, updateCurrentLevelSettings])
     
   const updateTimeLeft = useZustandStore((state:ZustandState) => 
                                                           state.updateTimeLeft)
@@ -98,13 +107,13 @@ function Level(props: any) {
   
 
   const goToNormalPlay = () => {
-    updateLevelSettings({
+    updateCurrentLevelSettings({
       levelState: LevelState.NormalPlay,
     })
   }
 
   const startLevel = () => {
-    updateLevelSettings({
+    updateCurrentLevelSettings({
       startTimeMs: Date.now()
     })
     goToNormalPlay()

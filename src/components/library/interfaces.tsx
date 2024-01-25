@@ -76,6 +76,27 @@ interface LevelSettings {
   startScreenBody: string
 }
 
+interface AllLevelSettings {
+  [id: string]: LevelSettings,
+}
+
+interface LevelResults {
+  // what happened in this level? did player win? what was the score?
+  id: string,
+  timeToCompleteSec?: number,
+  timeRemainingSec?: number, 
+  score: number,
+  livesLeft?: number,
+  enemiesDestroyed?: number,
+  won?: boolean,
+  winningCriteria?: WinCriteria,
+  failingCriteria?: FailCriteria,
+}
+
+interface AllLevelResults {
+  [id: string]: LevelResults
+}
+
 interface Collider {
   shape: ColliderShape
   offset: number[]
@@ -135,4 +156,7 @@ export {
   WinCriteria,
   LevelSettings,
   LevelFlowType,
+  LevelResults,
+  AllLevelResults,
+  AllLevelSettings,
 }

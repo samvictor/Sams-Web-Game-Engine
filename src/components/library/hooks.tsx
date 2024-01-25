@@ -12,8 +12,6 @@ import {
 
 function useMovePlayer() {
   const playerData = useZustandStore((state: ZustandState) => state.player)
-  const playerUpdater = useZustandStore((state: ZustandState) => 
-                                                            state.playerUpdater)
   const setPlayerPosition = useZustandStore((state: ZustandState) => 
                                                       state.setPlayerPosition)
 
@@ -80,7 +78,6 @@ function usePlayerShoot() {
 
 function useUpdateProjectiles() {
   const projectiles = useZustandStore((state: ZustandState) => state.projectiles)
-  const objectsDict = useZustandStore((state: ZustandState) => state.gameObjectsDict)
   const removeProjectileByIndex = useZustandStore((state: ZustandState) => 
                                                   state.removeProjectileByIndex)
   const damageObjectById = useZustandStore((state: ZustandState) => 
