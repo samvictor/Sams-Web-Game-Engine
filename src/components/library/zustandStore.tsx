@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { maxProjectilesOnScreen, 
   defaultGameObjectData, 
   defaultGameSettings, 
-  defaultLevelSettings} from './constants'
+  defaultLevelData} from './constants'
 import { 
   GameObjectData, 
   GameObjectsDictionary,
@@ -14,6 +14,7 @@ import {
   LevelSettings,
   LevelFlowType,
   LevelResults,
+  LevelData,
   AllLevelResults,
   AllLevelSettings,
   GameState,
@@ -32,7 +33,7 @@ interface ZustandState {
   colliderObjects: GameObjectData[]
   gameSettings: GameSettings
   // current level
-  currentLevelSettings: LevelSettings
+  currentLevelData: LevelData
   allLevelSettings: AllLevelSettings
   // what happened in each level? did player win? what was the score?
   allLevelResults: AllLevelResults
@@ -62,9 +63,10 @@ interface ZustandState {
   goToNextLevel: () => void
 
   // Level settings
-  setCurrentLevelSettings: (levelSettings: LevelSettings) => void 
-  updateCurrentLevelSettings: (levelSettings: any) => void
+  setCurrentLevelData: (levelData: LevelData) => void 
+  updateCurrentLevelData: (levelData: any) => void
   updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) => void
+  updateAllLevelResults: (levelResultsWithId: AllLevelResults) => void
 
   // timer 
   updateTimeLeft: (timeLeftMs?:number) => void
@@ -122,10 +124,10 @@ const removeFromListById = (list:any[],  id:string) => {
   return list;
 }
 
-const getTimeLeftFromLevelSettings = (levelSettings:LevelSettings) => {
-  const timeElapsedMs = (Date.now() - (levelSettings.startTimeMs || 0))
-                                        - (levelSettings.pauseOffsetMs || 0)
-  let timeLeftSec =  (levelSettings.timeLimitSec||0) -  
+const getTimeLeftFromLevelData = (levelData:LevelData) => {
+  const timeElapsedMs = (Date.now() - (levelData.startTimeMs || 0))
+                                        - (levelData.pauseOffsetMs || 0)
+  let timeLeftSec =  (levelData.timeLimitSec||0) -  
                                     Math.floor(timeElapsedMs/1000)
 
   if (timeLeftSec < 0) {
@@ -158,7 +160,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
   // live game objects with colliders
   colliderObjects: [],
   gameSettings: defaultGameSettings,
-  currentLevelSettings: defaultLevelSettings,
+  currentLevelData: defaultLevelData,
   allLevelSettings: {},
   allLevelResults: {},
   
@@ -361,8 +363,8 @@ const useZustandStore = create<ZustandState>()((set) => ({
           gameObjectsDict: oldObjects,
           playerStats: playerStatsClone,
           colliderObjects: tempColliderObj,
-          currentLevelSettings: {
-            ...state.currentLevelSettings,
+          currentLevelData: {
+            ...state.currentLevelData,
             numLivingEnemies: numLivingEnemies,
           }
         }
@@ -441,34 +443,34 @@ const useZustandStore = create<ZustandState>()((set) => ({
     }),
     
     // Level settings
-  setCurrentLevelSettings: (levelSettings: LevelSettings) =>
+  setCurrentLevelData: (levelData: LevelData) =>
     set(() => {
-      if (!levelSettings) {
+      if (!levelData) {
         throw new Error('levelSettings is empty (setLevelSettings)')
       }
 
       return {
-        currentLevelSettings: levelSettings,
+        currentLevelData: levelData,
       }
     }),
-  updateCurrentLevelSettings: (levelSettings: any) =>
+  updateCurrentLevelData: (levelData: any) =>
     set((state: ZustandState) => {
-      if (!levelSettings) {
+      if (!levelData) {
         throw new Error('levelSettings is empty (updateCurrentLevelSettings)')
       }
 
-      const oldLevelSettings = state.currentLevelSettings
-      const newLevelSettings = {
-        ...oldLevelSettings,
-        ...levelSettings
+      const oldLevelData = state.currentLevelData
+      const newLevelData = {
+        ...oldLevelData,
+        ...levelData
       }
       
 
-      const timeLeftSec = getTimeLeftFromLevelSettings(newLevelSettings);
+      const timeLeftSec = getTimeLeftFromLevelData(newLevelData);
 
       return {
-        currentLevelSettings: {
-          ...newLevelSettings,
+        currentLevelData: {
+          ...newLevelData,
           timeLeftSec: timeLeftSec,
         },
       }
@@ -479,14 +481,30 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('levelSettingsWithId is empty (updateAllLevelSettings)')
       }
 
-      const allLevelSettings:AllLevelSettings = state.allLevelSettings || {};
+      const tempAllLevelSettings:AllLevelSettings = state.allLevelSettings || {};
 
       return {
         allLevelSettings: {
-          ...allLevelSettings,
+          ...tempAllLevelSettings,
           ...levelSettingsWithId,
         },
       }
+    }),
+  updateAllLevelResults: (levelResultsWithId: AllLevelResults) => 
+    set((state:ZustandState) => {
+      if (!levelResultsWithId) {
+        throw new Error('levelResultsWithId is empty (updateAllLevelResults)')
+      }
+
+      const tempAllLevelResults:AllLevelResults = state.allLevelResults || {}
+
+      return {
+        allLevelResults: {
+          ...tempAllLevelResults,
+          ...levelResultsWithId,
+        }
+      }
+
     }),
   
   
@@ -496,19 +514,19 @@ const useZustandStore = create<ZustandState>()((set) => ({
     // if not, calculate time left from level settings 
     if (typeof inTimeLeftSec !== 'undefined') {
       return {
-        currentLevelSettings: {
-          ...state.currentLevelSettings,
+        currentLevelData: {
+          ...state.currentLevelData,
           timeLeftSec: inTimeLeftSec
         }
       }
     }
 
-    const timeLeftSec = getTimeLeftFromLevelSettings(
-                                          state.currentLevelSettings);    
+    const timeLeftSec = getTimeLeftFromLevelData(
+                                          state.currentLevelData);    
 
     return {
-      levelSettings: {
-        ...state.currentLevelSettings,
+      currentLevelData: {
+        ...state.currentLevelData,
         timeLeftSec: timeLeftSec,
       }
     }

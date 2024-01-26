@@ -22,7 +22,7 @@ enum LevelState {
   StartScreen = 'startScreen',
   NormalPlay = 'normalPlay',
   WinScreen = 'winScreen',
-  LoseScreen = 'loseScreen',
+  FailScreen = 'failScreen',
   OutOfTime = 'outOfTime',
 }
 
@@ -58,22 +58,27 @@ interface GameSettings {
   gameState: GameState
 }
 
+// initial level settings
 interface LevelSettings {
-  id?: string
+  id: string
   failCriteria: FailCriteria[]
   winCriteria: WinCriteria[]
   numberOfLives?: number
   numLivingEnemies?: number
   timeLimitSec?: number
-  timeLeftSec?: number
-  startTimeMs?: number
-  // add extra time while paused so time doesn't count down
-  pauseOffsetMs?: number
   targetIds?: string[]
   targetScore?: number
   levelState: LevelState
   title: string 
   startScreenBody: string
+}
+
+// level data as game is being played
+interface LevelData extends LevelSettings {
+  timeLeftSec: number
+  // add extra time while paused so time doesn't count down
+  pauseOffsetMs?: number
+  startTimeMs?: number
 }
 
 interface AllLevelSettings {
@@ -84,11 +89,11 @@ interface LevelResults {
   // what happened in this level? did player win? what was the score?
   id: string,
   timeToCompleteSec?: number,
-  timeRemainingSec?: number, 
+  timeRemainingSec: number, 
   score: number,
   livesLeft?: number,
   enemiesDestroyed?: number,
-  won?: boolean,
+  won: boolean,
   winningCriteria?: WinCriteria,
   failingCriteria?: FailCriteria,
 }
@@ -156,6 +161,7 @@ export {
   WinCriteria,
   LevelSettings,
   LevelFlowType,
+  LevelData,
   LevelResults,
   AllLevelResults,
   AllLevelSettings,

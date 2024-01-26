@@ -79,9 +79,10 @@ function GameNoProv(props: any) {
     })
   }
 
-  const levelSettings = useZustandStore((state:ZustandState) => state.levelSettings)
-  const updateLevelSettings = useZustandStore((state:ZustandState) => 
-                                                          state.updateLevelSettings)
+  const currentLevelData = useZustandStore((state:ZustandState) => 
+                                                        state.currentLevelData)
+  const updateCurrentLevelData = useZustandStore((state:ZustandState) => 
+                                                          state.updateCurrentLevelData)
   const endPause = async() => {
     // if not paused, do nothing
     if (gameState !== GameState.Paused) {
@@ -90,8 +91,8 @@ function GameNoProv(props: any) {
 
     const pauseTimeMs = timer.stop();
     timer.reset()
-    updateLevelSettings({
-      pauseOffsetMs: (levelSettings.pauseOffsetMs||0) + pauseTimeMs
+    updateCurrentLevelData({
+      pauseOffsetMs: (currentLevelData.pauseOffsetMs||0) + pauseTimeMs
     })
     goToNormalPlay()
   }

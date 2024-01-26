@@ -10,6 +10,7 @@ import {
   WinCriteria,
   LevelState,
   LevelFlowType,
+  LevelData,
 } from './interfaces'
 
 const maxProjectilesOnScreen = 100
@@ -50,12 +51,16 @@ const defaultLevelSettings: LevelSettings = {
   winCriteria: [WinCriteria.NumEnemies0],
   numberOfLives: 1,
   numLivingEnemies: 1,
-  timeLimitSec: 120,
-  pauseOffsetMs: 0,
+  timeLimitSec: 12,
   targetIds: [],
   levelState: LevelState.StartScreen,
   title: '',
   startScreenBody: 'Defeat all enemies to win!',
+}
+
+const defaultLevelData:LevelData = {
+  ...defaultLevelSettings,
+  timeLeftSec: defaultLevelSettings.timeLimitSec||Infinity,
 }
 
 
@@ -66,4 +71,5 @@ export { maxProjectilesOnScreen,
   defaultGameObjectData,
   defaultGameSettings, 
   defaultLevelSettings,
+  defaultLevelData,
 }

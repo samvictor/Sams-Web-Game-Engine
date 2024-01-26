@@ -97,8 +97,8 @@ function CanvasNoProv(props: any) {
   const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
   const playerStats: any = useZustandStore((state: ZustandState) => 
                                                           state.playerStats)
-  const levelSettings = useZustandStore((state: ZustandState) => 
-                                                          state.levelSettings)
+  const currentLevelData = useZustandStore((state: ZustandState) => 
+                                                        state.currentLevelData)
  
 
   const overlayXml: any = (
@@ -112,7 +112,7 @@ function CanvasNoProv(props: any) {
       }}
     >
       Score: {playerStats.score}
-      Time Left: {levelSettings.timeLeftSec}
+      Time Left: {currentLevelData.timeLeftSec}
     </div>
   )
 
