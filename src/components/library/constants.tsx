@@ -51,7 +51,7 @@ const defaultLevelSettings: LevelSettings = {
   winCriteria: [WinCriteria.NumEnemies0],
   numberOfLives: 1,
   numLivingEnemies: 1,
-  timeLimitSec: 12,
+  timeLimitSec: 5,
   targetIds: [],
   levelState: LevelState.StartScreen,
   title: '',

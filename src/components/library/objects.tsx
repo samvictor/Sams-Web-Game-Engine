@@ -1,13 +1,14 @@
 'use client'
 
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useContext } from 'react'
 // import { useSelector } from 'react-redux'
 import { useFrame } from '@react-three/fiber'
 import PropTypes from 'prop-types'
 // import reduxStore from './reduxStore'
-import { useZustandStore } from './zustandStore'
+import { ZustandState, useZustandStore } from './zustandStore'
 
 import { Collider, GameObjectData, GameObjectsDictionary, ColliderShape, GameObjectType } from './interfaces'
+import { LevelDataContext } from './contexts'
 
 function GameObject(props: any) {
   // This reference gives us direct access to the THREE.Mesh object
@@ -30,7 +31,8 @@ function GameObject(props: any) {
     offset: [0, 0, 0],
   }
   const isEnemy = props.isEnemy || false;
-  const addObject = useZustandStore((state: any) => state.addObject)
+  const addObject = useZustandStore((state: ZustandState) => state.addObject)
+  const levelDataContext = useContext(LevelDataContext);
 
   useEffect(() => {
     const newObjectData: GameObjectData = {
@@ -45,9 +47,13 @@ function GameObject(props: any) {
       scoreValue: scoreValue,
       collider: collider,
       isEnemy: isEnemy,
+      parentLevelId: levelDataContext.id,
     }
 
+    // console.log('parent data is ', JSON.stringify(levelDataContext, null, 4))
+
     addObject(newObjectData)
+    
   }, [])
 
   // Subscribe this component to the render-loop, rotate the mesh every frame

@@ -4,7 +4,7 @@
 
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, createContext } from 'react'
 import { defaultLevelSettings } from './library/constants'
 import { 
   FailCriteria, 
@@ -15,6 +15,8 @@ import {
   LevelData, 
 } from './library/interfaces'
 import { ZustandState, useZustandStore } from './library/zustandStore'
+import { create } from 'zustand'
+import { LevelDataContext } from './library/contexts'
 
 const defaultSettings: LevelSettings = defaultLevelSettings
 
@@ -44,12 +46,13 @@ function Level(props: any) {
   const updateGameSettings = useZustandStore((state:ZustandState) => 
                                                       state.updateGameSettings)  
   
+  const resetLevel = useZustandStore((state:ZustandState) => state.resetLevel)
   const timeUpdaterIntervalId = useRef<any>()
   
   // declare self in database
   useEffect(() => {
     updateAllLevelSettings({
-      levelId: settings
+      [levelId]: settings
     })
   }, [])
 
@@ -108,7 +111,7 @@ function Level(props: any) {
     if (levelDataFromStore.timeLeftSec <= 0
             && levelDataFromStore.failCriteria.includes(FailCriteria.TimeLeft0)
             && levelState === LevelState.NormalPlay)  {
-
+              console.log('going to fail screen')
       updateCurrentLevelData({
         levelState: LevelState.FailScreen
       })
@@ -154,10 +157,12 @@ function Level(props: any) {
   
 
   const goToNormalPlay = () => {
+    console.log('going to normal play');
     updateCurrentLevelData({
       levelState: LevelState.NormalPlay,
     })
   }
+  console.log('play state', levelDataFromStore.levelState);
 
   const startLevel = () => {
     updateCurrentLevelData({
@@ -170,16 +175,16 @@ function Level(props: any) {
   }
 
   // let childrenKey = levelId + '_children';
-  const resetLevel = () => {
-    console.log('trying to reset level')
-    updateGameSettings({
-      goToLevel: levelId,
-    })
+  // const resetLevel = () => {
+  //   console.log('trying to reset level')
+  //   updateGameSettings({
+  //     goToLevel: levelId,
+  //   })
 
-    // change key of children div to reset children
-    setChildrenKey('level_children_' + Date.now())
-    // return null
-  }
+  //   // change key of children div to reset children
+  //   setChildrenKey('level_children_' + Date.now())
+  //   // return null
+  // }
 
 
 
@@ -187,7 +192,7 @@ function Level(props: any) {
     goToNextLevel()
   }
   const failRetryClicked = () => {
-    resetLevel()
+    resetLevel(levelId)
   }
 
 
@@ -253,15 +258,17 @@ function Level(props: any) {
   }
 
   return (
-    <div id='webGameEngineLevel' style={{height: '100%'}}>
-      {returnBody}
-      <div key={childrenKey} style={{ display: childrenDisplay, height: '100%' }}>
-        {props.children}
+    <LevelDataContext.Provider value={settings}>
+      <div id='webGameEngineLevel' style={{height: '100%'}}>
+        {returnBody}
+        <div key={childrenKey} style={{ display: childrenDisplay, height: '100%' }}>
+          {props.children}
+        </div>
       </div>
-    </div>
+    </LevelDataContext.Provider>
   )
 
 
 }
 
-export default Level
+export {Level as default, LevelDataContext}

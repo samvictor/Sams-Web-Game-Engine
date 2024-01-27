@@ -11,13 +11,13 @@ import {
   GameObjectType, 
   GameSettings,
   PlayerStats,
-  LevelSettings,
   LevelFlowType,
-  LevelResults,
   LevelData,
   AllLevelResults,
   AllLevelSettings,
   GameState,
+  ObjectsByLevel,
+  LevelState,
 } from './interfaces'
 
 // import { Projectile } from './objects'
@@ -34,9 +34,14 @@ interface ZustandState {
   gameSettings: GameSettings
   // current level
   currentLevelData: LevelData
+  // inital settings
   allLevelSettings: AllLevelSettings
   // what happened in each level? did player win? what was the score?
   allLevelResults: AllLevelResults
+  // for each levelId, save initial data of objects
+  // used for restarts
+  allLevelObjectInitData: ObjectsByLevel
+
 
   // functions
   // players
@@ -61,6 +66,7 @@ interface ZustandState {
   setGameSettings: (gameSettings: GameSettings) => void
   updateGameSettings: (gameSettings: any) => void
   goToNextLevel: () => void
+  resetLevel: (levelId: string) => void
 
   // Level settings
   setCurrentLevelData: (levelData: LevelData) => void 
@@ -163,6 +169,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
   currentLevelData: defaultLevelData,
   allLevelSettings: {},
   allLevelResults: {},
+  allLevelObjectInitData: {},
   
 
   // functions
@@ -262,12 +269,26 @@ const useZustandStore = create<ZustandState>()((set) => ({
         tempColliderObj.push(newObject);
       }
 
+      if (!newObject.parentLevelId) {
+        throw new Error('new object missing parentLevelId (addObject)')
+      }
+
+      // save the initial data for this object
+      // used in restarts
+      const allLevelObjectInitData = state.allLevelObjectInitData || {}
+      const initObjectsForThisLevel = allLevelObjectInitData[newObject.parentLevelId] || {}
+      initObjectsForThisLevel[newObject.id] = {...newObject}
+      allLevelObjectInitData[newObject.parentLevelId] = initObjectsForThisLevel
+
+      console.log('initial object data', allLevelObjectInitData)
+
       return {
         gameObjectsDict: {
           ...state.gameObjectsDict,
           [newObject.id]: newObject,
         },
         colliderObjects: tempColliderObj,
+        allLevelObjectInitData: allLevelObjectInitData,
       }
     }),
   removeObjectById: (objectId: string) =>
@@ -440,6 +461,28 @@ const useZustandStore = create<ZustandState>()((set) => ({
       console.warn('cannot go to next level,',
                         'flow type is not linear (goToNextLevel)')
       return {}
+    }),
+  resetLevel: (levelId: string) => 
+    set((state:ZustandState) => {
+      const newProjectiles:ProjectileData[] = [];
+      const gameObjectsDict = state.allLevelObjectInitData[levelId] || {}
+      const thisLevelSettings = state.allLevelSettings[levelId];
+      console.log('all level settings', state.allLevelSettings)
+      if (!thisLevelSettings) {
+        throw new Error('level settings not found for this level ' + levelId + ' (resetLevel)')
+      }
+
+      const newLevelData:LevelData = {
+        ...thisLevelSettings,
+        timeLeftSec: thisLevelSettings.timeLimitSec || Infinity,
+        levelState: LevelState.NormalPlay,
+        startTimeMs: Date.now(),
+      }
+      return {
+        gameObjectsDict: gameObjectsDict,
+        projectiles: newProjectiles,
+        currentLevelData: newLevelData,
+      }
     }),
     
     // Level settings

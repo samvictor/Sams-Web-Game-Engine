@@ -125,7 +125,9 @@ interface GameObjectData {
   objectType: GameObjectType
   destroyed?: boolean
   isEnemy?: boolean
+  parentLevelId?: string
 }
+
 
 interface PlayerObjectData extends GameObjectData {
   lastShootTimeMs: number
@@ -144,6 +146,17 @@ interface ProjectileData extends GameObjectData {
 interface GameObjectsDictionary {
   [id: string]: GameObjectData
 }
+
+
+// {
+//   levelId: {
+//     objectId: {objData}
+//   }
+// }
+interface ObjectsByLevel {
+  [levelId: string]: GameObjectsDictionary
+}
+
 
 export {
   Collider,
@@ -165,4 +178,5 @@ export {
   LevelResults,
   AllLevelResults,
   AllLevelSettings,
+  ObjectsByLevel,
 }
