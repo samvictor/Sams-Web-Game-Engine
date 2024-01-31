@@ -144,7 +144,7 @@ function Level(props: any) {
   const startTimeUpdater = () => {
     // 2x per second update time left
     timeUpdaterIntervalId.current = setInterval(() => {
-      console.log('updating time')
+      // console.log('updating time')
       
       updateTimeLeft()
     }, 500)
@@ -160,7 +160,7 @@ function Level(props: any) {
       levelState: LevelState.NormalPlay,
     })
   }
-  console.log('play state', levelDataFromStore.levelState);
+  // console.log('play state', levelDataFromStore.levelState);
 
   const startLevel = () => {
     updateCurrentLevelData({

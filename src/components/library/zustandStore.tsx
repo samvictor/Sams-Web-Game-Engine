@@ -272,10 +272,8 @@ const useZustandStore = create<ZustandState>()((set) => ({
       // used in restarts
       const allLevelObjectInitData = state.allLevelObjectInitData || {}
       const initObjectsForThisLevel = allLevelObjectInitData[newObject.parentLevelId] || {}
-      initObjectsForThisLevel[newObject.id] = {...newObject}
+      initObjectsForThisLevel[newObject.id] = structuredClone(newObject)
       allLevelObjectInitData[newObject.parentLevelId] = initObjectsForThisLevel
-
-      console.log('initial object data', allLevelObjectInitData)
 
       return {
         gameObjectsDict: {
@@ -459,7 +457,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
   resetLevel: (levelId: string) => 
     set((state:ZustandState) => {
       const newProjectiles:ProjectileData[] = [];
-      const gameObjectsDict = state.allLevelObjectInitData[levelId] || {}
+      const gameObjectsDict = structuredClone(state.allLevelObjectInitData[levelId] || {})
       const thisLevelSettings = state.allLevelSettings[levelId];
       console.log('all level settings', state.allLevelSettings)
       if (!thisLevelSettings) {

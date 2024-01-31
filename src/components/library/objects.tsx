@@ -35,6 +35,8 @@ function GameObject(props: any) {
   const levelDataContext = useContext(LevelDataContext);
 
   useEffect(() => {
+    // register myself into the store (should only happen once)
+    console.log('regeristing object')
     const newObjectData: GameObjectData = {
       position: position,
       // object id is object_ + time created + random number
@@ -66,7 +68,6 @@ function GameObject(props: any) {
   // get this object data from store
   const objects: GameObjectsDictionary = useZustandStore((state: any) => state.gameObjectsDict)
   const thisObjectData = objects[id] || {}
-
   if (thisObjectData.destroyed) {
     return null
   }
