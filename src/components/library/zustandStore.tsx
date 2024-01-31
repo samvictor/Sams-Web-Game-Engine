@@ -472,6 +472,14 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('level settings not found for this level ' + levelId + ' (resetLevel)')
       }
 
+      const newColliderObj:GameObjectData[] = []
+
+      Object.values(gameObjectsDict).forEach((thisObject) => {
+        if (thisObject.collider) {
+          newColliderObj.push(thisObject);
+        }
+      })
+
       const newLevelData:LevelData = {
         ...thisLevelSettings,
         timeLeftSec: thisLevelSettings.timeLimitSec || Infinity,
@@ -482,6 +490,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         gameObjectsDict: gameObjectsDict,
         projectiles: newProjectiles,
         currentLevelData: newLevelData,
+        colliderObjects: newColliderObj,
       }
     }),
     
