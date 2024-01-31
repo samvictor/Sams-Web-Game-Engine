@@ -79,6 +79,7 @@ interface LevelData extends LevelSettings {
   // add extra time while paused so time doesn't count down
   pauseOffsetMs?: number
   startTimeMs?: number
+  score: number
 }
 
 interface AllLevelSettings {
@@ -134,10 +135,6 @@ interface PlayerObjectData extends GameObjectData {
   shootDelayMs: number
 }
 
-interface PlayerStats {
-  score:number
-}
-
 interface ProjectileData extends GameObjectData {
   damage: number
   sourceId: string
@@ -169,7 +166,6 @@ export {
   GameState,
   GameSettings,
   LevelState,
-  PlayerStats,
   FailCriteria, 
   WinCriteria,
   LevelSettings,

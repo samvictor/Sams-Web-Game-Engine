@@ -95,8 +95,6 @@ function CanvasNoProv(props: any) {
 
   // make overlay
   const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
-  const playerStats: any = useZustandStore((state: ZustandState) => 
-                                                          state.playerStats)
   const currentLevelData = useZustandStore((state: ZustandState) => 
                                                         state.currentLevelData)
  
@@ -111,7 +109,7 @@ function CanvasNoProv(props: any) {
         padding: '20px',
       }}
     >
-      Score: {playerStats.score}
+      Score: {currentLevelData.score}
       Time Left: {currentLevelData.timeLeftSec}
     </div>
   )

@@ -61,6 +61,7 @@ const defaultLevelSettings: LevelSettings = {
 const defaultLevelData:LevelData = {
   ...defaultLevelSettings,
   timeLeftSec: defaultLevelSettings.timeLimitSec||Infinity,
+  score: 0,
 }
 
 

@@ -15,7 +15,6 @@ import {
   LevelData, 
 } from './library/interfaces'
 import { ZustandState, useZustandStore } from './library/zustandStore'
-import { create } from 'zustand'
 import { LevelDataContext } from './library/contexts'
 
 const defaultSettings: LevelSettings = defaultLevelSettings
@@ -28,6 +27,7 @@ function Level(props: any) {
   const levelDataForStore:LevelData = {
     ...settings,
     timeLeftSec: settings.timeLimitSec || Infinity,
+    score: 0,
   }
 
   const levelId = settings.id
@@ -41,8 +41,6 @@ function Level(props: any) {
   
   const updateAllLevelResults = useZustandStore((state:ZustandState) => 
                                                 state.updateAllLevelResults)
-  const playerStats = useZustandStore((state:ZustandState) => 
-                                                    state.playerStats)
   const updateGameSettings = useZustandStore((state:ZustandState) => 
                                                       state.updateGameSettings)  
   
@@ -96,7 +94,7 @@ function Level(props: any) {
       })
       const levelResults:LevelResults = {
         id: levelId,
-        score: playerStats.score,
+        score: levelDataFromStore.score,
         won: true,
         timeRemainingSec: levelDataFromStore.timeLeftSec,
         winningCriteria: WinCriteria.NumEnemies0,
@@ -117,7 +115,7 @@ function Level(props: any) {
       })
       const levelResults:LevelResults = {
         id: levelId,
-        score: playerStats.score,
+        score: levelDataFromStore.score,
         won: false,
         timeRemainingSec: levelDataFromStore.timeLeftSec,
         failingCriteria: FailCriteria.TimeLeft0,
@@ -213,7 +211,7 @@ function Level(props: any) {
   const failScreen = (
     <div>
       You Lost
-      Score: {playerStats.score}
+      Score: {levelDataFromStore.score}
       <button onClick={failRetryClicked}>Try Again?</button>
     </div>
   )
@@ -221,7 +219,7 @@ function Level(props: any) {
   const winScreen = (
     <div>
       You Won!
-      Score: {playerStats.score}
+      Score: {levelDataFromStore.score}
       <button onClick={winContinueClicked}>Continue</button>
     </div>
   )

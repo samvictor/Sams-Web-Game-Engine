@@ -10,7 +10,6 @@ import {
   PlayerObjectData, 
   GameObjectType, 
   GameSettings,
-  PlayerStats,
   LevelFlowType,
   LevelData,
   AllLevelResults,
@@ -25,7 +24,6 @@ import {
 interface ZustandState {
   // data
   player: PlayerObjectData
-  playerStats: PlayerStats
   playerUpdater: number
   projectiles: ProjectileData[]
   projectilesUpdater: number
@@ -68,7 +66,7 @@ interface ZustandState {
   goToNextLevel: () => void
   resetLevel: (levelId: string) => void
 
-  // Level settings
+  // Level settings/data
   setCurrentLevelData: (levelData: LevelData) => void 
   updateCurrentLevelData: (levelData: any) => void
   updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) => void
@@ -152,9 +150,6 @@ const useZustandStore = create<ZustandState>()((set) => ({
     position: [0, -5, 0],
     lastShootTimeMs: 0,
     shootDelayMs: 100,
-  },
-  playerStats: {
-    score: 0,
   },
   // change updater number whenever we change dict 
   // this lets zustand know that there has been a change
@@ -359,8 +354,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
       } else {
         // destroy target
         target.destroyed = true
-        const playerStatsClone = { ...state.playerStats }
-        const oldPlayerScore = playerStatsClone.score || 0
+        let tempPlayerScore = state.currentLevelData.score || 0
 
         let tempColliderObj = state.colliderObjects
         tempColliderObj = removeFromListById(tempColliderObj, target.id)
@@ -376,17 +370,17 @@ const useZustandStore = create<ZustandState>()((set) => ({
         console.log("enemies remaining:", numLivingEnemies, 'objects', allObjects)
 
         if (target.scoreValue) {
-          playerStatsClone.score = oldPlayerScore + target.scoreValue
-          console.log('setting new score to', playerStatsClone.score)
+          tempPlayerScore += target.scoreValue
+          console.log('setting new score to', tempPlayerScore)
         }
 
         return {
           gameObjectsDict: oldObjects,
-          playerStats: playerStatsClone,
           colliderObjects: tempColliderObj,
           currentLevelData: {
             ...state.currentLevelData,
             numLivingEnemies: numLivingEnemies,
+            score: tempPlayerScore,
           }
         }
       }
@@ -485,6 +479,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         timeLeftSec: thisLevelSettings.timeLimitSec || Infinity,
         levelState: LevelState.NormalPlay,
         startTimeMs: Date.now(),
+        score: 0,
       }
       return {
         gameObjectsDict: gameObjectsDict,
