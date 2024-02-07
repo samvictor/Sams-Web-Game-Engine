@@ -4,27 +4,20 @@
 
 'use client'
 
-import React, { useEffect, useRef, useState, createContext } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { defaultLevelSettings } from './library/constants'
-import { 
-  FailCriteria, 
-  LevelResults, 
-  LevelSettings, 
-  LevelState, 
-  WinCriteria,
-  LevelData, 
-} from './library/interfaces'
+import { FailCriteria, LevelResults, LevelSettings, LevelState, WinCriteria, LevelData } from './library/interfaces'
 import { ZustandState, useZustandStore } from './library/zustandStore'
 import { LevelDataContext } from './library/contexts'
 
 const defaultSettings: LevelSettings = defaultLevelSettings
 
 function Level(props: any) {
-  const settings:LevelSettings = {
-    ...defaultSettings, 
+  const settings: LevelSettings = {
+    ...defaultSettings,
     ...props.settings,
   }
-  const levelDataForStore:LevelData = {
+  const levelDataForStore: LevelData = {
     ...settings,
     timeLeftSec: settings.timeLimitSec || Infinity,
     score: 0,
@@ -32,30 +25,25 @@ function Level(props: any) {
 
   const levelId = settings.id
   const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
-  const setCurrentLevelData = useZustandStore((state: ZustandState) => 
-                                                  state.setCurrentLevelData)
-  const updateAllLevelSettings = useZustandStore((state:ZustandState) => 
-                                                  state.updateAllLevelSettings)
-  const updateCurrentLevelData = useZustandStore((state:ZustandState) => 
-                                                state.updateCurrentLevelData)  
-  
-  const updateAllLevelResults = useZustandStore((state:ZustandState) => 
-                                                state.updateAllLevelResults)
-  const updateGameSettings = useZustandStore((state:ZustandState) => 
-                                                      state.updateGameSettings)  
-  
-  const resetLevel = useZustandStore((state:ZustandState) => state.resetLevel)
+  const setCurrentLevelData = useZustandStore((state: ZustandState) => state.setCurrentLevelData)
+  const updateAllLevelSettings = useZustandStore((state: ZustandState) => state.updateAllLevelSettings)
+  const updateCurrentLevelData = useZustandStore((state: ZustandState) => state.updateCurrentLevelData)
+
+  const updateAllLevelResults = useZustandStore((state: ZustandState) => state.updateAllLevelResults)
+  const updateGameSettings = useZustandStore((state: ZustandState) => state.updateGameSettings)
+
+  const resetLevel = useZustandStore((state: ZustandState) => state.resetLevel)
   const timeUpdaterIntervalId = useRef<any>()
-  
+
   // declare self in database
   useEffect(() => {
     updateAllLevelSettings({
-      [levelId]: settings
+      [levelId]: settings,
     })
   }, [])
 
   // start self
-  const goToLevel = gameSettings.goToLevel;
+  const goToLevel = gameSettings.goToLevel
   useEffect(() => {
     console.log('gotolevel is', goToLevel)
     if (goToLevel === levelId) {
@@ -68,31 +56,30 @@ function Level(props: any) {
       })
     }
   }, [goToLevel])
-  
-  
-  const levelDataFromStore = useZustandStore((state: ZustandState) => 
-  state.currentLevelData)
-  
-  
+
+  const levelDataFromStore = useZustandStore((state: ZustandState) => state.currentLevelData)
+
   // if levelState changes in props, update store
   if (props.levelState && props.levelState !== levelDataFromStore.levelState) {
     updateCurrentLevelData({
       gameState: props.gameState,
     })
   }
-  
-  const numLivingEnemies = levelDataFromStore.numLivingEnemies || 0;
+
+  const numLivingEnemies = levelDataFromStore.numLivingEnemies || 0
   const levelState = levelDataFromStore.levelState
-  
+
   useEffect(() => {
     // go to win screen when player wins
-    if (numLivingEnemies <= 0 
-              && levelDataFromStore.winCriteria.includes(WinCriteria.NumEnemies0) 
-              && levelState === LevelState.NormalPlay) {
+    if (
+      numLivingEnemies <= 0 &&
+      levelDataFromStore.winCriteria.includes(WinCriteria.NumEnemies0) &&
+      levelState === LevelState.NormalPlay
+    ) {
       updateCurrentLevelData({
-        levelState: LevelState.WinScreen
+        levelState: LevelState.WinScreen,
       })
-      const levelResults:LevelResults = {
+      const levelResults: LevelResults = {
         id: levelId,
         score: levelDataFromStore.score,
         won: true,
@@ -101,19 +88,21 @@ function Level(props: any) {
       }
 
       updateAllLevelResults({
-        [levelId]: levelResults
+        [levelId]: levelResults,
       })
     }
 
     // go to fail screen when time runs out
-    if (levelDataFromStore.timeLeftSec <= 0
-            && levelDataFromStore.failCriteria.includes(FailCriteria.TimeLeft0)
-            && levelState === LevelState.NormalPlay)  {
-              console.log('going to fail screen')
+    if (
+      levelDataFromStore.timeLeftSec <= 0 &&
+      levelDataFromStore.failCriteria.includes(FailCriteria.TimeLeft0) &&
+      levelState === LevelState.NormalPlay
+    ) {
+      console.log('going to fail screen')
       updateCurrentLevelData({
-        levelState: LevelState.FailScreen
+        levelState: LevelState.FailScreen,
       })
-      const levelResults:LevelResults = {
+      const levelResults: LevelResults = {
         id: levelId,
         score: levelDataFromStore.score,
         won: false,
@@ -122,40 +111,34 @@ function Level(props: any) {
       }
 
       updateAllLevelResults({
-        [levelId]: levelResults
+        [levelId]: levelResults,
       })
     }
-
-    
-    
   }, [numLivingEnemies, levelDataFromStore, levelState, updateCurrentLevelData])
-  
-  const updateTimeLeft = useZustandStore((state:ZustandState) => 
-                                                            state.updateTimeLeft)
-  const goToNextLevel = useZustandStore((state:ZustandState) => state.goToNextLevel)
-  const [childrenKey, setChildrenKey] = useState('level_children_' + Date.now())
-  
+
+  const updateTimeLeft = useZustandStore((state: ZustandState) => state.updateTimeLeft)
+  const goToNextLevel = useZustandStore((state: ZustandState) => state.goToNextLevel)
+  const [childrenKey] = useState('level_children_' + Date.now())
+
   // if we're not on this level, don't show anything
   if (gameSettings.currentLevel !== levelId) {
     return null
   }
 
-
   const startTimeUpdater = () => {
     // 2x per second update time left
     timeUpdaterIntervalId.current = setInterval(() => {
       // console.log('updating time')
-      
+
       updateTimeLeft()
     }, 500)
   }
   const clearTimeUpdater = () => {
     clearInterval(timeUpdaterIntervalId.current)
   }
-  
 
   const goToNormalPlay = () => {
-    console.log('going to normal play');
+    console.log('going to normal play')
     updateCurrentLevelData({
       levelState: LevelState.NormalPlay,
     })
@@ -164,7 +147,7 @@ function Level(props: any) {
 
   const startLevel = () => {
     updateCurrentLevelData({
-      startTimeMs: Date.now()
+      startTimeMs: Date.now(),
     })
     goToNormalPlay()
 
@@ -184,15 +167,12 @@ function Level(props: any) {
   //   // return null
   // }
 
-
-
   const winContinueClicked = () => {
     goToNextLevel()
   }
   const failRetryClicked = () => {
     resetLevel(levelId)
   }
-
 
   const startScreen = (
     <div>
@@ -202,31 +182,23 @@ function Level(props: any) {
     </div>
   )
 
-  const outOfTimeScreen = (
-    <div>
-      Out Of Time
-    </div>
-  )
+  const outOfTimeScreen = <div>Out Of Time</div>
 
   const failScreen = (
     <div>
-      You Lost
-      Score: {levelDataFromStore.score}
+      You Lost Score: {levelDataFromStore.score}
       <button onClick={failRetryClicked}>Try Again?</button>
     </div>
   )
 
   const winScreen = (
     <div>
-      You Won!
-      Score: {levelDataFromStore.score}
+      You Won! Score: {levelDataFromStore.score}
       <button onClick={winContinueClicked}>Continue</button>
     </div>
   )
 
-  
-  
-  let returnBody = null 
+  let returnBody = null
   let childrenDisplay = 'unset'
 
   switch (levelState) {
@@ -234,17 +206,17 @@ function Level(props: any) {
       returnBody = startScreen
       childrenDisplay = 'none'
       break
-    
-    case LevelState.OutOfTime: 
-      returnBody = outOfTimeScreen 
+
+    case LevelState.OutOfTime:
+      returnBody = outOfTimeScreen
       childrenDisplay = 'none'
       break
-    
+
     case LevelState.FailScreen:
-      returnBody = failScreen 
+      returnBody = failScreen
       childrenDisplay = 'none'
       break
-    
+
     case LevelState.WinScreen:
       returnBody = winScreen
       childrenDisplay = 'none'
@@ -252,12 +224,12 @@ function Level(props: any) {
 
     case LevelState.NormalPlay:
     default:
-      returnBody = null;
+      returnBody = null
   }
 
   return (
     <LevelDataContext.Provider value={settings}>
-      <div id='webGameEngineLevel' style={{height: '100%'}}>
+      <div id='webGameEngineLevel' style={{ height: '100%' }}>
         {returnBody}
         <div key={childrenKey} style={{ display: childrenDisplay, height: '100%' }}>
           {props.children}
@@ -265,8 +237,6 @@ function Level(props: any) {
       </div>
     </LevelDataContext.Provider>
   )
-
-
 }
 
-export {Level as default, LevelDataContext}
+export { Level as default, LevelDataContext }

@@ -1,14 +1,11 @@
 import { create } from 'zustand'
-import { maxProjectilesOnScreen, 
-  defaultGameObjectData, 
-  defaultGameSettings, 
-  defaultLevelData} from './constants'
-import { 
-  GameObjectData, 
+import { maxProjectilesOnScreen, defaultGameObjectData, defaultGameSettings, defaultLevelData } from './constants'
+import {
+  GameObjectData,
   GameObjectsDictionary,
-  ProjectileData, 
-  PlayerObjectData, 
-  GameObjectType, 
+  ProjectileData,
+  PlayerObjectData,
+  GameObjectType,
   GameSettings,
   LevelFlowType,
   LevelData,
@@ -40,7 +37,6 @@ interface ZustandState {
   // used for restarts
   allLevelObjectInitData: ObjectsByLevel
 
-
   // functions
   // players
   setPlayer: (newPlayer: PlayerObjectData) => void
@@ -49,16 +45,15 @@ interface ZustandState {
 
   // projectiles
   addProjectile: (newProjectile: ProjectileData) => void
-  updateProjectileByIndex: (projectileIndex: number, 
-                              newProjectile: ProjectileData) => void
+  updateProjectileByIndex: (projectileIndex: number, newProjectile: ProjectileData) => void
   removeProjectileById: (id: string) => void
-  removeProjectileByIndex: (projectileIndex: number, projectileId: string) => void 
+  removeProjectileByIndex: (projectileIndex: number, projectileId: string) => void
 
   // objects
   addObject: (newObject: GameObjectData) => void
 
   // damage
-  damageObjectById: (targetId: string, damage?: number, sourceId?: string) =>  void
+  damageObjectById: (targetId: string, damage?: number, sourceId?: string) => void
 
   // Game settings
   setGameSettings: (gameSettings: GameSettings) => void
@@ -67,18 +62,16 @@ interface ZustandState {
   resetLevel: (levelId: string) => void
 
   // Level settings/data
-  setCurrentLevelData: (levelData: LevelData) => void 
+  setCurrentLevelData: (levelData: LevelData) => void
   updateCurrentLevelData: (levelData: any) => void
   updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) => void
   updateAllLevelResults: (levelResultsWithId: AllLevelResults) => void
 
-  // timer 
-  updateTimeLeft: (timeLeftMs?:number) => void
+  // timer
+  updateTimeLeft: (timeLeftMs?: number) => void
 }
 
-const updateProjectileByIndex = (oldProjectiles: ProjectileData[], 
-                                    index: number, 
-                                    newProjectile: ProjectileData) => {
+const updateProjectileByIndex = (oldProjectiles: ProjectileData[], index: number, newProjectile: ProjectileData) => {
   if (!oldProjectiles) {
     // old projectiles not found
     throw new Error('old projectiles not found')
@@ -88,9 +81,7 @@ const updateProjectileByIndex = (oldProjectiles: ProjectileData[],
 
   return oldProjectiles
 }
-const removeProjectileByIndex = (oldProjectiles: ProjectileData[], 
-                                    index: number, 
-                                    id?: string) => {
+const removeProjectileByIndex = (oldProjectiles: ProjectileData[], index: number, id?: string) => {
   if (!oldProjectiles) {
     // old projectiles not found
     throw new Error('old projectiles not found')
@@ -101,13 +92,13 @@ const removeProjectileByIndex = (oldProjectiles: ProjectileData[],
     // make sure projectile exist and matches id if available
     oldProjectiles.splice(index, 1)
   } else {
-    throw new Error('projectile not deleted')
+    console.warn('projectile not deleted')
   }
 
   return oldProjectiles
 }
 
-const removeFromListById = (list:any[],  id:string) => {
+const removeFromListById = (list: any[], id: string) => {
   if (!list) {
     throw new Error('list not found')
   }
@@ -118,28 +109,26 @@ const removeFromListById = (list:any[],  id:string) => {
 
   const indexToRemove = list.findIndex((item: any) => item.id === id)
   if (indexToRemove === -1) {
-    console.warn('id not found in list (removeFromListById)');
+    console.warn('id not found in list (removeFromListById)')
     console.warn('list', list, 'id', id)
     return list
   }
 
   list.splice(indexToRemove, 1)
 
-  return list;
+  return list
 }
 
-const getTimeLeftFromLevelData = (levelData:LevelData) => {
-  const timeElapsedMs = (Date.now() - (levelData.startTimeMs || 0))
-                                        - (levelData.pauseOffsetMs || 0)
-  let timeLeftSec =  (levelData.timeLimitSec||0) -  
-                                    Math.floor(timeElapsedMs/1000)
+const getTimeLeftFromLevelData = (levelData: LevelData) => {
+  const timeElapsedMs = Date.now() - (levelData.startTimeMs || 0) - (levelData.pauseOffsetMs || 0)
+  let timeLeftSec = (levelData.timeLimitSec || 0) - Math.floor(timeElapsedMs / 1000)
 
   if (timeLeftSec < 0) {
     timeLeftSec = 0
   }
 
-  return timeLeftSec;
-} 
+  return timeLeftSec
+}
 
 const useZustandStore = create<ZustandState>()((set) => ({
   // default state
@@ -151,7 +140,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
     lastShootTimeMs: 0,
     shootDelayMs: 100,
   },
-  // change updater number whenever we change dict 
+  // change updater number whenever we change dict
   // this lets zustand know that there has been a change
   // and we should rerender
   playerUpdater: 0,
@@ -165,7 +154,6 @@ const useZustandStore = create<ZustandState>()((set) => ({
   allLevelSettings: {},
   allLevelResults: {},
   allLevelObjectInitData: {},
-  
 
   // functions
   // players
@@ -230,7 +218,6 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('projectile not deleted (removeProjectileById)')
       }
 
-
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
@@ -241,8 +228,6 @@ const useZustandStore = create<ZustandState>()((set) => ({
       let tempProjectiles = state.projectiles || []
       tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, projectileId)
 
-
-      
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
@@ -259,9 +244,9 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('new object missing id (addObject)')
       }
 
-      const tempColliderObj = state.colliderObjects || [];
+      const tempColliderObj = state.colliderObjects || []
       if (newObject.collider) {
-        tempColliderObj.push(newObject);
+        tempColliderObj.push(newObject)
       }
 
       if (!newObject.parentLevelId) {
@@ -358,14 +343,14 @@ const useZustandStore = create<ZustandState>()((set) => ({
         tempColliderObj = removeFromListById(tempColliderObj, target.id)
 
         // count how many enemies are still alive
-        let numLivingEnemies = 0;
-        const allObjects:GameObjectData[] = Object.values(state.gameObjectsDict);
-        allObjects.forEach((thisObject:GameObjectData) => {
+        let numLivingEnemies = 0
+        const allObjects: GameObjectData[] = Object.values(state.gameObjectsDict)
+        allObjects.forEach((thisObject: GameObjectData) => {
           if (!thisObject.destroyed && thisObject.isEnemy) {
             numLivingEnemies++
           }
         })
-        console.log("enemies remaining:", numLivingEnemies, 'objects', allObjects)
+        console.log('enemies remaining:', numLivingEnemies, 'objects', allObjects)
 
         if (target.scoreValue) {
           tempPlayerScore += target.scoreValue
@@ -379,7 +364,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
             ...state.currentLevelData,
             numLivingEnemies: numLivingEnemies,
             score: tempPlayerScore,
-          }
+          },
         }
       }
 
@@ -416,63 +401,62 @@ const useZustandStore = create<ZustandState>()((set) => ({
     set((state: ZustandState) => {
       const tempGameSettings = state.gameSettings
 
-      const currentLevel = tempGameSettings.currentLevel;
-      const levelFlow = tempGameSettings.levelFlow;
-      const levelFlowType = tempGameSettings.levelFlowType;
+      const currentLevel = tempGameSettings.currentLevel
+      const levelFlow = tempGameSettings.levelFlow
+      const levelFlowType = tempGameSettings.levelFlowType
 
       if (levelFlowType === LevelFlowType.Linear) {
         if (!currentLevel) {
           throw new Error('no current level found')
         }
-        let currentLevelIndex = levelFlow.indexOf(currentLevel);
+        let currentLevelIndex = levelFlow.indexOf(currentLevel)
         if (currentLevelIndex === -1) {
           throw new Error('current level not in level flow')
         }
 
-        currentLevelIndex++;
+        currentLevelIndex++
         if (currentLevelIndex === levelFlow.length) {
           // we're out of levels. end game
           return {
             gameSettings: {
               ...tempGameSettings,
-              gameState: GameState.EndScreen
-            }
+              gameState: GameState.EndScreen,
+            },
           }
         }
 
-        // move to next level 
-        const newLevel = levelFlow[currentLevelIndex];
+        // move to next level
+        const newLevel = levelFlow[currentLevelIndex]
         return {
           gameSettings: {
             ...tempGameSettings,
             goToLevel: newLevel,
-          }
+          },
         }
       }
 
-      console.warn('cannot go to next level,',
-                        'flow type is not linear (goToNextLevel)')
+      console.warn('cannot go to next level,', 'flow type is not linear (goToNextLevel)')
       return {}
     }),
-  resetLevel: (levelId: string) => 
-    set((state:ZustandState) => {
-      const newProjectiles:ProjectileData[] = [];
+  resetLevel: (levelId: string) =>
+    set((state: ZustandState) => {
+      const newProjectiles: ProjectileData[] = []
       const gameObjectsDict = structuredClone(state.allLevelObjectInitData[levelId] || {})
-      const thisLevelSettings = state.allLevelSettings[levelId];
+      const thisLevelSettings = state.allLevelSettings[levelId]
       console.log('all level settings', state.allLevelSettings)
       if (!thisLevelSettings) {
         throw new Error('level settings not found for this level ' + levelId + ' (resetLevel)')
       }
 
-      const newColliderObj:GameObjectData[] = []
+      const newColliderObj: GameObjectData[] = []
 
       Object.values(gameObjectsDict).forEach((thisObject) => {
         if (thisObject.collider) {
-          newColliderObj.push(thisObject);
+          newColliderObj.push(thisObject)
         }
       })
 
-      const newLevelData:LevelData = {
+      const newLevelData: LevelData = {
         ...thisLevelSettings,
         timeLeftSec: thisLevelSettings.timeLimitSec || Infinity,
         levelState: LevelState.NormalPlay,
@@ -486,8 +470,8 @@ const useZustandStore = create<ZustandState>()((set) => ({
         colliderObjects: newColliderObj,
       }
     }),
-    
-    // Level settings
+
+  // Level settings
   setCurrentLevelData: (levelData: LevelData) =>
     set(() => {
       if (!levelData) {
@@ -507,11 +491,10 @@ const useZustandStore = create<ZustandState>()((set) => ({
       const oldLevelData = state.currentLevelData
       const newLevelData = {
         ...oldLevelData,
-        ...levelData
+        ...levelData,
       }
-      
 
-      const timeLeftSec = getTimeLeftFromLevelData(newLevelData);
+      const timeLeftSec = getTimeLeftFromLevelData(newLevelData)
 
       return {
         currentLevelData: {
@@ -520,13 +503,13 @@ const useZustandStore = create<ZustandState>()((set) => ({
         },
       }
     }),
-  updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) => 
+  updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) =>
     set((state: ZustandState) => {
       if (!levelSettingsWithId) {
         throw new Error('levelSettingsWithId is empty (updateAllLevelSettings)')
       }
 
-      const tempAllLevelSettings:AllLevelSettings = state.allLevelSettings || {};
+      const tempAllLevelSettings: AllLevelSettings = state.allLevelSettings || {}
 
       return {
         allLevelSettings: {
@@ -535,47 +518,45 @@ const useZustandStore = create<ZustandState>()((set) => ({
         },
       }
     }),
-  updateAllLevelResults: (levelResultsWithId: AllLevelResults) => 
-    set((state:ZustandState) => {
+  updateAllLevelResults: (levelResultsWithId: AllLevelResults) =>
+    set((state: ZustandState) => {
       if (!levelResultsWithId) {
         throw new Error('levelResultsWithId is empty (updateAllLevelResults)')
       }
 
-      const tempAllLevelResults:AllLevelResults = state.allLevelResults || {}
+      const tempAllLevelResults: AllLevelResults = state.allLevelResults || {}
 
       return {
         allLevelResults: {
           ...tempAllLevelResults,
           ...levelResultsWithId,
+        },
+      }
+    }),
+
+  // timer
+  updateTimeLeft: (inTimeLeftSec?: number) =>
+    set((state: ZustandState) => {
+      // if timeLeftMs is provided, use that.
+      // if not, calculate time left from level settings
+      if (typeof inTimeLeftSec !== 'undefined') {
+        return {
+          currentLevelData: {
+            ...state.currentLevelData,
+            timeLeftSec: inTimeLeftSec,
+          },
         }
       }
 
-    }),
-  
-  
-  // timer
-  updateTimeLeft: (inTimeLeftSec?:number) => set((state:ZustandState) => {
-    // if timeLeftMs is provided, use that. 
-    // if not, calculate time left from level settings 
-    if (typeof inTimeLeftSec !== 'undefined') {
+      const timeLeftSec = getTimeLeftFromLevelData(state.currentLevelData)
+
       return {
         currentLevelData: {
           ...state.currentLevelData,
-          timeLeftSec: inTimeLeftSec
-        }
+          timeLeftSec: timeLeftSec,
+        },
       }
-    }
-
-    const timeLeftSec = getTimeLeftFromLevelData(
-                                          state.currentLevelData);    
-
-    return {
-      currentLevelData: {
-        ...state.currentLevelData,
-        timeLeftSec: timeLeftSec,
-      }
-    }
-  })
+    }),
 }))
 
 export { useZustandStore, ZustandState }

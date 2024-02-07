@@ -17,14 +17,11 @@ import { timer } from './library/helpfulFunctions'
 const defaultSettings: GameSettings = defaultGameSettings
 
 function GameNoProv(props: any) {
-  const settings:GameSettings = { ...defaultSettings, ...props.settings }
+  const settings: GameSettings = { ...defaultSettings, ...props.settings }
   const setGameSettings = useZustandStore((state: any) => state.setGameSettings)
   const settingsFromStore = useZustandStore((state: any) => state.gameSettings)
   const gameState = settingsFromStore.gameState
-  const updateGameSettings = useZustandStore((state: any) => 
-                                                        state.updateGameSettings)
-
- 
+  const updateGameSettings = useZustandStore((state: any) => state.updateGameSettings)
 
   useEffect(() => {
     if (settings.levelFlowType === LevelFlowType.Linear) {
@@ -33,10 +30,8 @@ function GameNoProv(props: any) {
     setGameSettings(settings)
   }, [])
 
-
-
   useEffect(() => {
-    // handle key presses  
+    // handle key presses
     const handleKeyUp = (e: any) => {
       switch (e.code) {
         case 'Escape':
@@ -50,9 +45,6 @@ function GameNoProv(props: any) {
       document.removeEventListener('keyup', handleKeyUp)
     }
   }, [gameState])
-  
-  
-  
 
   // first try to get gameState from props. If not there, get it from store
   if (props.gameState && props.gameState !== settingsFromStore.gameState) {
@@ -60,7 +52,7 @@ function GameNoProv(props: any) {
       gameState: props.gameState,
     })
   }
-  
+
   const goToNormalPlay = () => {
     updateGameSettings({
       gameState: GameState.NormalPlay,
@@ -79,32 +71,28 @@ function GameNoProv(props: any) {
     })
   }
 
-  const currentLevelData = useZustandStore((state:ZustandState) => 
-                                                        state.currentLevelData)
-  const updateCurrentLevelData = useZustandStore((state:ZustandState) => 
-                                                          state.updateCurrentLevelData)
-  const endPause = async() => {
+  const currentLevelData = useZustandStore((state: ZustandState) => state.currentLevelData)
+  const updateCurrentLevelData = useZustandStore((state: ZustandState) => state.updateCurrentLevelData)
+  const endPause = async () => {
     // if not paused, do nothing
     if (gameState !== GameState.Paused) {
       return
     }
 
-    const pauseTimeMs = timer.stop();
+    const pauseTimeMs = timer.stop()
     timer.reset()
     updateCurrentLevelData({
-      pauseOffsetMs: (currentLevelData.pauseOffsetMs||0) + pauseTimeMs
+      pauseOffsetMs: (currentLevelData.pauseOffsetMs || 0) + pauseTimeMs,
     })
     goToNormalPlay()
   }
 
   const pausePressed = () => {
     if (gameState === GameState.Paused) {
-      endPause();
+      endPause()
+    } else {
+      startPause()
     }
-    else {
-      startPause();
-    }
-
   }
 
   const startScreen = (
@@ -118,6 +106,36 @@ function GameNoProv(props: any) {
     <div>
       Pause Screen
       <button onClick={endPause}>Resume</button>
+    </div>
+  )
+
+  // const resetLevel = useZustandStore((state: ZustandState) => state.resetLevel)
+  // const restartGame = () => {
+  //   updateGameSettings({
+  //     goToLevel: settingsFromStore.levelFlow[0],
+  //   })
+  //   resetLevel(settingsFromStore.levelFlow[0])
+  // }
+
+  const allLevelResults = useZustandStore((state: ZustandState) => state.allLevelResults)
+  const allLevelSettings = useZustandStore((state: ZustandState) => state.allLevelSettings)
+
+  const stats: any = {}
+  Object.keys(stats).forEach((key) => {
+    stats[key] = {
+      ...allLevelResults[key],
+      ...allLevelSettings[key],
+    }
+  })
+
+  const endScreen = (
+    <div>
+      End Screen score is <br />
+      {Object.values(stats).map((stat: any, i) => (
+        <div key={i}>
+          {stat.title} : {stat.score || 0}
+        </div>
+      ))}
     </div>
   )
 
@@ -136,8 +154,8 @@ function GameNoProv(props: any) {
       break
 
     case GameState.EndScreen:
+      returnBody = endScreen
       childrenDisplay = 'none'
-      returnBody = <div>End Screen</div>
       break
 
     case GameState.NormalPlay:
@@ -150,8 +168,8 @@ function GameNoProv(props: any) {
       id='webGameEngineParent'
       style={{
         position: 'relative',
-        width: '100vw',
-        height: '100vh',
+        width: '100dvw',
+        height: '100dvh',
         background: settings.background,
       }}
     >

@@ -10,7 +10,23 @@ import { ZustandState, useZustandStore } from './zustandStore'
 import { Collider, GameObjectData, GameObjectsDictionary, ColliderShape, GameObjectType } from './interfaces'
 import { LevelDataContext } from './contexts'
 
-function GameObject(props: any) {
+/**
+ * This function creates a new game object with the given properties.
+ * @param props - The properties of the game object, including its position, rotation, size, speed, health, score value, collider, and whether it is an enemy.
+ */
+function GameObject(props: {
+  position?: [number, number, number]
+  rotation?: [number, number, number]
+  size?: [number, number, number]
+  speed?: number
+  health?: number
+  scoreValue?: number
+  collider?: Collider
+  isEnemy?: boolean
+  objectType?: GameObjectType
+  objectId?: string
+  color?: string
+}) {
   // This reference gives us direct access to the THREE.Mesh object
   const ref = useRef<any>()
   // Hold state for hovered and clicked events
@@ -30,9 +46,9 @@ function GameObject(props: any) {
     boxSize: size,
     offset: [0, 0, 0],
   }
-  const isEnemy = props.isEnemy || false;
+  const isEnemy = props.isEnemy || false
   const addObject = useZustandStore((state: ZustandState) => state.addObject)
-  const levelDataContext = useContext(LevelDataContext);
+  const levelDataContext = useContext(LevelDataContext)
 
   useEffect(() => {
     // register myself into the store (should only happen once)
@@ -52,16 +68,16 @@ function GameObject(props: any) {
       parentLevelId: levelDataContext.id,
     }
 
-    // console.log('parent data is ', JSON.stringify(levelDataContext, null, 4))
+    // console.log('parent data is ', JSON.stringify(levelDataContext, null, 4));
 
     addObject(newObjectData)
-    
   }, [])
 
   // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     if (ref?.current?.rotation?.x) ref.current.rotation.x += delta
   })
+
   // Return the view, these are regular Threejs elements expressed in JSX
   const defaultColor = props.color || 'orange'
 
@@ -88,18 +104,17 @@ function GameObject(props: any) {
   )
 }
 
-function Enemy(props:any) {
+function Enemy(props: any) {
   // create basic game object, but set 'isEnemy' to true by default
-  let isEnemy = true;
+  let isEnemy = true
   if (typeof props.isEnemy !== 'undefined') {
     isEnemy = props.isEnemy
   }
 
   const objectType = props.objectType || 'enemy'
-  
+
   delete props.isEnemy
   delete props.objectType
-
 
   return <GameObject {...props} isEnemy={isEnemy} objectType={objectType} />
 }
@@ -149,7 +164,7 @@ function Projectile(props: any) {
   return (
     <mesh {...props} ref={ref}>
       <boxGeometry args={[0.1, 0.5, 0.1]} />
-      <meshStandardMaterial color={color}/>
+      <meshStandardMaterial color={color} />
     </mesh>
   )
 }
