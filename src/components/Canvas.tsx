@@ -79,15 +79,13 @@ function CanvasNoProv(props: any) {
   }
 
   const bullets = useZustandStore((state: ZustandState) => state.projectiles)
-  const projectilesUpdater = useZustandStore((state: ZustandState) => 
-                                                    state.projectilesUpdater)
+  const projectilesUpdater = useZustandStore((state: ZustandState) => state.projectilesUpdater)
 
   function RenderBullets() {
     const bulletsXml: any[] = []
 
     bullets.forEach((thisBullet: any) => {
-      bulletsXml.push(<Projectile position={thisBullet.position} 
-                                  key={'bullet_' + thisBullet.id} />)
+      bulletsXml.push(<Projectile position={thisBullet.position} key={'bullet_' + thisBullet.id} />)
     })
 
     return bulletsXml
@@ -95,9 +93,7 @@ function CanvasNoProv(props: any) {
 
   // make overlay
   const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
-  const currentLevelData = useZustandStore((state: ZustandState) => 
-                                                        state.currentLevelData)
- 
+  const currentLevelData = useZustandStore((state: ZustandState) => state.currentLevelData)
 
   const overlayXml: any = (
     <div

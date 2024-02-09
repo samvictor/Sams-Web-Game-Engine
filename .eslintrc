@@ -18,10 +18,11 @@
   "rules": {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
+    "react/no-unknown-property": "warn",
     "@typescript-eslint/no-non-null-assertion": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "react/no-unknown-property": "warn"
+    "@typescript-eslint/no-unused-vars": "warn"
   },
   "settings": {
     "react": {

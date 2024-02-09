@@ -74,7 +74,7 @@ function GameObject(props: {
   }, [])
 
   // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((state, delta) => {
+  useFrame((_, delta) => {
     if (ref?.current?.rotation?.x) ref.current.rotation.x += delta
   })
 

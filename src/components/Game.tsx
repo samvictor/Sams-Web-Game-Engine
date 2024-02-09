@@ -16,7 +16,7 @@ import { timer } from './library/helpfulFunctions'
 
 const defaultSettings: GameSettings = defaultGameSettings
 
-function GameNoProv(props: any) {
+function Game(props: any) {
   const settings: GameSettings = { ...defaultSettings, ...props.settings }
   const setGameSettings = useZustandStore((state: any) => state.setGameSettings)
   const settingsFromStore = useZustandStore((state: any) => state.gameSettings)
@@ -178,11 +178,5 @@ function GameNoProv(props: any) {
     </div>
   )
 }
-
-const Game = (props: any) => (
-  // <Provider store={reduxStore}>
-  <GameNoProv {...props} />
-  // </Provider>
-)
 
 export default Game
