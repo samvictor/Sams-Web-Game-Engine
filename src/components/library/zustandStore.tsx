@@ -24,7 +24,7 @@ interface ZustandState {
   playerUpdater: number;
   projectiles: ProjectileData[];
   projectilesUpdater: number;
-  gameObjectsDict: GameObjectsDictionary;
+  gameObjectsMap: Map<string, GameObjectData>;
   colliderObjects: GameObjectData[];
   gameSettings: GameSettings;
   // current level
@@ -35,7 +35,7 @@ interface ZustandState {
   allLevelResults: AllLevelResults;
   // for each levelId, save initial data of objects
   // used for restarts
-  allLevelObjectInitData: ObjectsByLevel;
+  allLevelObjectInitData: Map<string, Map<string, GameObjectData>>;
 
   // functions
   // players
@@ -146,14 +146,14 @@ const useZustandStore = create<ZustandState>()((set) => ({
   playerUpdater: 0,
   projectiles: [],
   projectilesUpdater: 0,
-  gameObjectsDict: {},
+  gameObjectsMap: new Map<string, GameObjectData>(),
   // live game objects with colliders
   colliderObjects: [],
   gameSettings: defaultGameSettings,
   currentLevelData: defaultLevelData,
   allLevelSettings: {},
   allLevelResults: {},
-  allLevelObjectInitData: {},
+  allLevelObjectInitData: new Map(),
 
   // functions
   // players
@@ -256,26 +256,27 @@ const useZustandStore = create<ZustandState>()((set) => ({
       // save the initial data for this object
       // used in restarts
       const allLevelObjectInitData = state.allLevelObjectInitData || {};
-      const initObjectsForThisLevel = allLevelObjectInitData[newObject.parentLevelId] || {};
-      initObjectsForThisLevel[newObject.id] = structuredClone(newObject);
-      allLevelObjectInitData[newObject.parentLevelId] = initObjectsForThisLevel;
+      const initObjectsForThisLevel = allLevelObjectInitData.get(newObject.parentLevelId) || new Map();
+      initObjectsForThisLevel.set(newObject.id, structuredClone(newObject));
+      allLevelObjectInitData.set(newObject.parentLevelId, initObjectsForThisLevel);
+
+      // clone objects map
+      const newGameObjectsMap = new Map(state.gameObjectsMap);
+      newGameObjectsMap.set(newObject.id, structuredClone(newObject));
 
       return {
-        gameObjectsDict: {
-          ...state.gameObjectsDict,
-          [newObject.id]: newObject,
-        },
+        gameObjectsMap: newGameObjectsMap,
         colliderObjects: tempColliderObj,
         allLevelObjectInitData: allLevelObjectInitData,
       };
     }),
   removeObjectById: (objectId: string) =>
     set((state: ZustandState) => {
-      const tempObjects = state.gameObjectsDict || {};
-      delete tempObjects[objectId];
+      const tempObjects = state.gameObjectsMap || new Map();
+      tempObjects.delete(objectId);
 
       return {
-        gameObjectsDict: tempObjects,
+        gameObjectsMap: tempObjects,
       };
     }),
   updateObjectById: (newObject: GameObjectData) =>
@@ -287,11 +288,11 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('new object missing id (addObject)');
       }
 
+      const tempObjects = state.gameObjectsMap || new Map();
+      tempObjects.set(newObject.id, newObject);
+
       return {
-        gameObjectsDict: {
-          ...state.gameObjectsDict,
-          [newObject.id]: newObject,
-        },
+        gameObjectsMap: tempObjects,
       };
     }),
 
@@ -312,13 +313,13 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('invalid targetId in damageObjectById');
       }
 
-      const oldObjects = { ...state.gameObjectsDict };
-      if (!oldObjects) {
+      const tempObjects = new Map(state.gameObjectsMap);
+      if (!tempObjects) {
         // old objects not found
         throw new Error('old objects not found');
       }
 
-      const target = oldObjects[targetId];
+      const target = tempObjects.get(targetId);
 
       if (!target) {
         // target not found in list
@@ -330,7 +331,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         return {};
       }
 
-      console.log('target health', target.health);
+      // console.log('target health', target.health);
 
       if (target.health && target.health > damageAmount) {
         target.health -= damageAmount;
@@ -344,13 +345,12 @@ const useZustandStore = create<ZustandState>()((set) => ({
 
         // count how many enemies are still alive
         let numLivingEnemies = 0;
-        const allObjects: GameObjectData[] = Object.values(state.gameObjectsDict);
-        allObjects.forEach((thisObject: GameObjectData) => {
+        state.gameObjectsMap.forEach((thisObject: GameObjectData) => {
           if (!thisObject.destroyed && thisObject.isEnemy) {
             numLivingEnemies++;
           }
         });
-        console.log('enemies remaining:', numLivingEnemies, 'objects', allObjects);
+        console.log('enemies remaining:', numLivingEnemies, 'objects', state.gameObjectsMap.values);
 
         if (target.scoreValue) {
           tempPlayerScore += target.scoreValue;
@@ -358,7 +358,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         }
 
         return {
-          gameObjectsDict: oldObjects,
+          gameObjectsMap: tempObjects,
           colliderObjects: tempColliderObj,
           currentLevelData: {
             ...state.currentLevelData,
@@ -441,7 +441,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
   resetLevel: (levelId: string) =>
     set((state: ZustandState) => {
       const newProjectiles: ProjectileData[] = [];
-      const gameObjectsDict = structuredClone(state.allLevelObjectInitData[levelId] || {});
+      const gameObjectsDict = new Map(state.allLevelObjectInitData.get(levelId) || new Map());
       const thisLevelSettings = state.allLevelSettings[levelId];
       console.log('all level settings', state.allLevelSettings);
       if (!thisLevelSettings) {
