@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 // import reduxStore from './reduxStore'
 import { ZustandState, useZustandStore } from './zustandStore';
 
-import { Collider, GameObjectData, GameObjectsDictionary, ColliderShape, GameObjectType } from './interfaces';
+import { Collider, GameObjectData, ColliderShape, GameObjectType } from './interfaces';
 import { LevelDataContext } from './contexts';
 
 /**
@@ -82,8 +82,8 @@ function GameObject(props: {
   const defaultColor = props.color || 'orange';
 
   // get this object data from store
-  const objects: GameObjectsDictionary = useZustandStore((state: any) => state.gameObjectsDict);
-  const thisObjectData = objects[id] || {};
+  const objects: Map<string, GameObjectData> = useZustandStore((state: ZustandState) => state.gameObjectsMap);
+  const thisObjectData: any = objects.get(id) || {};
   if (thisObjectData.destroyed) {
     return null;
   }

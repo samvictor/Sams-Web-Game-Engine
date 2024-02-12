@@ -139,23 +139,9 @@ interface ProjectileData extends GameObjectData {
   sourceId: string;
 }
 
-interface GameObjectsDictionary {
-  [id: string]: GameObjectData;
-}
-
-// {
-//   levelId: {
-//     objectId: {objData}
-//   }
-// }
-interface ObjectsByLevel {
-  [levelId: string]: GameObjectsDictionary;
-}
-
 export {
   Collider,
   GameObjectData,
-  GameObjectsDictionary,
   ProjectileData,
   PlayerObjectData,
   ColliderShape,
@@ -171,5 +157,4 @@ export {
   LevelResults,
   AllLevelResults,
   AllLevelSettings,
-  ObjectsByLevel,
 };

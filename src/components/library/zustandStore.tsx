@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { maxProjectilesOnScreen, defaultGameObjectData, defaultGameSettings, defaultLevelData } from './constants';
 import {
   GameObjectData,
-  GameObjectsDictionary,
   ProjectileData,
   PlayerObjectData,
   GameObjectType,
@@ -12,7 +11,6 @@ import {
   AllLevelResults,
   AllLevelSettings,
   GameState,
-  ObjectsByLevel,
   LevelState,
 } from './interfaces';
 
@@ -441,7 +439,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
   resetLevel: (levelId: string) =>
     set((state: ZustandState) => {
       const newProjectiles: ProjectileData[] = [];
-      const gameObjectsDict = new Map(state.allLevelObjectInitData.get(levelId) || new Map());
+      const tempGameObjectsMap = new Map(state.allLevelObjectInitData.get(levelId) || new Map());
       const thisLevelSettings = state.allLevelSettings[levelId];
       console.log('all level settings', state.allLevelSettings);
       if (!thisLevelSettings) {
@@ -450,7 +448,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
 
       const newColliderObj: GameObjectData[] = [];
 
-      Object.values(gameObjectsDict).forEach((thisObject) => {
+      tempGameObjectsMap.forEach((thisObject) => {
         if (thisObject.collider) {
           newColliderObj.push(thisObject);
         }
@@ -464,7 +462,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         score: 0,
       };
       return {
-        gameObjectsDict: gameObjectsDict,
+        gameObjectsMap: tempGameObjectsMap,
         projectiles: newProjectiles,
         currentLevelData: newLevelData,
         colliderObjects: newColliderObj,
