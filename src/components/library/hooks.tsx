@@ -70,9 +70,9 @@ function usePlayerShoot() {
 
 function useUpdateProjectiles() {
   const projectiles = useZustandStore((state: ZustandState) => state.projectiles);
-  const removeProjectileByIndex = useZustandStore((state: ZustandState) => state.removeProjectileByIndex);
+  const removeProjectileById = useZustandStore((state: ZustandState) => state.removeProjectileById);
   const damageObjectById = useZustandStore((state: ZustandState) => state.damageObjectById);
-  const updateProjectileByIndex = useZustandStore((state: ZustandState) => state.updateProjectileByIndex);
+  const updateProjectileById = useZustandStore((state: ZustandState) => state.updateProjectileById);
 
   const objects = useZustandStore((state: ZustandState) => state.colliderObjects);
 
@@ -82,7 +82,7 @@ function useUpdateProjectiles() {
     }
 
     const scaledDelta = delta * 10;
-    projectiles.forEach((bullet: any, i: number) => {
+    projectiles.forEach((bullet: any, projectileId: string) => {
       // check if bullet is out of bounds
       if (
         bullet.position[0] > screenBoundsMax[0] ||
@@ -93,7 +93,7 @@ function useUpdateProjectiles() {
         bullet.position[2] < screenBoundsMin[2]
       ) {
         // bullet is out of bounds, delete and return
-        removeProjectileByIndex(i, bullet.id);
+        removeProjectileById(projectileId);
         return;
       }
 
@@ -111,12 +111,12 @@ function useUpdateProjectiles() {
           // console.log("collision", bullet, thisObject);
           hadCollision = true;
           // destroy this projectile
-          removeProjectileByIndex(i, bullet.id);
+          removeProjectileById(projectileId);
         }
       });
 
       if (!hadCollision) {
-        updateProjectileByIndex(i, bullet);
+        updateProjectileById(bullet, projectileId);
       }
     });
   }

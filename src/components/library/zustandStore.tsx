@@ -20,7 +20,7 @@ interface ZustandState {
   // data
   player: PlayerObjectData;
   playerUpdater: number;
-  projectiles: ProjectileData[];
+  projectiles: Map<string, ProjectileData>;
   projectilesUpdater: number;
   gameObjectsMap: Map<string, GameObjectData>;
   colliderObjects: GameObjectData[];
@@ -43,8 +43,9 @@ interface ZustandState {
 
   // projectiles
   addProjectile: (newProjectile: ProjectileData) => void;
-  updateProjectileByIndex: (projectileIndex: number, newProjectile: ProjectileData) => void;
-  removeProjectileById: (id: string) => void;
+  updateProjectileByIndex: (newProjectile: ProjectileData, projectileIndex: number) => void;
+  updateProjectileById: (newProjectile: ProjectileData, projectileId?: string) => void;
+  removeProjectileById: (projectileId: string) => void;
   removeProjectileByIndex: (projectileIndex: number, projectileId: string) => void;
 
   // objects
@@ -69,28 +70,51 @@ interface ZustandState {
   updateTimeLeft: (timeLeftMs?: number) => void;
 }
 
-const updateProjectileByIndex = (oldProjectiles: ProjectileData[], index: number, newProjectile: ProjectileData) => {
+const updateProjectileByIndex = (
+  oldProjectiles: Map<string, ProjectileData>,
+  index: number,
+  newProjectile: ProjectileData,
+) => {
   if (!oldProjectiles) {
     // old projectiles not found
     throw new Error('old projectiles not found');
   }
 
-  oldProjectiles[index] = newProjectile;
+  const oldKey = Array.from(oldProjectiles.keys())[index];
+
+  if (!oldKey) {
+    // old key not found
+    throw new Error('old key not found');
+  }
+
+  oldProjectiles.set(oldKey, newProjectile);
 
   return oldProjectiles;
 };
-const removeProjectileByIndex = (oldProjectiles: ProjectileData[], index: number, id?: string) => {
+const removeProjectileByIndex = (oldProjectiles: Map<string, ProjectileData>, index: number, id?: string) => {
   if (!oldProjectiles) {
     // old projectiles not found
     throw new Error('old projectiles not found');
   }
 
-  const thisProjectile = oldProjectiles[index];
-  if (thisProjectile && (!id || thisProjectile.id === id)) {
-    // make sure projectile exist and matches id if available
-    oldProjectiles.splice(index, 1);
+  // get oldkey
+  let oldKey;
+  if (index === 0) {
+    oldKey = oldProjectiles.keys().next().value;
   } else {
-    console.warn('projectile not deleted');
+    oldKey = Array.from(oldProjectiles.keys())[index];
+  }
+
+  if (!oldKey) {
+    // oldKey not found
+    throw new Error('oldKey not found');
+  }
+
+  if (id && oldKey !== id) {
+    // id provided, but did not match projectile key
+    console.warn('id mismatch (removeProjectileByIndex)');
+  } else {
+    oldProjectiles.delete(oldKey);
   }
 
   return oldProjectiles;
@@ -142,7 +166,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
   // this lets zustand know that there has been a change
   // and we should rerender
   playerUpdater: 0,
-  projectiles: [],
+  projectiles: new Map<string, ProjectileData>(),
   projectilesUpdater: 0,
   gameObjectsMap: new Map<string, GameObjectData>(),
   // live game objects with colliders
@@ -184,20 +208,28 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('new projectile not found');
       }
 
-      let tempProjectiles = state.projectiles || [];
-      if (tempProjectiles.length >= maxProjectilesOnScreen) {
-        tempProjectiles = removeProjectileByIndex(tempProjectiles, 0);
+      if (!newProjectile.id) {
+        throw new Error('new projectile id not found');
       }
-      tempProjectiles.push(newProjectile);
+
+      const tempProjectiles: Map<string, ProjectileData> = state.projectiles || new Map();
+      if (tempProjectiles.size >= maxProjectilesOnScreen) {
+        // too many projectiles on screen
+        // remove the first projectile
+        // get key of first projectile
+        const keyOfFirstProjectile = tempProjectiles.keys().next().value;
+        tempProjectiles.delete(keyOfFirstProjectile);
+      }
+      tempProjectiles.set(newProjectile.id, newProjectile);
 
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
       };
     }),
-  updateProjectileByIndex: (projectileIndex: number, newProjectile: ProjectileData) =>
+  updateProjectileByIndex: (newProjectile: ProjectileData, projectileIndex: number) =>
     set((state: ZustandState) => {
-      let tempProjectiles = state.projectiles || [];
+      let tempProjectiles = state.projectiles || new Map();
       tempProjectiles = updateProjectileByIndex(tempProjectiles, projectileIndex, newProjectile);
       // console.log("setting projectiles to", JSON.stringify(tempProjectiles));
       return {
@@ -205,16 +237,21 @@ const useZustandStore = create<ZustandState>()((set) => ({
         projectilesUpdater: Date.now(),
       };
     }),
+  updateProjectileById: (newProjectile: ProjectileData, inProjectileId?: string) =>
+    set((state: ZustandState) => {
+      const tempProjectiles = state.projectiles || new Map();
+      const projectileId = inProjectileId || newProjectile.id;
+      tempProjectiles.set(projectileId, newProjectile);
+
+      return {
+        projectiles: tempProjectiles,
+        projectilesUpdater: Date.now(),
+      };
+    }),
   removeProjectileById: (id: string) =>
     set((state: ZustandState) => {
-      let tempProjectiles = state.projectiles || [];
-
-      const projectileIndex = tempProjectiles.findIndex((projectile: any) => projectile.id === id);
-      if (projectileIndex > -1) {
-        tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, id);
-      } else {
-        throw new Error('projectile not deleted (removeProjectileById)');
-      }
+      const tempProjectiles = state.projectiles || new Map();
+      tempProjectiles.delete(id);
 
       return {
         projectiles: tempProjectiles,
@@ -438,7 +475,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
     }),
   resetLevel: (levelId: string) =>
     set((state: ZustandState) => {
-      const newProjectiles: ProjectileData[] = [];
+      const newProjectiles: Map<string, ProjectileData> = new Map();
       const tempGameObjectsMap = new Map(state.allLevelObjectInitData.get(levelId) || new Map());
       const thisLevelSettings = state.allLevelSettings[levelId];
       console.log('all level settings', state.allLevelSettings);
