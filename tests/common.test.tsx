@@ -1,16 +1,16 @@
-import * as React from 'react'
-import { render } from '@testing-library/react'
+import * as React from 'react';
+import { render } from '@testing-library/react';
 
-import 'jest-canvas-mock'
+import 'jest-canvas-mock';
 
-import { Canvas, Player, Game, Level, Enemy } from '../src'
-import { GameState, LevelState } from '../src/components/library/interfaces'
+import { Canvas, Player, Game, Level, Enemy } from '../src';
+import { GameState, LevelState } from '../src/components/library/interfaces';
 
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}))
+}));
 
 describe('Common render', () => {
   it('renders start screen', () => {
@@ -25,8 +25,8 @@ describe('Common render', () => {
           </Canvas>
         </Level>
       </Game>,
-    )
-  })
+    );
+  });
 
   it('renders normal play', () => {
     render(
@@ -40,6 +40,10 @@ describe('Common render', () => {
           </Canvas>
         </Level>
       </Game>,
-    )
-  })
-})
+    );
+  });
+});
+
+// future tests
+// damage objects, check damaged,
+// start game, restart game, check settings match

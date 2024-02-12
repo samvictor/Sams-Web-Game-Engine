@@ -1,6 +1,4 @@
-import { createContext } from "react"
-const LevelDataContext = createContext<any>({})
+import { createContext } from 'react';
+const LevelDataContext = createContext<any>({});
 
-export { 
-  LevelDataContext
-}
+export { LevelDataContext };

@@ -1,5 +1,5 @@
-import { create } from 'zustand'
-import { maxProjectilesOnScreen, defaultGameObjectData, defaultGameSettings, defaultLevelData } from './constants'
+import { create } from 'zustand';
+import { maxProjectilesOnScreen, defaultGameObjectData, defaultGameSettings, defaultLevelData } from './constants';
 import {
   GameObjectData,
   GameObjectsDictionary,
@@ -14,121 +14,121 @@ import {
   GameState,
   ObjectsByLevel,
   LevelState,
-} from './interfaces'
+} from './interfaces';
 
 // import { Projectile } from './objects'
 
 interface ZustandState {
   // data
-  player: PlayerObjectData
-  playerUpdater: number
-  projectiles: ProjectileData[]
-  projectilesUpdater: number
-  gameObjectsDict: GameObjectsDictionary
-  colliderObjects: GameObjectData[]
-  gameSettings: GameSettings
+  player: PlayerObjectData;
+  playerUpdater: number;
+  projectiles: ProjectileData[];
+  projectilesUpdater: number;
+  gameObjectsDict: GameObjectsDictionary;
+  colliderObjects: GameObjectData[];
+  gameSettings: GameSettings;
   // current level
-  currentLevelData: LevelData
+  currentLevelData: LevelData;
   // inital settings
-  allLevelSettings: AllLevelSettings
+  allLevelSettings: AllLevelSettings;
   // what happened in each level? did player win? what was the score?
-  allLevelResults: AllLevelResults
+  allLevelResults: AllLevelResults;
   // for each levelId, save initial data of objects
   // used for restarts
-  allLevelObjectInitData: ObjectsByLevel
+  allLevelObjectInitData: ObjectsByLevel;
 
   // functions
   // players
-  setPlayer: (newPlayer: PlayerObjectData) => void
-  setPlayerPosition: (newPlayerPosition: number[]) => void
-  setPlayerLastShootTimeMs: (newShootTime: number) => void
+  setPlayer: (newPlayer: PlayerObjectData) => void;
+  setPlayerPosition: (newPlayerPosition: number[]) => void;
+  setPlayerLastShootTimeMs: (newShootTime: number) => void;
 
   // projectiles
-  addProjectile: (newProjectile: ProjectileData) => void
-  updateProjectileByIndex: (projectileIndex: number, newProjectile: ProjectileData) => void
-  removeProjectileById: (id: string) => void
-  removeProjectileByIndex: (projectileIndex: number, projectileId: string) => void
+  addProjectile: (newProjectile: ProjectileData) => void;
+  updateProjectileByIndex: (projectileIndex: number, newProjectile: ProjectileData) => void;
+  removeProjectileById: (id: string) => void;
+  removeProjectileByIndex: (projectileIndex: number, projectileId: string) => void;
 
   // objects
-  addObject: (newObject: GameObjectData) => void
+  addObject: (newObject: GameObjectData) => void;
 
   // damage
-  damageObjectById: (targetId: string, damage?: number, sourceId?: string) => void
+  damageObjectById: (targetId: string, damage?: number, sourceId?: string) => void;
 
   // Game settings
-  setGameSettings: (gameSettings: GameSettings) => void
-  updateGameSettings: (gameSettings: any) => void
-  goToNextLevel: () => void
-  resetLevel: (levelId: string) => void
+  setGameSettings: (gameSettings: GameSettings) => void;
+  updateGameSettings: (gameSettings: any) => void;
+  goToNextLevel: () => void;
+  resetLevel: (levelId: string) => void;
 
   // Level settings/data
-  setCurrentLevelData: (levelData: LevelData) => void
-  updateCurrentLevelData: (levelData: any) => void
-  updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) => void
-  updateAllLevelResults: (levelResultsWithId: AllLevelResults) => void
+  setCurrentLevelData: (levelData: LevelData) => void;
+  updateCurrentLevelData: (levelData: any) => void;
+  updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) => void;
+  updateAllLevelResults: (levelResultsWithId: AllLevelResults) => void;
 
   // timer
-  updateTimeLeft: (timeLeftMs?: number) => void
+  updateTimeLeft: (timeLeftMs?: number) => void;
 }
 
 const updateProjectileByIndex = (oldProjectiles: ProjectileData[], index: number, newProjectile: ProjectileData) => {
   if (!oldProjectiles) {
     // old projectiles not found
-    throw new Error('old projectiles not found')
+    throw new Error('old projectiles not found');
   }
 
-  oldProjectiles[index] = newProjectile
+  oldProjectiles[index] = newProjectile;
 
-  return oldProjectiles
-}
+  return oldProjectiles;
+};
 const removeProjectileByIndex = (oldProjectiles: ProjectileData[], index: number, id?: string) => {
   if (!oldProjectiles) {
     // old projectiles not found
-    throw new Error('old projectiles not found')
+    throw new Error('old projectiles not found');
   }
 
-  const thisProjectile = oldProjectiles[index]
+  const thisProjectile = oldProjectiles[index];
   if (thisProjectile && (!id || thisProjectile.id === id)) {
     // make sure projectile exist and matches id if available
-    oldProjectiles.splice(index, 1)
+    oldProjectiles.splice(index, 1);
   } else {
-    console.warn('projectile not deleted')
+    console.warn('projectile not deleted');
   }
 
-  return oldProjectiles
-}
+  return oldProjectiles;
+};
 
 const removeFromListById = (list: any[], id: string) => {
   if (!list) {
-    throw new Error('list not found')
+    throw new Error('list not found');
   }
 
   if (!id) {
-    throw new Error('id not found')
+    throw new Error('id not found');
   }
 
-  const indexToRemove = list.findIndex((item: any) => item.id === id)
+  const indexToRemove = list.findIndex((item: any) => item.id === id);
   if (indexToRemove === -1) {
-    console.warn('id not found in list (removeFromListById)')
-    console.warn('list', list, 'id', id)
-    return list
+    console.warn('id not found in list (removeFromListById)');
+    console.warn('list', list, 'id', id);
+    return list;
   }
 
-  list.splice(indexToRemove, 1)
+  list.splice(indexToRemove, 1);
 
-  return list
-}
+  return list;
+};
 
 const getTimeLeftFromLevelData = (levelData: LevelData) => {
-  const timeElapsedMs = Date.now() - (levelData.startTimeMs || 0) - (levelData.pauseOffsetMs || 0)
-  let timeLeftSec = (levelData.timeLimitSec || 0) - Math.floor(timeElapsedMs / 1000)
+  const timeElapsedMs = Date.now() - (levelData.startTimeMs || 0) - (levelData.pauseOffsetMs || 0);
+  let timeLeftSec = (levelData.timeLimitSec || 0) - Math.floor(timeElapsedMs / 1000);
 
   if (timeLeftSec < 0) {
-    timeLeftSec = 0
+    timeLeftSec = 0;
   }
 
-  return timeLeftSec
-}
+  return timeLeftSec;
+};
 
 const useZustandStore = create<ZustandState>()((set) => ({
   // default state
@@ -183,82 +183,82 @@ const useZustandStore = create<ZustandState>()((set) => ({
   addProjectile: (newProjectile: ProjectileData) =>
     set((state: any) => {
       if (!newProjectile) {
-        throw new Error('new projectile not found')
+        throw new Error('new projectile not found');
       }
 
-      let tempProjectiles = state.projectiles || []
+      let tempProjectiles = state.projectiles || [];
       if (tempProjectiles.length >= maxProjectilesOnScreen) {
-        tempProjectiles = removeProjectileByIndex(tempProjectiles, 0)
+        tempProjectiles = removeProjectileByIndex(tempProjectiles, 0);
       }
-      tempProjectiles.push(newProjectile)
+      tempProjectiles.push(newProjectile);
 
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
-      }
+      };
     }),
   updateProjectileByIndex: (projectileIndex: number, newProjectile: ProjectileData) =>
     set((state: ZustandState) => {
-      let tempProjectiles = state.projectiles || []
-      tempProjectiles = updateProjectileByIndex(tempProjectiles, projectileIndex, newProjectile)
+      let tempProjectiles = state.projectiles || [];
+      tempProjectiles = updateProjectileByIndex(tempProjectiles, projectileIndex, newProjectile);
       // console.log("setting projectiles to", JSON.stringify(tempProjectiles));
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
-      }
+      };
     }),
   removeProjectileById: (id: string) =>
     set((state: ZustandState) => {
-      let tempProjectiles = state.projectiles || []
+      let tempProjectiles = state.projectiles || [];
 
-      const projectileIndex = tempProjectiles.findIndex((projectile: any) => projectile.id === id)
+      const projectileIndex = tempProjectiles.findIndex((projectile: any) => projectile.id === id);
       if (projectileIndex > -1) {
-        tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, id)
+        tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, id);
       } else {
-        throw new Error('projectile not deleted (removeProjectileById)')
+        throw new Error('projectile not deleted (removeProjectileById)');
       }
 
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
-      }
+      };
     }),
   removeProjectileByIndex: (projectileIndex: number, projectileId: string) =>
     set((state: ZustandState) => {
-      let tempProjectiles = state.projectiles || []
-      tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, projectileId)
+      let tempProjectiles = state.projectiles || [];
+      tempProjectiles = removeProjectileByIndex(tempProjectiles, projectileIndex, projectileId);
 
       return {
         projectiles: tempProjectiles,
         projectilesUpdater: Date.now(),
-      }
+      };
     }),
 
   // objects
   addObject: (newObject: GameObjectData) =>
     set((state: ZustandState) => {
       if (!newObject) {
-        throw new Error('new object not found (addObject)')
+        throw new Error('new object not found (addObject)');
       }
       if (!newObject.id) {
-        throw new Error('new object missing id (addObject)')
+        throw new Error('new object missing id (addObject)');
       }
 
-      const tempColliderObj = state.colliderObjects || []
+      const tempColliderObj = state.colliderObjects || [];
       if (newObject.collider) {
-        tempColliderObj.push(newObject)
+        tempColliderObj.push(newObject);
       }
 
       if (!newObject.parentLevelId) {
-        throw new Error('new object missing parentLevelId (addObject)')
+        throw new Error('new object missing parentLevelId (addObject)');
       }
 
       // save the initial data for this object
       // used in restarts
-      const allLevelObjectInitData = state.allLevelObjectInitData || {}
-      const initObjectsForThisLevel = allLevelObjectInitData[newObject.parentLevelId] || {}
-      initObjectsForThisLevel[newObject.id] = structuredClone(newObject)
-      allLevelObjectInitData[newObject.parentLevelId] = initObjectsForThisLevel
+      const allLevelObjectInitData = state.allLevelObjectInitData || {};
+      const initObjectsForThisLevel = allLevelObjectInitData[newObject.parentLevelId] || {};
+      initObjectsForThisLevel[newObject.id] = structuredClone(newObject);
+      allLevelObjectInitData[newObject.parentLevelId] = initObjectsForThisLevel;
 
       return {
         gameObjectsDict: {
@@ -267,24 +267,24 @@ const useZustandStore = create<ZustandState>()((set) => ({
         },
         colliderObjects: tempColliderObj,
         allLevelObjectInitData: allLevelObjectInitData,
-      }
+      };
     }),
   removeObjectById: (objectId: string) =>
     set((state: ZustandState) => {
-      const tempObjects = state.gameObjectsDict || {}
-      delete tempObjects[objectId]
+      const tempObjects = state.gameObjectsDict || {};
+      delete tempObjects[objectId];
 
       return {
         gameObjectsDict: tempObjects,
-      }
+      };
     }),
   updateObjectById: (newObject: GameObjectData) =>
     set((state: ZustandState) => {
       if (!newObject) {
-        throw new Error('new object not found (addObject)')
+        throw new Error('new object not found (addObject)');
       }
       if (!newObject.id) {
-        throw new Error('new object missing id (addObject)')
+        throw new Error('new object missing id (addObject)');
       }
 
       return {
@@ -292,69 +292,69 @@ const useZustandStore = create<ZustandState>()((set) => ({
           ...state.gameObjectsDict,
           [newObject.id]: newObject,
         },
-      }
+      };
     }),
 
   // damage
   damageObjectById: (targetId: string, damage?: number, sourceId?: string) =>
     set((state: ZustandState) => {
       if (!sourceId) {
-        console.warn('source id not found in damageObjectById')
+        console.warn('source id not found in damageObjectById');
       }
-      let damageAmount = 1
+      let damageAmount = 1;
       if (typeof damage === 'number') {
-        damageAmount = damage
+        damageAmount = damage;
       } else {
-        console.warn('damage amount not found, using default (1) in damageObjectById')
+        console.warn('damage amount not found, using default (1) in damageObjectById');
       }
 
       if (!targetId) {
-        throw new Error('invalid targetId in damageObjectById')
+        throw new Error('invalid targetId in damageObjectById');
       }
 
-      const oldObjects = { ...state.gameObjectsDict }
+      const oldObjects = { ...state.gameObjectsDict };
       if (!oldObjects) {
         // old objects not found
-        throw new Error('old objects not found')
+        throw new Error('old objects not found');
       }
 
-      const target = oldObjects[targetId]
+      const target = oldObjects[targetId];
 
       if (!target) {
         // target not found in list
-        throw new Error('target not found in object dict. (damageObjectById)')
+        throw new Error('target not found in object dict. (damageObjectById)');
       }
 
       if (target.destroyed) {
-        console.warn('target already destroyed (damageObjectById)')
-        return {}
+        console.warn('target already destroyed (damageObjectById)');
+        return {};
       }
 
-      console.log('target health', target.health)
+      console.log('target health', target.health);
 
       if (target.health && target.health > damageAmount) {
-        target.health -= damageAmount
+        target.health -= damageAmount;
       } else {
         // destroy target
-        target.destroyed = true
-        let tempPlayerScore = state.currentLevelData.score || 0
+        target.destroyed = true;
+        let tempPlayerScore = state.currentLevelData.score || 0;
 
-        let tempColliderObj = state.colliderObjects
-        tempColliderObj = removeFromListById(tempColliderObj, target.id)
+        let tempColliderObj = state.colliderObjects;
+        tempColliderObj = removeFromListById(tempColliderObj, target.id);
 
         // count how many enemies are still alive
-        let numLivingEnemies = 0
-        const allObjects: GameObjectData[] = Object.values(state.gameObjectsDict)
+        let numLivingEnemies = 0;
+        const allObjects: GameObjectData[] = Object.values(state.gameObjectsDict);
         allObjects.forEach((thisObject: GameObjectData) => {
           if (!thisObject.destroyed && thisObject.isEnemy) {
-            numLivingEnemies++
+            numLivingEnemies++;
           }
-        })
-        console.log('enemies remaining:', numLivingEnemies, 'objects', allObjects)
+        });
+        console.log('enemies remaining:', numLivingEnemies, 'objects', allObjects);
 
         if (target.scoreValue) {
-          tempPlayerScore += target.scoreValue
-          console.log('setting new score to', tempPlayerScore)
+          tempPlayerScore += target.scoreValue;
+          console.log('setting new score to', tempPlayerScore);
         }
 
         return {
@@ -365,56 +365,56 @@ const useZustandStore = create<ZustandState>()((set) => ({
             numLivingEnemies: numLivingEnemies,
             score: tempPlayerScore,
           },
-        }
+        };
       }
 
-      return {}
+      return {};
     }),
 
   // Game settings
   setGameSettings: (gameSettings: GameSettings) =>
     set(() => {
       if (!gameSettings) {
-        throw new Error('gameSettings is empty')
+        throw new Error('gameSettings is empty');
       }
 
       return {
         gameSettings: gameSettings,
-      }
+      };
     }),
   updateGameSettings: (gameSettings: any) =>
     set((state: ZustandState) => {
       if (!gameSettings) {
-        throw new Error('gameSettings is empty')
+        throw new Error('gameSettings is empty');
       }
 
-      const oldGameSettings = state.gameSettings
+      const oldGameSettings = state.gameSettings;
 
       return {
         gameSettings: {
           ...oldGameSettings,
           ...gameSettings,
         },
-      }
+      };
     }),
   goToNextLevel: () =>
     set((state: ZustandState) => {
-      const tempGameSettings = state.gameSettings
+      const tempGameSettings = state.gameSettings;
 
-      const currentLevel = tempGameSettings.currentLevel
-      const levelFlow = tempGameSettings.levelFlow
-      const levelFlowType = tempGameSettings.levelFlowType
+      const currentLevel = tempGameSettings.currentLevel;
+      const levelFlow = tempGameSettings.levelFlow;
+      const levelFlowType = tempGameSettings.levelFlowType;
 
       if (levelFlowType === LevelFlowType.Linear) {
         if (!currentLevel) {
-          throw new Error('no current level found')
+          throw new Error('no current level found');
         }
-        let currentLevelIndex = levelFlow.indexOf(currentLevel)
+        let currentLevelIndex = levelFlow.indexOf(currentLevel);
         if (currentLevelIndex === -1) {
-          throw new Error('current level not in level flow')
+          throw new Error('current level not in level flow');
         }
 
-        currentLevelIndex++
+        currentLevelIndex++;
         if (currentLevelIndex === levelFlow.length) {
           // we're out of levels. end game
           return {
@@ -422,39 +422,39 @@ const useZustandStore = create<ZustandState>()((set) => ({
               ...tempGameSettings,
               gameState: GameState.EndScreen,
             },
-          }
+          };
         }
 
         // move to next level
-        const newLevel = levelFlow[currentLevelIndex]
+        const newLevel = levelFlow[currentLevelIndex];
         return {
           gameSettings: {
             ...tempGameSettings,
             goToLevel: newLevel,
           },
-        }
+        };
       }
 
-      console.warn('cannot go to next level,', 'flow type is not linear (goToNextLevel)')
-      return {}
+      console.warn('cannot go to next level,', 'flow type is not linear (goToNextLevel)');
+      return {};
     }),
   resetLevel: (levelId: string) =>
     set((state: ZustandState) => {
-      const newProjectiles: ProjectileData[] = []
-      const gameObjectsDict = structuredClone(state.allLevelObjectInitData[levelId] || {})
-      const thisLevelSettings = state.allLevelSettings[levelId]
-      console.log('all level settings', state.allLevelSettings)
+      const newProjectiles: ProjectileData[] = [];
+      const gameObjectsDict = structuredClone(state.allLevelObjectInitData[levelId] || {});
+      const thisLevelSettings = state.allLevelSettings[levelId];
+      console.log('all level settings', state.allLevelSettings);
       if (!thisLevelSettings) {
-        throw new Error('level settings not found for this level ' + levelId + ' (resetLevel)')
+        throw new Error('level settings not found for this level ' + levelId + ' (resetLevel)');
       }
 
-      const newColliderObj: GameObjectData[] = []
+      const newColliderObj: GameObjectData[] = [];
 
       Object.values(gameObjectsDict).forEach((thisObject) => {
         if (thisObject.collider) {
-          newColliderObj.push(thisObject)
+          newColliderObj.push(thisObject);
         }
-      })
+      });
 
       const newLevelData: LevelData = {
         ...thisLevelSettings,
@@ -462,76 +462,76 @@ const useZustandStore = create<ZustandState>()((set) => ({
         levelState: LevelState.NormalPlay,
         startTimeMs: Date.now(),
         score: 0,
-      }
+      };
       return {
         gameObjectsDict: gameObjectsDict,
         projectiles: newProjectiles,
         currentLevelData: newLevelData,
         colliderObjects: newColliderObj,
-      }
+      };
     }),
 
   // Level settings
   setCurrentLevelData: (levelData: LevelData) =>
     set(() => {
       if (!levelData) {
-        throw new Error('levelSettings is empty (setLevelSettings)')
+        throw new Error('levelSettings is empty (setLevelSettings)');
       }
 
       return {
         currentLevelData: levelData,
-      }
+      };
     }),
   updateCurrentLevelData: (levelData: any) =>
     set((state: ZustandState) => {
       if (!levelData) {
-        throw new Error('levelSettings is empty (updateCurrentLevelSettings)')
+        throw new Error('levelSettings is empty (updateCurrentLevelSettings)');
       }
 
-      const oldLevelData = state.currentLevelData
+      const oldLevelData = state.currentLevelData;
       const newLevelData = {
         ...oldLevelData,
         ...levelData,
-      }
+      };
 
-      const timeLeftSec = getTimeLeftFromLevelData(newLevelData)
+      const timeLeftSec = getTimeLeftFromLevelData(newLevelData);
 
       return {
         currentLevelData: {
           ...newLevelData,
           timeLeftSec: timeLeftSec,
         },
-      }
+      };
     }),
   updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) =>
     set((state: ZustandState) => {
       if (!levelSettingsWithId) {
-        throw new Error('levelSettingsWithId is empty (updateAllLevelSettings)')
+        throw new Error('levelSettingsWithId is empty (updateAllLevelSettings)');
       }
 
-      const tempAllLevelSettings: AllLevelSettings = state.allLevelSettings || {}
+      const tempAllLevelSettings: AllLevelSettings = state.allLevelSettings || {};
 
       return {
         allLevelSettings: {
           ...tempAllLevelSettings,
           ...levelSettingsWithId,
         },
-      }
+      };
     }),
   updateAllLevelResults: (levelResultsWithId: AllLevelResults) =>
     set((state: ZustandState) => {
       if (!levelResultsWithId) {
-        throw new Error('levelResultsWithId is empty (updateAllLevelResults)')
+        throw new Error('levelResultsWithId is empty (updateAllLevelResults)');
       }
 
-      const tempAllLevelResults: AllLevelResults = state.allLevelResults || {}
+      const tempAllLevelResults: AllLevelResults = state.allLevelResults || {};
 
       return {
         allLevelResults: {
           ...tempAllLevelResults,
           ...levelResultsWithId,
         },
-      }
+      };
     }),
 
   // timer
@@ -545,18 +545,18 @@ const useZustandStore = create<ZustandState>()((set) => ({
             ...state.currentLevelData,
             timeLeftSec: inTimeLeftSec,
           },
-        }
+        };
       }
 
-      const timeLeftSec = getTimeLeftFromLevelData(state.currentLevelData)
+      const timeLeftSec = getTimeLeftFromLevelData(state.currentLevelData);
 
       return {
         currentLevelData: {
           ...state.currentLevelData,
           timeLeftSec: timeLeftSec,
         },
-      }
+      };
     }),
-}))
+}));
 
-export { useZustandStore, ZustandState }
+export { useZustandStore, ZustandState };

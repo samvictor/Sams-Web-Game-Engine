@@ -2,15 +2,15 @@
 // It holds all of the data and does most of the processing
 // Start with a Canvas and add other components to it
 
-'use client'
+'use client';
 
-import React, { useState, useEffect } from 'react'
-import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber'
+import React, { useState, useEffect } from 'react';
+import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber';
 // import { useSelector } from 'react-redux'
 // import reduxStore from './library/reduxStore';
-import { Projectile } from './library/objects'
-import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks'
-import { useZustandStore, ZustandState } from './library/zustandStore'
+import { Projectile } from './library/objects';
+import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks';
+import { useZustandStore, ZustandState } from './library/zustandStore';
 
 // import { Provider } from 'react-redux'
 // import {useZustandStore} from './library/zustandStore'
@@ -20,9 +20,9 @@ import { useZustandStore, ZustandState } from './library/zustandStore'
 function CanvasNoProv(props: any) {
   // const settings = { ...defaultSettings, ...props.settings }
 
-  const movePlayer = useMovePlayer()
-  const playerShoot = usePlayerShoot()
-  const updateBullets = useUpdateProjectiles()
+  const movePlayer = useMovePlayer();
+  const playerShoot = usePlayerShoot();
+  const updateBullets = useUpdateProjectiles();
 
   const keys: any = {
     KeyW: 'up',
@@ -34,9 +34,9 @@ function CanvasNoProv(props: any) {
     ArrowLeft: 'left',
     ArrowRight: 'right',
     Space: 'shoot',
-  }
+  };
 
-  const moveFieldByKey = (key: any) => keys[key]
+  const moveFieldByKey = (key: any) => keys[key];
 
   const [movement, setMovement] = useState({
     up: false,
@@ -44,56 +44,56 @@ function CanvasNoProv(props: any) {
     left: false,
     right: false,
     shoot: false,
-  })
+  });
 
   useEffect(() => {
     const handleKeyDown = (e: any) => {
-      setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: true }))
-    }
+      setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: true }));
+    };
     const handleKeyUp = (e: any) => {
-      setMovement((m: any) => ({ ...m, [moveFieldByKey(e.code)]: false }))
-    }
-    document.addEventListener('keydown', handleKeyDown)
-    document.addEventListener('keyup', handleKeyUp)
+      setMovement((m: any) => ({ ...m, [moveFieldByKey(e.code)]: false }));
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-      document.removeEventListener('keyup', handleKeyUp)
-    }
-  }, [])
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('keyup', handleKeyUp);
+    };
+  }, []);
 
   function Updater() {
     useFrame((_, delta: number) => {
       if (movement.left) {
-        movePlayer('left', delta)
+        movePlayer('left', delta);
       } else if (movement.right) {
-        movePlayer('right', delta)
+        movePlayer('right', delta);
       }
       if (movement.shoot) {
-        playerShoot()
+        playerShoot();
       }
 
-      updateBullets(delta)
-    })
+      updateBullets(delta);
+    });
 
-    return <mesh />
+    return <mesh />;
   }
 
-  const bullets = useZustandStore((state: ZustandState) => state.projectiles)
-  const projectilesUpdater = useZustandStore((state: ZustandState) => state.projectilesUpdater)
+  const bullets = useZustandStore((state: ZustandState) => state.projectiles);
+  const projectilesUpdater = useZustandStore((state: ZustandState) => state.projectilesUpdater);
 
   function RenderBullets() {
-    const bulletsXml: any[] = []
+    const bulletsXml: any[] = [];
 
     bullets.forEach((thisBullet: any) => {
-      bulletsXml.push(<Projectile position={thisBullet.position} key={'bullet_' + thisBullet.id} />)
-    })
+      bulletsXml.push(<Projectile position={thisBullet.position} key={'bullet_' + thisBullet.id} />);
+    });
 
-    return bulletsXml
+    return bulletsXml;
   }
 
   // make overlay
-  const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings)
-  const currentLevelData = useZustandStore((state: ZustandState) => state.currentLevelData)
+  const gameSettings = useZustandStore((state: ZustandState) => state.gameSettings);
+  const currentLevelData = useZustandStore((state: ZustandState) => state.currentLevelData);
 
   const overlayXml: any = (
     <div
@@ -108,7 +108,7 @@ function CanvasNoProv(props: any) {
       Score: {currentLevelData.score}
       Time Left: {currentLevelData.timeLeftSec}
     </div>
-  )
+  );
 
   return (
     <div
@@ -127,9 +127,9 @@ function CanvasNoProv(props: any) {
 
       {overlayXml}
     </div>
-  )
+  );
 }
 
-const Canvas = (props: any) => <CanvasNoProv {...props} />
+const Canvas = (props: any) => <CanvasNoProv {...props} />;
 
-export default Canvas
+export default Canvas;

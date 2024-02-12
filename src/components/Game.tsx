@@ -2,33 +2,33 @@
 // It holds all of the data and does most of the processing
 // Start with a Canvas and add other components to it
 
-'use client'
+'use client';
 
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 // import { useSelector } from 'react-redux'
 
 // import { Provider } from 'react-redux'
 // import reduxStore from './library/reduxStore'
-import { ZustandState, useZustandStore } from './library/zustandStore'
-import { GameState, GameSettings, LevelFlowType } from './library/interfaces'
-import { defaultGameSettings } from './library/constants'
-import { timer } from './library/helpfulFunctions'
+import { ZustandState, useZustandStore } from './library/zustandStore';
+import { GameState, GameSettings, LevelFlowType } from './library/interfaces';
+import { defaultGameSettings } from './library/constants';
+import { timer } from './library/helpfulFunctions';
 
-const defaultSettings: GameSettings = defaultGameSettings
+const defaultSettings: GameSettings = defaultGameSettings;
 
 function Game(props: any) {
-  const settings: GameSettings = { ...defaultSettings, ...props.settings }
-  const setGameSettings = useZustandStore((state: any) => state.setGameSettings)
-  const settingsFromStore = useZustandStore((state: any) => state.gameSettings)
-  const gameState = settingsFromStore.gameState
-  const updateGameSettings = useZustandStore((state: any) => state.updateGameSettings)
+  const settings: GameSettings = { ...defaultSettings, ...props.settings };
+  const setGameSettings = useZustandStore((state: any) => state.setGameSettings);
+  const settingsFromStore = useZustandStore((state: any) => state.gameSettings);
+  const gameState = settingsFromStore.gameState;
+  const updateGameSettings = useZustandStore((state: any) => state.updateGameSettings);
 
   useEffect(() => {
     if (settings.levelFlowType === LevelFlowType.Linear) {
-      settings.goToLevel = settings.levelFlow[0]
+      settings.goToLevel = settings.levelFlow[0];
     }
-    setGameSettings(settings)
-  }, [])
+    setGameSettings(settings);
+  }, []);
 
   useEffect(() => {
     // handle key presses
@@ -36,78 +36,78 @@ function Game(props: any) {
       switch (e.code) {
         case 'Escape':
         case 'KeyP':
-          pausePressed()
-          break
+          pausePressed();
+          break;
       }
-    }
-    document.addEventListener('keyup', handleKeyUp)
+    };
+    document.addEventListener('keyup', handleKeyUp);
     return () => {
-      document.removeEventListener('keyup', handleKeyUp)
-    }
-  }, [gameState])
+      document.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [gameState]);
 
   // first try to get gameState from props. If not there, get it from store
   if (props.gameState && props.gameState !== settingsFromStore.gameState) {
     updateGameSettings({
       gameState: props.gameState,
-    })
+    });
   }
 
   const goToNormalPlay = () => {
     updateGameSettings({
       gameState: GameState.NormalPlay,
-    })
-  }
+    });
+  };
 
   const startPause = () => {
     // if already paused, do nothing
     if (gameState === GameState.Paused) {
-      return
+      return;
     }
 
-    timer.start()
+    timer.start();
     updateGameSettings({
       gameState: GameState.Paused,
-    })
-  }
+    });
+  };
 
-  const currentLevelData = useZustandStore((state: ZustandState) => state.currentLevelData)
-  const updateCurrentLevelData = useZustandStore((state: ZustandState) => state.updateCurrentLevelData)
+  const currentLevelData = useZustandStore((state: ZustandState) => state.currentLevelData);
+  const updateCurrentLevelData = useZustandStore((state: ZustandState) => state.updateCurrentLevelData);
   const endPause = async () => {
     // if not paused, do nothing
     if (gameState !== GameState.Paused) {
-      return
+      return;
     }
 
-    const pauseTimeMs = timer.stop()
-    timer.reset()
+    const pauseTimeMs = timer.stop();
+    timer.reset();
     updateCurrentLevelData({
       pauseOffsetMs: (currentLevelData.pauseOffsetMs || 0) + pauseTimeMs,
-    })
-    goToNormalPlay()
-  }
+    });
+    goToNormalPlay();
+  };
 
   const pausePressed = () => {
     if (gameState === GameState.Paused) {
-      endPause()
+      endPause();
     } else {
-      startPause()
+      startPause();
     }
-  }
+  };
 
   const startScreen = (
     <div>
       Start Screen
       <button onClick={goToNormalPlay}>Start</button>
     </div>
-  )
+  );
 
   const pauseScreen = (
     <div>
       Pause Screen
       <button onClick={endPause}>Resume</button>
     </div>
-  )
+  );
 
   // const resetLevel = useZustandStore((state: ZustandState) => state.resetLevel)
   // const restartGame = () => {
@@ -117,16 +117,16 @@ function Game(props: any) {
   //   resetLevel(settingsFromStore.levelFlow[0])
   // }
 
-  const allLevelResults = useZustandStore((state: ZustandState) => state.allLevelResults)
-  const allLevelSettings = useZustandStore((state: ZustandState) => state.allLevelSettings)
+  const allLevelResults = useZustandStore((state: ZustandState) => state.allLevelResults);
+  const allLevelSettings = useZustandStore((state: ZustandState) => state.allLevelSettings);
 
-  const stats: any = {}
+  const stats: any = {};
   Object.keys(stats).forEach((key) => {
     stats[key] = {
       ...allLevelResults[key],
       ...allLevelSettings[key],
-    }
-  })
+    };
+  });
 
   const endScreen = (
     <div>
@@ -137,26 +137,26 @@ function Game(props: any) {
         </div>
       ))}
     </div>
-  )
+  );
 
-  let returnBody = null //props.children;
-  let childrenDisplay = 'unset'
+  let returnBody = null; //props.children;
+  let childrenDisplay = 'unset';
 
   switch (gameState) {
     case GameState.StartScreen:
-      returnBody = startScreen
-      childrenDisplay = 'none'
-      break
+      returnBody = startScreen;
+      childrenDisplay = 'none';
+      break;
 
     case GameState.Paused:
-      returnBody = pauseScreen
-      childrenDisplay = 'none'
-      break
+      returnBody = pauseScreen;
+      childrenDisplay = 'none';
+      break;
 
     case GameState.EndScreen:
-      returnBody = endScreen
-      childrenDisplay = 'none'
-      break
+      returnBody = endScreen;
+      childrenDisplay = 'none';
+      break;
 
     case GameState.NormalPlay:
     default:
@@ -176,7 +176,7 @@ function Game(props: any) {
       {returnBody}
       <div style={{ display: childrenDisplay, height: '100%' }}>{props.children}</div>
     </div>
-  )
+  );
 }
 
-export default Game
+export default Game;

@@ -3,8 +3,9 @@
   "singleQuote": true,
   "trailingComma": "all",
   "tabWidth": 2,
-  "semi": false,
   "printWidth": 120,
   "jsxSingleQuote": true,
-  "endOfLine": "auto"
+  "endOfLine": "auto",
+  "semi": true,
+  "arrowParens": "always"
 }

@@ -1,20 +1,20 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
 type Props = {
-  value?: number
-}
+  value?: number;
+};
 const Test = ({ value = 0 }: Props) => {
-  const [counter, setCounter] = useState(value)
+  const [counter, setCounter] = useState(value);
 
   const onMinus = () => {
-    setCounter((prev) => prev - 1)
-  }
+    setCounter((prev) => prev - 1);
+  };
 
   const onPlus = () => {
-    setCounter((prev) => prev + 1)
-  }
+    setCounter((prev) => prev + 1);
+  };
 
   return (
     <div>
@@ -23,8 +23,8 @@ const Test = ({ value = 0 }: Props) => {
       <button onClick={onPlus}>+</button>
       version 0.1.3
     </div>
-  )
-}
+  );
+};
 
 // const Canvas = () => {
 //   return (
@@ -45,4 +45,4 @@ const Test = ({ value = 0 }: Props) => {
 //   );
 // }
 
-export default Test
+export default Test;

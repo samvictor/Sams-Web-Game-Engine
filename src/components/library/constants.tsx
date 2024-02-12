@@ -1,8 +1,8 @@
-import { 
-  GameObjectData, 
-  Collider, 
-  ColliderShape, 
-  GameObjectType, 
+import {
+  GameObjectData,
+  Collider,
+  ColliderShape,
+  GameObjectType,
   GameSettings,
   GameState,
   LevelSettings,
@@ -11,18 +11,18 @@ import {
   LevelState,
   LevelFlowType,
   LevelData,
-} from './interfaces'
+} from './interfaces';
 
-const maxProjectilesOnScreen = 100
-const maxObjectsOnScreen = 100
-const screenBoundsMax = [40, 20, 10]
-const screenBoundsMin = [-40, -20, -40]
+const maxProjectilesOnScreen = 100;
+const maxObjectsOnScreen = 100;
+const screenBoundsMax = [40, 20, 10];
+const screenBoundsMin = [-40, -20, -40];
 
 const defaultCollider: Collider = {
   shape: ColliderShape.Box,
   boxSize: [1, 1, 1],
   offset: [0, 0, 0],
-}
+};
 
 const defaultGameObjectData: GameObjectData = {
   position: [0, 0, 0],
@@ -32,7 +32,7 @@ const defaultGameObjectData: GameObjectData = {
   rotation: [0, 0, 0],
   speed: 1,
   collider: defaultCollider,
-}
+};
 
 const defaultGameSettings: GameSettings = {
   background: 'transparent',
@@ -43,7 +43,7 @@ const defaultGameSettings: GameSettings = {
   levelFlow: ['defaultLevel'],
   currentLevel: null,
   gameState: GameState.StartScreen,
-}
+};
 
 const defaultLevelSettings: LevelSettings = {
   id: 'defaultLevel',
@@ -56,21 +56,21 @@ const defaultLevelSettings: LevelSettings = {
   levelState: LevelState.StartScreen,
   title: '',
   startScreenBody: 'Defeat all enemies to win!',
-}
+};
 
-const defaultLevelData:LevelData = {
+const defaultLevelData: LevelData = {
   ...defaultLevelSettings,
-  timeLeftSec: defaultLevelSettings.timeLimitSec||Infinity,
+  timeLeftSec: defaultLevelSettings.timeLimitSec || Infinity,
   score: 0,
-}
+};
 
-
-export { maxProjectilesOnScreen, 
-  maxObjectsOnScreen, 
-  screenBoundsMax, 
-  screenBoundsMin, 
+export {
+  maxProjectilesOnScreen,
+  maxObjectsOnScreen,
+  screenBoundsMax,
+  screenBoundsMin,
   defaultGameObjectData,
-  defaultGameSettings, 
+  defaultGameSettings,
   defaultLevelSettings,
   defaultLevelData,
-}
+};
