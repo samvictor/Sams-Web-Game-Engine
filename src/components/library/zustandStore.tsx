@@ -485,6 +485,12 @@ const useZustandStore = create<ZustandState>()((set) => ({
 
       const newColliderObj: GameObjectData[] = [];
 
+      tempGameObjectsMap.forEach((thisGameObject, thisGameObjectId) => {
+        // we need to clone every game object so that when we reset the level,
+        // these objects are still in their initial states
+        tempGameObjectsMap.set(thisGameObjectId, structuredClone(thisGameObject));
+      });
+
       tempGameObjectsMap.forEach((thisObject) => {
         if (thisObject.collider) {
           newColliderObj.push(thisObject);

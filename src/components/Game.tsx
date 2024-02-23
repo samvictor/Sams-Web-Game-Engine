@@ -121,7 +121,7 @@ function Game(props: any) {
   const allLevelSettings = useZustandStore((state: ZustandState) => state.allLevelSettings);
 
   const stats: any = {};
-  Object.keys(stats).forEach((key) => {
+  Object.keys(allLevelResults).forEach((key) => {
     stats[key] = {
       ...allLevelResults[key],
       ...allLevelSettings[key],
