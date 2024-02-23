@@ -23,7 +23,7 @@ interface ZustandState {
   projectiles: Map<string, ProjectileData>;
   projectilesUpdater: number;
   gameObjectsMap: Map<string, GameObjectData>;
-  colliderObjects: GameObjectData[];
+  colliderObjects: Map<string, GameObjectData>;
   gameSettings: GameSettings;
   // current level
   currentLevelData: LevelData;
@@ -170,7 +170,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
   projectilesUpdater: 0,
   gameObjectsMap: new Map<string, GameObjectData>(),
   // live game objects with colliders
-  colliderObjects: [],
+  colliderObjects: new Map<string, GameObjectData>(),
   gameSettings: defaultGameSettings,
   currentLevelData: defaultLevelData,
   allLevelSettings: {},
@@ -279,9 +279,9 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('new object missing id (addObject)');
       }
 
-      const tempColliderObj = state.colliderObjects || [];
+      const tempColliderObj = state.colliderObjects || new Map();
       if (newObject.collider) {
-        tempColliderObj.push(newObject);
+        tempColliderObj.set(newObject.id, newObject);
       }
 
       if (!newObject.parentLevelId) {
@@ -375,8 +375,8 @@ const useZustandStore = create<ZustandState>()((set) => ({
         target.destroyed = true;
         let tempPlayerScore = state.currentLevelData.score || 0;
 
-        let tempColliderObj = state.colliderObjects;
-        tempColliderObj = removeFromListById(tempColliderObj, target.id);
+        const tempColliderObj = state.colliderObjects;
+        tempColliderObj.delete(target.id);
 
         // count how many enemies are still alive
         let numLivingEnemies = 0;
@@ -483,7 +483,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         throw new Error('level settings not found for this level ' + levelId + ' (resetLevel)');
       }
 
-      const newColliderObj: GameObjectData[] = [];
+      const newColliderObjs = new Map<string, GameObjectData>();
 
       tempGameObjectsMap.forEach((thisGameObject, thisGameObjectId) => {
         // we need to clone every game object so that when we reset the level,
@@ -492,8 +492,8 @@ const useZustandStore = create<ZustandState>()((set) => ({
       });
 
       tempGameObjectsMap.forEach((thisObject) => {
-        if (thisObject.collider) {
-          newColliderObj.push(thisObject);
+        if (thisObject.collider && thisObject.id) {
+          newColliderObjs.set(thisObject.id, thisObject);
         }
       });
 
@@ -508,7 +508,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         gameObjectsMap: tempGameObjectsMap,
         projectiles: newProjectiles,
         currentLevelData: newLevelData,
-        colliderObjects: newColliderObj,
+        colliderObjects: newColliderObjs,
       };
     }),
 
