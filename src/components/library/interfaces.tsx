@@ -82,10 +82,6 @@ interface LevelData extends LevelSettings {
   score: number;
 }
 
-interface AllLevelSettings {
-  [id: string]: LevelSettings;
-}
-
 interface LevelResults {
   // what happened in this level? did player win? what was the score?
   id: string;
@@ -97,10 +93,6 @@ interface LevelResults {
   won: boolean;
   winningCriteria?: WinCriteria;
   failingCriteria?: FailCriteria;
-}
-
-interface AllLevelResults {
-  [id: string]: LevelResults;
 }
 
 interface Collider {
@@ -155,6 +147,4 @@ export {
   LevelFlowType,
   LevelData,
   LevelResults,
-  AllLevelResults,
-  AllLevelSettings,
 };

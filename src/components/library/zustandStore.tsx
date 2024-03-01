@@ -8,10 +8,10 @@ import {
   GameSettings,
   LevelFlowType,
   LevelData,
-  AllLevelResults,
-  AllLevelSettings,
   GameState,
   LevelState,
+  LevelSettings,
+  LevelResults,
 } from './interfaces';
 
 // import { Projectile } from './objects'
@@ -28,9 +28,9 @@ interface ZustandState {
   // current level
   currentLevelData: LevelData;
   // inital settings
-  allLevelSettings: AllLevelSettings;
+  allLevelSettings: Map<string, LevelSettings>;
   // what happened in each level? did player win? what was the score?
-  allLevelResults: AllLevelResults;
+  allLevelResults: Map<string, LevelResults>;
   // for each levelId, save initial data of objects
   // used for restarts
   allLevelObjectInitData: Map<string, Map<string, GameObjectData>>;
@@ -63,8 +63,8 @@ interface ZustandState {
   // Level settings/data
   setCurrentLevelData: (levelData: LevelData) => void;
   updateCurrentLevelData: (levelData: any) => void;
-  updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) => void;
-  updateAllLevelResults: (levelResultsWithId: AllLevelResults) => void;
+  updateAllLevelSettings: (levelSettingsWithId: Map<string, LevelSettings>) => void;
+  updateAllLevelResults: (levelResultsWithId: Map<string, LevelResults>) => void;
 
   // timer
   updateTimeLeft: (timeLeftMs?: number) => void;
@@ -120,27 +120,6 @@ const removeProjectileByIndex = (oldProjectiles: Map<string, ProjectileData>, in
   return oldProjectiles;
 };
 
-const removeFromListById = (list: any[], id: string) => {
-  if (!list) {
-    throw new Error('list not found');
-  }
-
-  if (!id) {
-    throw new Error('id not found');
-  }
-
-  const indexToRemove = list.findIndex((item: any) => item.id === id);
-  if (indexToRemove === -1) {
-    console.warn('id not found in list (removeFromListById)');
-    console.warn('list', list, 'id', id);
-    return list;
-  }
-
-  list.splice(indexToRemove, 1);
-
-  return list;
-};
-
 const getTimeLeftFromLevelData = (levelData: LevelData) => {
   const timeElapsedMs = Date.now() - (levelData.startTimeMs || 0) - (levelData.pauseOffsetMs || 0);
   let timeLeftSec = (levelData.timeLimitSec || 0) - Math.floor(timeElapsedMs / 1000);
@@ -173,8 +152,8 @@ const useZustandStore = create<ZustandState>()((set) => ({
   colliderObjects: new Map<string, GameObjectData>(),
   gameSettings: defaultGameSettings,
   currentLevelData: defaultLevelData,
-  allLevelSettings: {},
-  allLevelResults: {},
+  allLevelSettings: new Map<string, LevelSettings>(),
+  allLevelResults: new Map<string, LevelResults>(),
   allLevelObjectInitData: new Map(),
 
   // functions
@@ -477,7 +456,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
     set((state: ZustandState) => {
       const newProjectiles: Map<string, ProjectileData> = new Map();
       const tempGameObjectsMap = new Map(state.allLevelObjectInitData.get(levelId) || new Map());
-      const thisLevelSettings = state.allLevelSettings[levelId];
+      const thisLevelSettings = state.allLevelSettings.get(levelId);
       console.log('all level settings', state.allLevelSettings);
       if (!thisLevelSettings) {
         throw new Error('level settings not found for this level ' + levelId + ' (resetLevel)');
@@ -544,34 +523,34 @@ const useZustandStore = create<ZustandState>()((set) => ({
         },
       };
     }),
-  updateAllLevelSettings: (levelSettingsWithId: AllLevelSettings) =>
+  updateAllLevelSettings: (levelSettingsWithId: Map<string, LevelSettings>) =>
     set((state: ZustandState) => {
       if (!levelSettingsWithId) {
         throw new Error('levelSettingsWithId is empty (updateAllLevelSettings)');
       }
 
-      const tempAllLevelSettings: AllLevelSettings = state.allLevelSettings || {};
+      const tempAllLevelSettings: Map<string, LevelSettings> = state.allLevelSettings || new Map();
+      levelSettingsWithId.forEach((thisLevelSettings, thisLevelId) => {
+        tempAllLevelSettings.set(thisLevelId, thisLevelSettings);
+      });
 
       return {
-        allLevelSettings: {
-          ...tempAllLevelSettings,
-          ...levelSettingsWithId,
-        },
+        allLevelSettings: tempAllLevelSettings,
       };
     }),
-  updateAllLevelResults: (levelResultsWithId: AllLevelResults) =>
+  updateAllLevelResults: (levelResultsWithId: Map<string, LevelResults>) =>
     set((state: ZustandState) => {
       if (!levelResultsWithId) {
         throw new Error('levelResultsWithId is empty (updateAllLevelResults)');
       }
 
-      const tempAllLevelResults: AllLevelResults = state.allLevelResults || {};
+      const tempAllLevelResults: Map<string, LevelResults> = state.allLevelResults || new Map();
+      levelResultsWithId.forEach((thisLevelResults, thisLevelId) => {
+        tempAllLevelResults.set(thisLevelId, thisLevelResults);
+      });
 
       return {
-        allLevelResults: {
-          ...tempAllLevelResults,
-          ...levelResultsWithId,
-        },
+        allLevelResults: tempAllLevelResults,
       };
     }),
 

@@ -120,22 +120,28 @@ function Game(props: any) {
   const allLevelResults = useZustandStore((state: ZustandState) => state.allLevelResults);
   const allLevelSettings = useZustandStore((state: ZustandState) => state.allLevelSettings);
 
-  const stats: any = {};
-  Object.keys(allLevelResults).forEach((key) => {
-    stats[key] = {
-      ...allLevelResults[key],
-      ...allLevelSettings[key],
-    };
+  const stats: Map<string, any> = new Map();
+  allLevelResults.forEach((thisLevelResult, levelId) => {
+    stats.set(levelId, {
+      ...thisLevelResult,
+      ...(allLevelSettings.get(levelId)), // prettier-ignore
+    });
+  });
+
+  const scoresXml: any = [];
+
+  stats.forEach((thisStat, levelId) => {
+    scoresXml.push(
+      <div key={levelId + '_stat'}>
+        {thisStat['title']} : {thisStat['score'] || 0}
+      </div>,
+    );
   });
 
   const endScreen = (
     <div>
       End Screen score is <br />
-      {Object.values(stats).map((stat: any, i) => (
-        <div key={i}>
-          {stat.title} : {stat.score || 0}
-        </div>
-      ))}
+      {scoresXml}
     </div>
   );
 

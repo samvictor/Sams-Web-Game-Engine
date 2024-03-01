@@ -37,9 +37,7 @@ function Level(props: any) {
 
   // declare self in database
   useEffect(() => {
-    updateAllLevelSettings({
-      [levelId]: settings,
-    });
+    updateAllLevelSettings(new Map([[levelId, settings]]));
   }, []);
 
   // start self
@@ -87,9 +85,7 @@ function Level(props: any) {
         winningCriteria: WinCriteria.NumEnemies0,
       };
 
-      updateAllLevelResults({
-        [levelId]: levelResults,
-      });
+      updateAllLevelResults(new Map([[levelId, levelResults]]));
     }
 
     // go to fail screen when time runs out
@@ -110,9 +106,7 @@ function Level(props: any) {
         failingCriteria: FailCriteria.TimeLeft0,
       };
 
-      updateAllLevelResults({
-        [levelId]: levelResults,
-      });
+      updateAllLevelResults(new Map([[levelId, levelResults]]));
     }
   }, [numLivingEnemies, levelDataFromStore, levelState, updateCurrentLevelData]);
 
