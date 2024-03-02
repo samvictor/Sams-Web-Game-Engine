@@ -10,6 +10,9 @@ import { ZustandState, useZustandStore } from './zustandStore';
 import { Collider, GameObjectData, ColliderShape, GameObjectType } from './interfaces';
 import { LevelDataContext } from './contexts';
 
+import { useLoader } from '@react-three/fiber';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
 /**
  * This function creates a new game object with the given properties.
  * @param props - The properties of the game object, including its position, rotation, size, speed, health, score value, collider, and whether it is an enemy.
@@ -22,10 +25,14 @@ function GameObject(props: {
   health?: number;
   scoreValue?: number;
   collider?: Collider;
+  showCollider?: boolean;
   isEnemy?: boolean;
   objectType?: GameObjectType;
   objectId?: string;
   color?: string;
+  filePath?: string;
+  filePathType?: string;
+  type?: string;
 }) {
   // This reference gives us direct access to the THREE.Mesh object
   const ref = useRef<any>();
@@ -50,6 +57,9 @@ function GameObject(props: {
   const addObject = useZustandStore((state: ZustandState) => state.addObject);
   const levelDataContext = useContext(LevelDataContext);
 
+  const filePath = props.filePath || '';
+  const type = props.type || 'defualt';
+
   useEffect(() => {
     // register myself into the store (should only happen once)
     console.log('regeristing object');
@@ -69,14 +79,15 @@ function GameObject(props: {
     };
 
     // console.log('parent data is ', JSON.stringify(levelDataContext, null, 4));
-
-    addObject(newObjectData);
+    if (type !== 'player') {
+      addObject(newObjectData);
+    }
   }, []);
 
   // Subscribe this component to the render-loop, rotate the mesh every frame
-  useFrame((_, delta) => {
-    if (ref?.current?.rotation?.x) ref.current.rotation.x += delta;
-  });
+  // useFrame((_, delta) => {
+  //   if (ref?.current?.rotation?.x) ref.current.rotation.x += delta;
+  // });
 
   // Return the view, these are regular Threejs elements expressed in JSX
   const defaultColor = props.color || 'orange';
@@ -88,20 +99,39 @@ function GameObject(props: {
     return null;
   }
 
+  if (filePath) {
+    return <LoadModelFromFile {...props} filePath={filePath} />;
+  }
+
   return (
     <mesh
       {...props}
-      ref={ref}
       scale={clicked ? 1.5 : 1}
       onClick={() => click(!clicked)}
       onPointerOver={() => hover(true)}
       onPointerOut={() => hover(false)}
-      gameObjectId={id}
+      // gameObjectId={id}
     >
       <boxGeometry args={size} />
       <meshStandardMaterial color={hovered ? 'hotpink' : defaultColor} />
     </mesh>
   );
+}
+
+function LoadModelFromFile(props: { filePath: string; filePathType?: string }) {
+  const filePath = props.filePath || '';
+  const filePathType = props.filePathType || 'gltf';
+  if (!filePath) {
+    throw new Error('Invalid file path');
+  }
+
+  const objectFromFile = useLoader(GLTFLoader, filePath);
+
+  if (!objectFromFile) {
+    throw new Error('Failed to load file');
+  }
+
+  return <primitive {...props} object={objectFromFile.scene} />;
 }
 
 function Enemy(props: any) {
@@ -150,10 +180,10 @@ Ship.propTypes = {
   position: PropTypes.array,
 };
 
-function Player() {
+function Player(props: any) {
   const playerData = useZustandStore((state: any) => state.player);
   const playerPosition = playerData.position || [0, 0, 1];
-  return <Ship color={'blue'} position={playerPosition} />;
+  return <GameObject {...props} type='player' position={playerPosition} />;
 }
 
 function Projectile(props: any) {

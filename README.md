@@ -78,6 +78,9 @@ Supported arguments:
 - position - x, y, and z components of object position. [0, 0, 0] by default.
   This is the position of the center of the object.
 - size - x, y, and z components of object sie. [1, 1, 1] by default.
+- rotation - x-axis, y-axis, and z-axis components of object rotation in radians. [0, 0, 0] by default.
+- showCollider - Only designed for testing purposes. This option lets you see where the collider will be, even though it's usually invisible. "false" by default.
+- filePath - If you want to use a 3d model in a separate file, use this argument. It expects a path to a .gltf file. You need to also put this file in the static files directory.
 
 ## Player
 
@@ -105,7 +108,6 @@ const myCollider: Collider = {
   shape: 'box',
   boxSize: [1, 1, 1],
   offset: [0, 0, 0],
-  visible: true,
 };
 
 return (
@@ -125,7 +127,6 @@ Supported values:
 - **cylinderOrientation** - (future) Must be, and should only be used with cylinder shape. Orientation of the cylinder. Which axis is the height of the cylinder parallel to? x, y, or z. "x" by default.
 - **sphereRadius** - Must be, and should only be used with sphere shape. Radius of collider. "1" by default.
 - **offset** - (required) x, y, and z components of collider position offset. "[0, 0, 0]" by default.
-- **visible** - Only designed for testing purposes. This option lets you see where the collider will be, even though it's usually invisible. "false" by default.
 
 `yarn prettier`
 

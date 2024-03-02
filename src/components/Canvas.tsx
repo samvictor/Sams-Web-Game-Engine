@@ -10,16 +10,12 @@ import { Projectile } from './library/objects';
 import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks';
 import { useZustandStore, ZustandState } from './library/zustandStore';
 
-import { useLoader } from '@react-three/fiber';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
-
 // import {useZustandStore} from './library/zustandStore'
 
 // const defaultSettings: any = {}
 
 function Canvas(props: any) {
   // const settings = { ...defaultSettings, ...props.settings }
-  const gltf = useLoader(GLTFLoader, '/3d_files/low_poly_space_ship/scene.gltf');
 
   const movePlayer = useMovePlayer();
   const playerShoot = usePlayerShoot();
@@ -124,7 +120,6 @@ function Canvas(props: any) {
         <pointLight position={[10, 10, 10]} />
         <RenderBullets />
         {props.children}
-        <primitive object={gltf.scene} />
       </ThreeCanvas>
 
       {overlayXml}
