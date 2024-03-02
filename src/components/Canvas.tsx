@@ -1,24 +1,25 @@
-// The Canvas is the entry point for your game
-// It holds all of the data and does most of the processing
-// Start with a Canvas and add other components to it
+// The Canvas receives inputs for player movements
+// and helps render the GameObjects in the level
+// Add GameObjects and a Player to your Canvas
 
 'use client';
 
 import React, { useState, useEffect } from 'react';
 import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber';
-// import { useSelector } from 'react-redux'
-// import reduxStore from './library/reduxStore';
 import { Projectile } from './library/objects';
 import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks';
 import { useZustandStore, ZustandState } from './library/zustandStore';
 
-// import { Provider } from 'react-redux'
+import { useLoader } from '@react-three/fiber';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+
 // import {useZustandStore} from './library/zustandStore'
 
 // const defaultSettings: any = {}
 
-function CanvasNoProv(props: any) {
+function Canvas(props: any) {
   // const settings = { ...defaultSettings, ...props.settings }
+  const gltf = useLoader(GLTFLoader, '/3d_files/low_poly_space_ship/scene.gltf');
 
   const movePlayer = useMovePlayer();
   const playerShoot = usePlayerShoot();
@@ -123,13 +124,12 @@ function CanvasNoProv(props: any) {
         <pointLight position={[10, 10, 10]} />
         <RenderBullets />
         {props.children}
+        <primitive object={gltf.scene} />
       </ThreeCanvas>
 
       {overlayXml}
     </div>
   );
 }
-
-const Canvas = (props: any) => <CanvasNoProv {...props} />;
 
 export default Canvas;

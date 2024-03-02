@@ -1,6 +1,5 @@
-// The Canvas is the entry point for your game
-// It holds all of the data and does most of the processing
-// Start with a Canvas and add other components to it
+// Levels help organize your game into levels
+// add a Canvas in your level to start designing the level
 
 'use client';
 

@@ -1,14 +1,10 @@
-// The Canvas is the entry point for your game
+// The Game is the entry point for your game
 // It holds all of the data and does most of the processing
-// Start with a Canvas and add other components to it
+// Start with a Game and add Levels to it
 
 'use client';
 
 import React, { useEffect } from 'react';
-// import { useSelector } from 'react-redux'
-
-// import { Provider } from 'react-redux'
-// import reduxStore from './library/reduxStore'
 import { ZustandState, useZustandStore } from './library/zustandStore';
 import { GameState, GameSettings, LevelFlowType } from './library/interfaces';
 import { defaultGameSettings } from './library/constants';
