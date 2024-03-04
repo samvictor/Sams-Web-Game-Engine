@@ -131,7 +131,9 @@ function LoadModelFromFile(props: { filePath: string; filePathType?: string }) {
     throw new Error('Failed to load file');
   }
 
-  return <primitive {...props} object={objectFromFile.scene} />;
+  console.log('object from file is', objectFromFile);
+
+  return <primitive {...props} object={objectFromFile.scene.clone()} />;
 }
 
 function Enemy(props: any) {
