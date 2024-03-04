@@ -549,6 +549,9 @@ const useZustandStore = create<ZustandState>()((set) => ({
         tempAllLevelResults.set(thisLevelId, thisLevelResults);
       });
 
+      console.log('level results with id', levelResultsWithId);
+      console.log('tempAllLevelresults', tempAllLevelResults);
+
       return {
         allLevelResults: tempAllLevelResults,
       };

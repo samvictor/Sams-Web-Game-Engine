@@ -68,6 +68,10 @@ function Level(props: any) {
 
   useEffect(() => {
     // go to win screen when player wins
+    if (gameSettings.currentLevel !== levelId) {
+      return;
+    }
+
     if (
       numLivingEnemies <= 0 &&
       levelDataFromStore.winCriteria.includes(WinCriteria.NumEnemies0) &&

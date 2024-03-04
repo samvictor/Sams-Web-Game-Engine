@@ -115,7 +115,7 @@ function Game(props: any) {
 
   const allLevelResults = useZustandStore((state: ZustandState) => state.allLevelResults);
   const allLevelSettings = useZustandStore((state: ZustandState) => state.allLevelSettings);
-
+  // console.log('all level results', allLevelResults);
   const stats: Map<string, any> = new Map();
   allLevelResults.forEach((thisLevelResult, levelId) => {
     stats.set(levelId, {
