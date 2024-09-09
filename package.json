@@ -37,6 +37,12 @@
   ],
   "author": "Sam Inniss (samvictor)",
   "license": "MIT",
+  "dependencies": {
+    "@react-three/fiber": "^8.15.12",
+    "prop-types": "^15.8.1",
+    "three": "^0.160.0",
+    "zustand": "^4.4.7"
+  },
   "devDependencies": {
     "@react-three/fiber": "^8.15.12",
     "@testing-library/react": "^14.1.2",
