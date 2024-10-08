@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { versionText } from './library/constants';
 
 type Props = {
   value?: number;
@@ -21,7 +22,7 @@ const Test = ({ value = 0 }: Props) => {
       <h1>Counter: {counter}</h1>
       <button onClick={onMinus}>-</button>
       <button onClick={onPlus}>+</button>
-      version 0.1.3
+      {versionText}
     </div>
   );
 };

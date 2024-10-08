@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly Spaceships
+* source:	https://sketchfab.com/3d-models/low-poly-spaceships-9177fe4356e4451485dc6129c9904eb9
+* author:	Samuel Metters (https://sketchfab.com/samuelmetters)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Spaceships" (https://sketchfab.com/3d-models/low-poly-spaceships-9177fe4356e4451485dc6129c9904eb9) by Samuel Metters (https://sketchfab.com/samuelmetters) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
