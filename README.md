@@ -8,6 +8,9 @@ Powered by React Three Fiber.
 This library is designed for games that use 3D assets, but 2D movement
 (e.g. side scrollers, tetris, galaga).
 
+Working example:
+https://sams-web-game-engine-example.vercel.app/
+
 ## Features:
 
 - Movement
