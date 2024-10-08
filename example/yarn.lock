@@ -2023,10 +2023,10 @@ safe-regex-test@^1.0.3:
     es-errors "^1.3.0"
     is-regex "^1.1.4"
 
-sams-web-game-engine@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/sams-web-game-engine/-/sams-web-game-engine-0.1.7.tgz#9682c236dc860d858458c7f804d1857850de0e48"
-  integrity sha512-E5JavYymODBHZDhEcu13/cMmD9CjGd2MDpsQoQWQ0zTqEkmSgSvmp8FHDVDjEzOsHVYG2An58l84utYQKrbDzg==
+sams-web-game-engine@^0.1.9:
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/sams-web-game-engine/-/sams-web-game-engine-0.1.9.tgz#d406afeef09dd28a4f165705274331954e9441af"
+  integrity sha512-3/b9Ahh05DwZ+KUukqlurscZr97ez+65TSY+1dCIgQvb3p1ujilIGLNEFjxeJR/BDJChE/g4wBsvusl+hToMSA==
   dependencies:
     "@react-three/fiber" "^8.15.12"
     prop-types "^15.8.1"
