@@ -11,6 +11,7 @@ import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/h
 import { useZustandStore, ZustandState } from './library/zustandStore';
 import { BackgroundAdditionOptions } from './library/interfaces';
 import { StarsBackground } from './library/backgroundAdditions';
+import { cssClassBase } from './library/constants';
 
 // import {useZustandStore} from './library/zustandStore'
 
@@ -127,7 +128,7 @@ function Canvas(props: any) {
 
   return (
     <div
-      id='webGameEngineCanvas'
+      id=`${cssClassBase}-canvas`
       style={{
         height: '100%',
       }}
