@@ -4,7 +4,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { defaultLevelSettings } from './library/constants';
+import { defaultLevelSettings, cssClassBase } from './library/constants';
 import { FailCriteria, LevelResults, LevelSettings, LevelState, WinCriteria, LevelData } from './library/interfaces';
 import { ZustandState, useZustandStore } from './library/zustandStore';
 import { LevelDataContext } from './library/contexts';
@@ -172,7 +172,7 @@ function Level(props: any) {
   };
 
   const startScreen = (
-    <div className='gameScreen levelStartScreen'>
+    <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-start-screen`>
       {settings.title}
       {settings.startScreenBody}
       <button onClick={startLevel}>Start</button>
@@ -182,14 +182,14 @@ function Level(props: any) {
   const outOfTimeScreen = <div>Out Of Time</div>;
 
   const failScreen = (
-    <div className='gameScreen levelFailScreen'>
+    <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-fail-screen`>
       You Lost Score: {levelDataFromStore.score}
       <button onClick={failRetryClicked}>Try Again?</button>
     </div>
   );
 
   const winScreen = (
-    <div className='gameScreen levelWinScreen'>
+    <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-win-screen`>
       You Won! Score: {levelDataFromStore.score}
       <button onClick={winContinueClicked}>Continue</button>
     </div>
@@ -226,7 +226,7 @@ function Level(props: any) {
 
   return (
     <LevelDataContext.Provider value={settings}>
-      <div id='webGameEngineLevel' style={{ height: '100%' }}>
+      <div id=`${cssClassBase}-webGameEngineLevel` style={{ height: '100%' }}>
         {returnBody}
         <div key={childrenKey} style={{ display: childrenDisplay, height: '100%' }}>
           {props.children}
