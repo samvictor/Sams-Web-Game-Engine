@@ -93,14 +93,14 @@ function Game(props: any) {
 
   const startScreen = (
     <div className=`${cssClassBase}game-screen ${cssClassBase}game-start-screen`>
-      Start Screen
+      <h1>Start Screen</h1>
       <button onClick={goToNormalPlay}>Start</button>
     </div>
   );
 
   const pauseScreen = (
     <div className=`${cssClassBase}-game-screen ${cssClassBase}-game-pause-screen`>
-      Pause Screen
+      <h1>Pause Screen</h1>
       <button onClick={endPause}>Resume</button>
     </div>
   );
@@ -112,6 +112,8 @@ function Game(props: any) {
   //   })
   //   resetLevel(settingsFromStore.levelFlow[0])
   // }
+
+  // calculate score for end screen
 
   const allLevelResults = useZustandStore((state: ZustandState) => state.allLevelResults);
   const allLevelSettings = useZustandStore((state: ZustandState) => state.allLevelSettings);
@@ -135,8 +137,9 @@ function Game(props: any) {
   });
 
   const endScreen = (
-    <div>
-      End Screen score is <br />
+    <div className=`${cssClassBase}-game-screen ${cssClassBase}-end-screen`>
+      <h1> End Screen </h1>
+        score is <br />
       {scoresXml}
     </div>
   );
