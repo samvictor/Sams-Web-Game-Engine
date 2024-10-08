@@ -19,6 +19,7 @@ const maxObjectsOnScreen = 100;
 const screenBoundsMax = [40, 20, 10];
 const screenBoundsMin = [-40, -20, -40];
 const versionText = 'version 1.0';
+const cssClassBase = 'sam-engine-';
 
 const defaultCollider: Collider = {
   shape: ColliderShape.Box,
