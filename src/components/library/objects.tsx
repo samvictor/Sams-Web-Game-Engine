@@ -11,7 +11,8 @@ import { Collider, GameObjectData, ColliderShape, GameObjectType } from './inter
 import { LevelDataContext } from './contexts';
 
 import { useLoader } from '@react-three/fiber';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
+import { GLTFLoader } from './GLTFLoader.d';
+//import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 /**
  * This function creates a new game object with the given properties.

@@ -1,6 +1,6 @@
 {
   "name": "sams-web-game-engine",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "This library makes it easier to make web-based games.",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.js",

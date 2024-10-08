@@ -197,7 +197,7 @@ const useZustandStore = create<ZustandState>()((set) => ({
         // remove the first projectile
         // get key of first projectile
         const keyOfFirstProjectile = tempProjectiles.keys().next().value;
-        tempProjectiles.delete(keyOfFirstProjectile);
+        if (keyOfFirstProjectile) tempProjectiles.delete(keyOfFirstProjectile);
       }
       tempProjectiles.set(newProjectile.id, newProjectile);
 
