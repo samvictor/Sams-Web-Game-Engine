@@ -173,8 +173,8 @@ function Level(props: any) {
 
   const startScreen = (
     <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-start-screen`>
-      {settings.title}
-      {settings.startScreenBody}
+      <h1>{settings.title}</h1>
+      {settings.startScreenBody}<br/>
       <button onClick={startLevel}>Start</button>
     </div>
   );
@@ -183,14 +183,16 @@ function Level(props: any) {
 
   const failScreen = (
     <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-fail-screen`>
-      You Lost Score: {levelDataFromStore.score}
+      <h1>You Lost </h1>
+        Score: {levelDataFromStore.score}<br/>
       <button onClick={failRetryClicked}>Try Again?</button>
     </div>
   );
 
   const winScreen = (
     <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-win-screen`>
-      You Won! Score: {levelDataFromStore.score}
+      <h1>You Won! </h1>
+        Score: {levelDataFromStore.score}<br/>
       <button onClick={winContinueClicked}>Continue</button>
     </div>
   );
