@@ -97,7 +97,7 @@ function Canvas(props: any) {
 
   const overlayXml: any = (
     <div
-      id=`${cssClassBase}-overlay`
+      id={`${cssClassBase}-overlay`}
       style={{
         color: gameSettings.overlayTextColor,
         position: 'fixed',
@@ -128,7 +128,7 @@ function Canvas(props: any) {
 
   return (
     <div
-      id=`${cssClassBase}-canvas`
+      id={`${cssClassBase}-canvas`}
       style={{
         height: '100%',
       }}

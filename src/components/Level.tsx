@@ -172,7 +172,7 @@ function Level(props: any) {
   };
 
   const startScreen = (
-    <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-start-screen`>
+    <div className={`${cssClassBase}-game-screen ${cssClassBase}-level-start-screen`}>
       <h1>{settings.title}</h1>
       {settings.startScreenBody}<br/>
       <button onClick={startLevel}>Start</button>
@@ -182,7 +182,7 @@ function Level(props: any) {
   const outOfTimeScreen = <div>Out Of Time</div>;
 
   const failScreen = (
-    <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-fail-screen`>
+    <div className={`${cssClassBase}-game-screen ${cssClassBase}-level-fail-screen`}>
       <h1>You Lost </h1>
         Score: {levelDataFromStore.score}<br/>
       <button onClick={failRetryClicked}>Try Again?</button>
@@ -190,7 +190,7 @@ function Level(props: any) {
   );
 
   const winScreen = (
-    <div className=`${cssClassBase}-game-screen ${cssClassBase}-level-win-screen`>
+    <div className={`${cssClassBase}-game-screen ${cssClassBase}-level-win-screen`}>
       <h1>You Won! </h1>
         Score: {levelDataFromStore.score}<br/>
       <button onClick={winContinueClicked}>Continue</button>
@@ -228,7 +228,7 @@ function Level(props: any) {
 
   return (
     <LevelDataContext.Provider value={settings}>
-      <div id=`${cssClassBase}-webGameEngineLevel` style={{ height: '100%' }}>
+      <div id={`${cssClassBase}-level`} style={{ height: '100%' }}>
         {returnBody}
         <div key={childrenKey} style={{ display: childrenDisplay, height: '100%' }}>
           {props.children}

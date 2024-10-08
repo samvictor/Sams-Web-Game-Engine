@@ -92,14 +92,14 @@ function Game(props: any) {
   };
 
   const startScreen = (
-    <div className=`${cssClassBase}game-screen ${cssClassBase}game-start-screen`>
+    <div className={`${cssClassBase}game-screen ${cssClassBase}game-start-screen`}>
       <h1>Start Screen</h1>
       <button onClick={goToNormalPlay}>Start</button>
     </div>
   );
 
   const pauseScreen = (
-    <div className=`${cssClassBase}-game-screen ${cssClassBase}-game-pause-screen`>
+    <div className={`${cssClassBase}-game-screen ${cssClassBase}-game-pause-screen`}>
       <h1>Pause Screen</h1>
       <button onClick={endPause}>Resume</button>
     </div>
@@ -137,7 +137,7 @@ function Game(props: any) {
   });
 
   const endScreen = (
-    <div className=`${cssClassBase}-game-screen ${cssClassBase}-end-screen`>
+    <div className={`${cssClassBase}-game-screen ${cssClassBase}-end-screen`}>
       <h1> End Screen </h1>
         score is <br />
       {scoresXml}
@@ -170,7 +170,7 @@ function Game(props: any) {
 
   return (
     <div
-      id=`${cssClassBase}-parent`
+      id={`${cssClassBase}-parent`}
       style={{
         position: 'relative',
         width: '100dvw',
