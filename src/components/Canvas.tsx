@@ -97,7 +97,7 @@ function Canvas(props: any) {
 
   const overlayXml: any = (
     <div
-      id='webGameEngineOverlay'
+      id=`${cssClassBase}-overlay`
       style={{
         color: gameSettings.overlayTextColor,
         position: 'fixed',
