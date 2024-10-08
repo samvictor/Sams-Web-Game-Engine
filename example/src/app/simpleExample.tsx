@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import styles from './page.module.css';
 
-import { Canvas, Player, Box, GameObject, Game, Level, Enemy } from '../../../src/index';
+// import { Canvas, Player, Box, GameObject, Game, Level, Enemy } from '../../../src/index';
+import { Canvas, Player, Box, GameObject, Game, Level, Enemy } from 'sams-web-game-engine';
 
 export default function SimpleExample() {
   const canvasSettings: any = {
