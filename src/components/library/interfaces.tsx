@@ -43,8 +43,18 @@ enum LevelFlowType {
   Linear,
 }
 
+enum BackgroundAdditionOptions {
+  None,
+  Stars,
+  StarsMovingDown,
+  StarsMovingUp,
+  StarsMovingLeft,
+  StarsMovingRight
+}
+
 interface GameSettings {
   background: string;
+  backgroundAddition?: BackgroundAdditionOptions;
   overlayTextColor: string;
   gravity: string;
   travelDirection: string;
@@ -140,6 +150,7 @@ export {
   GameObjectType,
   GameState,
   GameSettings,
+  BackgroundAdditionOptions,
   LevelState,
   FailCriteria,
   WinCriteria,

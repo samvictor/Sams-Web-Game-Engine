@@ -92,14 +92,14 @@ function Game(props: any) {
   };
 
   const startScreen = (
-    <div>
+    <div className='gameScreen gameStartScreen'>
       Start Screen
       <button onClick={goToNormalPlay}>Start</button>
     </div>
   );
 
   const pauseScreen = (
-    <div>
+    <div className="gameScreen gamePauseScreen">
       Pause Screen
       <button onClick={endPause}>Resume</button>
     </div>
@@ -173,6 +173,7 @@ function Game(props: any) {
         width: '100dvw',
         height: '100dvh',
         background: settings.background,
+        color: settings.overlayTextColor,
       }}
     >
       {returnBody}

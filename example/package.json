@@ -9,12 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@react-three/fiber": "^8.17.9",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18",
-    "sams-web-game-engine": "^0.1.7",
-    "three": "^0.160.0"
+    "sams-web-game-engine": "^0.1.7"
   },
   "devDependencies": {
     "@types/node": "^20",

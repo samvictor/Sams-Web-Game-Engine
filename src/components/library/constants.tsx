@@ -11,6 +11,7 @@ import {
   LevelState,
   LevelFlowType,
   LevelData,
+  BackgroundAdditionOptions,
 } from './interfaces';
 
 const maxProjectilesOnScreen = 100;
@@ -37,6 +38,7 @@ const defaultGameObjectData: GameObjectData = {
 
 const defaultGameSettings: GameSettings = {
   background: 'transparent',
+  backgroundAddition: BackgroundAdditionOptions.None,
   overlayTextColor: 'black',
   gravity: 'none',
   travelDirection: 'up',

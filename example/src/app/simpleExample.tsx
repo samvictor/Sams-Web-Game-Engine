@@ -1,13 +1,14 @@
 import Image from 'next/image';
 import styles from './page.module.css';
 
-// import { Canvas, Player, Box, GameObject, Game, Level, Enemy } from '../../../src/index';
-import { Canvas, Player, Box, GameObject, Game, Level, Enemy } from 'sams-web-game-engine';
+import { Canvas, Player, Box, GameObject, Game, Level, Enemy, BackgroundAdditionOptions } from '../../../src/index';
+// import { Canvas, Player, Box, GameObject, Game, Level, Enemy } from 'sams-web-game-engine';
 
 export default function SimpleExample() {
-  const canvasSettings: any = {
-    background: 'white',
-    overlayTextColor: 'black',
+  const gameSettings: any = {
+    background: 'black',
+    backgroundAddition: BackgroundAdditionOptions.StarsMovingDown,
+    overlayTextColor: 'white',
     levelFlow: ['level1', 'level2'],
   };
 
@@ -25,7 +26,7 @@ export default function SimpleExample() {
   };
 
   return (
-    <Game settings={canvasSettings}>
+    <Game settings={gameSettings}>
       <Level settings={level1Settings}>
         <Canvas>
           <Enemy color={'green'} position={[0, 1, 0]} objectId='greenBox' />

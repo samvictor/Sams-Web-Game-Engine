@@ -9,6 +9,8 @@ import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber';
 import { Projectile } from './library/objects';
 import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks';
 import { useZustandStore, ZustandState } from './library/zustandStore';
+import { BackgroundAdditionOptions } from './library/interfaces';
+import { StarsBackground } from './library/backgroundAdditions';
 
 // import {useZustandStore} from './library/zustandStore'
 
@@ -107,6 +109,19 @@ function Canvas(props: any) {
     </div>
   );
 
+  // show background additions, if they're needed
+  let backgroundAdditionXml = null;
+  if (gameSettings?.backgroundAddition) {
+    if ([BackgroundAdditionOptions.Stars,
+          BackgroundAdditionOptions.StarsMovingDown,
+          BackgroundAdditionOptions.StarsMovingUp,
+          BackgroundAdditionOptions.StarsMovingLeft,
+          BackgroundAdditionOptions.StarsMovingRight    
+        ].includes(gameSettings.backgroundAddition)) {
+          backgroundAdditionXml = <StarsBackground direction={gameSettings.backgroundAddition} />
+      }
+  }
+
   return (
     <div
       id='webGameEngineCanvas'
@@ -118,8 +133,11 @@ function Canvas(props: any) {
         <Updater />
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
+        {backgroundAdditionXml}
+
         <RenderBullets />
         {props.children}
+        
       </ThreeCanvas>
 
       {overlayXml}
