@@ -139,7 +139,7 @@ function Game(props: any) {
   const endScreen = (
     <div className={`${cssClassBase}-game-screen ${cssClassBase}-end-screen`}>
       <h1> End Screen </h1>
-        score is <br />
+      score is <br />
       {scoresXml}
     </div>
   );

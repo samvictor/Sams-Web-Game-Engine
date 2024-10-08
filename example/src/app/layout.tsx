@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Game Engine Example',
-  description: 'Sam\'s game engine example',
+  description: "Sam's game engine example",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

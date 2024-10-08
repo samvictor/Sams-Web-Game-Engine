@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect, useContext, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { BackgroundAdditionOptions } from './interfaces';
 import { MeshBasicMaterial, SphereGeometry, Vector3 } from 'three';
-  
+
 function StarsBackground({ direction = BackgroundAdditionOptions.StarsMovingDown, speed = 80, numStars = 20 }) {
   // Field of stars for a background.
   // const ref = useRef();
