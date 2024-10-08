@@ -49,7 +49,7 @@ enum BackgroundAdditionOptions {
   StarsMovingDown,
   StarsMovingUp,
   StarsMovingLeft,
-  StarsMovingRight
+  StarsMovingRight,
 }
 
 interface GameSettings {

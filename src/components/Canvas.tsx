@@ -112,14 +112,17 @@ function Canvas(props: any) {
   // show background additions, if they're needed
   let backgroundAdditionXml = null;
   if (gameSettings?.backgroundAddition) {
-    if ([BackgroundAdditionOptions.Stars,
-          BackgroundAdditionOptions.StarsMovingDown,
-          BackgroundAdditionOptions.StarsMovingUp,
-          BackgroundAdditionOptions.StarsMovingLeft,
-          BackgroundAdditionOptions.StarsMovingRight    
-        ].includes(gameSettings.backgroundAddition)) {
-          backgroundAdditionXml = <StarsBackground direction={gameSettings.backgroundAddition} />
-      }
+    if (
+      [
+        BackgroundAdditionOptions.Stars,
+        BackgroundAdditionOptions.StarsMovingDown,
+        BackgroundAdditionOptions.StarsMovingUp,
+        BackgroundAdditionOptions.StarsMovingLeft,
+        BackgroundAdditionOptions.StarsMovingRight,
+      ].includes(gameSettings.backgroundAddition)
+    ) {
+      backgroundAdditionXml = <StarsBackground direction={gameSettings.backgroundAddition} />;
+    }
   }
 
   return (
@@ -137,7 +140,6 @@ function Canvas(props: any) {
 
         <RenderBullets />
         {props.children}
-        
       </ThreeCanvas>
 
       {overlayXml}

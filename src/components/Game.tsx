@@ -99,7 +99,7 @@ function Game(props: any) {
   );
 
   const pauseScreen = (
-    <div className="gameScreen gamePauseScreen">
+    <div className='gameScreen gamePauseScreen'>
       Pause Screen
       <button onClick={endPause}>Resume</button>
     </div>

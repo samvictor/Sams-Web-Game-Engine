@@ -172,7 +172,7 @@ function Level(props: any) {
   };
 
   const startScreen = (
-    <div className="gameScreen levelStartScreen">
+    <div className='gameScreen levelStartScreen'>
       {settings.title}
       {settings.startScreenBody}
       <button onClick={startLevel}>Start</button>
@@ -182,14 +182,14 @@ function Level(props: any) {
   const outOfTimeScreen = <div>Out Of Time</div>;
 
   const failScreen = (
-    <div className="gameScreen levelFailScreen">
+    <div className='gameScreen levelFailScreen'>
       You Lost Score: {levelDataFromStore.score}
       <button onClick={failRetryClicked}>Try Again?</button>
     </div>
   );
 
   const winScreen = (
-    <div className="gameScreen levelWinScreen">
+    <div className='gameScreen levelWinScreen'>
       You Won! Score: {levelDataFromStore.score}
       <button onClick={winContinueClicked}>Continue</button>
     </div>
