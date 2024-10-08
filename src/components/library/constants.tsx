@@ -78,4 +78,5 @@ export {
   defaultLevelSettings,
   defaultLevelData,
   versionText,
+  cssClassBase,
 };
