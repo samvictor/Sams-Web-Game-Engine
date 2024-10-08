@@ -7,7 +7,7 @@
 import React, { useEffect } from 'react';
 import { ZustandState, useZustandStore } from './library/zustandStore';
 import { GameState, GameSettings, LevelFlowType } from './library/interfaces';
-import { defaultGameSettings } from './library/constants';
+import { defaultGameSettings, cssClassBase } from './library/constants';
 import { timer } from './library/helpfulFunctions';
 
 const defaultSettings: GameSettings = defaultGameSettings;
@@ -92,14 +92,14 @@ function Game(props: any) {
   };
 
   const startScreen = (
-    <div className='gameScreen gameStartScreen'>
+    <div className=`${cssClassBase}game-screen ${cssClassBase}game-start-screen`>
       Start Screen
       <button onClick={goToNormalPlay}>Start</button>
     </div>
   );
 
   const pauseScreen = (
-    <div className='gameScreen gamePauseScreen'>
+    <div className=`${cssClassBase}-game-screen ${cssClassBase}-game-pause-screen`>
       Pause Screen
       <button onClick={endPause}>Resume</button>
     </div>
@@ -167,7 +167,7 @@ function Game(props: any) {
 
   return (
     <div
-      id='webGameEngineParent'
+      id=`${cssClassBase}-parent`
       style={{
         position: 'relative',
         width: '100dvw',
