@@ -33,12 +33,12 @@ export default function SimpleExample() {
           <Enemy
             color='red'
             objectId='redship'
-            position={[5, 1, 0]}
+            position={[3, 1, 0]}
             filePath='/3d_files/low_poly_space_ship/scene.gltf'
             rotation={[Math.PI / 2, 0, 0]}
             scale={[0.2, 0.2, 0.4]}
           />
-          <Enemy color={'pink'} position={[-1, 1, 0]} objectId='pinkBox' size={[1.5, 0.5, 1.5]} />
+          <Enemy color={'pink'} position={[-2, 1, 0]} objectId='pinkBox' size={[1.5, 0.5, 1.5]} />
           <Player
             filePath='/3d_files/low_poly_space_ship/scene.gltf'
             rotation={[-Math.PI / 2, 0, Math.PI]}

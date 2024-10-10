@@ -107,14 +107,14 @@ function GameObject(props: {
   return (
     <mesh
       {...props}
-      scale={clicked ? 1.5 : 1}
+      scale={1}
       onClick={() => click(!clicked)}
       onPointerOver={() => hover(true)}
       onPointerOut={() => hover(false)}
       // gameObjectId={id}
     >
       <boxGeometry args={size} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : defaultColor} />
+      <meshStandardMaterial color={defaultColor} />
     </mesh>
   );
 }
