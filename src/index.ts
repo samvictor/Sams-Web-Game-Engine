@@ -1,4 +1,4 @@
-import { Collider, BackgroundAdditionOptions, LevelFlowType } from './components/library/interfaces';
+import { BackgroundAdditionOptions, Collider, ControlOptions, LevelFlowType } from './components/library/interfaces';
 import Canvas from './components/Canvas';
 import Game from './components/Game';
 import Level from './components/Level';
@@ -16,5 +16,6 @@ export {
   Enemy,
   collisionCheck,
   BackgroundAdditionOptions,
+  ControlOptions,
   LevelFlowType,
 };

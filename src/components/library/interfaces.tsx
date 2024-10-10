@@ -43,6 +43,11 @@ enum LevelFlowType {
   Linear,
 }
 
+enum ControlOptions {
+  Keyboard,
+  OnScreen,
+}
+
 enum BackgroundAdditionOptions {
   None,
   Stars,
@@ -141,6 +146,14 @@ interface ProjectileData extends GameObjectData {
   sourceId: string;
 }
 
+interface Controls {
+  up: boolean;
+  down: boolean;
+  left: boolean;
+  right: boolean;
+  shoot: boolean;
+}
+
 export {
   Collider,
   GameObjectData,
@@ -149,8 +162,10 @@ export {
   ColliderShape,
   GameObjectType,
   GameState,
-  GameSettings,
+  ControlOptions,
+  Controls,
   BackgroundAdditionOptions,
+  GameSettings,
   LevelState,
   FailCriteria,
   WinCriteria,

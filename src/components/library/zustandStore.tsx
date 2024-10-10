@@ -12,6 +12,7 @@ import {
   LevelState,
   LevelSettings,
   LevelResults,
+  Controls,
 } from './interfaces';
 
 // import { Projectile } from './objects'
@@ -34,6 +35,8 @@ interface ZustandState {
   // for each levelId, save initial data of objects
   // used for restarts
   allLevelObjectInitData: Map<string, Map<string, GameObjectData>>;
+  // which control inputs are currently active?
+  controls: Controls;
 
   // functions
   // players
@@ -68,6 +71,10 @@ interface ZustandState {
 
   // timer
   updateTimeLeft: (timeLeftMs?: number) => void;
+
+  // controls
+  setControls: (controls: Controls) => void;
+  updateControls: (controls: Partial<Controls>) => void;
 }
 
 const updateProjectileByIndex = (
@@ -155,6 +162,13 @@ const useZustandStore = create<ZustandState>()((set) => ({
   allLevelSettings: new Map<string, LevelSettings>(),
   allLevelResults: new Map<string, LevelResults>(),
   allLevelObjectInitData: new Map(),
+  controls: {
+    up: false,
+    down: false,
+    left: false,
+    right: false,
+    shoot: false,
+  },
 
   // functions
   // players
@@ -577,6 +591,32 @@ const useZustandStore = create<ZustandState>()((set) => ({
         currentLevelData: {
           ...state.currentLevelData,
           timeLeftSec: timeLeftSec,
+        },
+      };
+    }),
+
+  // controls
+  setControls: (newControls: Controls) =>
+    set(() => {
+      if (!newControls) {
+        throw new Error('new object not found (setControls)');
+      }
+
+      return {
+        controls: newControls,
+      };
+    }),
+
+  updateControls: (newControls: Partial<Controls>) =>
+    set((state: ZustandState) => {
+      if (!newControls) {
+        throw new Error('new object not found (updateControls)');
+      }
+
+      return {
+        controls: {
+          ...state.controls,
+          ...newControls,
         },
       };
     }),

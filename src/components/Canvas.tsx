@@ -9,9 +9,10 @@ import { Canvas as ThreeCanvas, useFrame } from '@react-three/fiber';
 import { Projectile } from './library/objects';
 import { useMovePlayer, usePlayerShoot, useUpdateProjectiles } from './library/hooks';
 import { useZustandStore, ZustandState } from './library/zustandStore';
-import { BackgroundAdditionOptions } from './library/interfaces';
 import { StarsBackground } from './library/backgroundAdditions';
 import { cssClassBase } from './library/constants';
+import { ControlOptions, KeyboardControls, OnScreenControls } from './library/controls';
+import { BackgroundAdditionOptions } from './library/interfaces';
 
 // import {useZustandStore} from './library/zustandStore'
 
@@ -20,55 +21,20 @@ import { cssClassBase } from './library/constants';
 function Canvas(props: any) {
   // const settings = { ...defaultSettings, ...props.settings }
 
+  const updateBullets = useUpdateProjectiles();
   const movePlayer = useMovePlayer();
   const playerShoot = usePlayerShoot();
-  const updateBullets = useUpdateProjectiles();
 
-  const keys: any = {
-    KeyW: 'up',
-    KeyS: 'down',
-    KeyA: 'left',
-    KeyD: 'right',
-    ArrowUp: 'up',
-    ArrowDown: 'down',
-    ArrowLeft: 'left',
-    ArrowRight: 'right',
-    Space: 'shoot',
-  };
-
-  const moveFieldByKey = (key: any) => keys[key];
-
-  const [movement, setMovement] = useState({
-    up: false,
-    down: false,
-    left: false,
-    right: false,
-    shoot: false,
-  });
-
-  useEffect(() => {
-    const handleKeyDown = (e: any) => {
-      setMovement((m) => ({ ...m, [moveFieldByKey(e.code)]: true }));
-    };
-    const handleKeyUp = (e: any) => {
-      setMovement((m: any) => ({ ...m, [moveFieldByKey(e.code)]: false }));
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
-    };
-  }, []);
+  const controls = useZustandStore((state: ZustandState) => state.controls);
 
   function Updater() {
     useFrame((_, delta: number) => {
-      if (movement.left) {
+      if (controls.left) {
         movePlayer('left', delta);
-      } else if (movement.right) {
+      } else if (controls.right) {
         movePlayer('right', delta);
       }
-      if (movement.shoot) {
+      if (controls.shoot) {
         playerShoot();
       }
 
@@ -135,6 +101,7 @@ function Canvas(props: any) {
     >
       <ThreeCanvas camera={{ position: [0, 0, 10] }}>
         <Updater />
+        <KeyboardControls />
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
         {backgroundAdditionXml}
@@ -144,6 +111,7 @@ function Canvas(props: any) {
       </ThreeCanvas>
 
       {overlayXml}
+      <OnScreenControls />
     </div>
   );
 }

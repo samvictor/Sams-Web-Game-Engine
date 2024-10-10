@@ -20,6 +20,7 @@ function useMovePlayer() {
     }
     // console.log('setting player position to', newPosition)
     // console.log('playerUpdater is', playerUpdater)
+    console.log('player moved', direction, 'at', Date.now());
     setPlayerPosition(newPosition);
   }
 

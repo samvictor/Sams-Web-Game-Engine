@@ -1,7 +1,9 @@
+'use client';
+
 import React, { useRef, useState, useEffect, useContext, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { BackgroundAdditionOptions } from './interfaces';
 import { MeshBasicMaterial, SphereGeometry, Vector3 } from 'three';
+import { BackgroundAdditionOptions } from './interfaces';
 
 function StarsBackground({ direction = BackgroundAdditionOptions.StarsMovingDown, speed = 80, numStars = 20 }) {
   // Field of stars for a background.
@@ -45,7 +47,7 @@ function StarsBackground({ direction = BackgroundAdditionOptions.StarsMovingDown
       // user has been off screen for a while
       // If we do this update, all stars will be on same line
       return;
-    } 
+    }
 
     const newStarPositionsXY: number[][] = starPositionsXY.map((pos: number[]) => {
       // increment the position of each star
