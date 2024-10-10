@@ -69,6 +69,7 @@ function Canvas(props: any) {
         position: 'fixed',
         top: 0,
         padding: '20px',
+        userSelect: 'none',
       }}
     >
       Score: {currentLevelData.score}
