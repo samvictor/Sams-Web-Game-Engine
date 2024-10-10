@@ -34,12 +34,18 @@ function StarsBackground({ direction = BackgroundAdditionOptions.StarsMovingDown
     console.log('new star positions are', tempStarPositionsXY);
   }, []);
 
-  console.log('star positions', starPositionsXY);
+  // console.log('star positions', starPositionsXY);
 
   useFrame((_, delta) => {
     if (!starPositions || starPositions.length === 0) {
       return;
     }
+
+    if (delta > 1) {
+      // user has been off screen for a while
+      // If we do this update, all stars will be on same line
+      return;
+    } 
 
     const newStarPositionsXY: number[][] = starPositionsXY.map((pos: number[]) => {
       // increment the position of each star
